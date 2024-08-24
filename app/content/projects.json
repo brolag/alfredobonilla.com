@@ -1,0 +1,30 @@
+{
+  "title": "My Projects",
+  "projects": [
+    {
+      "name": "ZK Multiverse",
+      "description": "A web game to learn cryptography and zk circuits using Circom or Noir",
+      "url": "https://github.com/brolag/zk-multiverse"
+    },
+    {
+      "name": "Semaphore Paymaster Frontend",
+      "description": "Frontend for a Semaphore + Paymaster project using Next.js",
+      "url": "https://github.com/semaphore-paymaster/frontend"
+    },
+    {
+      "name": "Clean Front-End Code",
+      "description": "A general purpose clean code manual for Front End Developers",
+      "url": "https://github.com/brolag/clean-front-end-code"
+    },
+    {
+      "name": "Cofiblocks Marketplace",
+      "description": "A Starknet web3 platform to innovate Costa Rica coffee industry",
+      "url": "https://github.com/Vagabonds-Labs/marketplace"
+    },
+    {
+      "name": "Starknet Frontend Workshop",
+      "description": "Learn to build a frontend application using Starknet and Next.js",
+      "url": "https://github.com/brolag/starknet-bootcamp-frontend"
+    }
+  ]
+}

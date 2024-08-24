@@ -1,0 +1,17 @@
+{
+  "title": "Contact Information",
+  "details": [
+    {
+      "type": "GitHub",
+      "value": "https://github.com/brolag"
+    },
+    {
+      "type": "LinkedIn",
+      "value": "https://www.linkedin.com/in/brolag/"
+    },
+    {
+      "type": "Instagram",
+      "value": "https://www.instagram.com/brolag/"
+    }
+  ]
+}

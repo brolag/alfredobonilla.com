@@ -1,0 +1,15 @@
+{
+  "title": "My Services",
+  "services": [
+    {
+      "name": "Mentoring",
+      "description": "Guidance and support for aspiring developers",
+      "link": "https://calendly.com/brolag/mentoria-gratuita"
+    },
+    {
+      "name": "Coding",
+      "description": "Professional software development services",
+      "link": "https://docs.google.com/forms/d/e/1FAIpQLSdyGVfmPVv_1jX7dvGlMJvhqrzcudNasx4CWoWQkoDODgRepA/viewform"
+    }
+  ]
+}
