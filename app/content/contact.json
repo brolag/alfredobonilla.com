@@ -1,17 +1,20 @@
 {
-  "title": "Contact Information",
+  "title": "📞 Contact Information",
   "details": [
     {
-      "type": "GitHub",
-      "value": "https://github.com/brolag"
+      "type": "🐙 GitHub",
+      "value": "https://github.com/brolag",
+      "emoji": "🐙"
     },
     {
-      "type": "LinkedIn",
-      "value": "https://www.linkedin.com/in/brolag/"
+      "type": "💼 LinkedIn",
+      "value": "https://www.linkedin.com/in/brolag/",
+      "emoji": "💼"
     },
     {
-      "type": "Instagram",
-      "value": "https://www.instagram.com/brolag/"
+      "type": "📸 Instagram",
+      "value": "https://www.instagram.com/brolag/",
+      "emoji": "📸"
     }
   ]
 }

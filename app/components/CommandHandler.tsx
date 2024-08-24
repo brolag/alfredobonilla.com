@@ -14,11 +14,11 @@ export const CommandHandler = (
     case 'help':
       return [
         'Available commands:',
-        'about - Display information about me',
-        'projects - Show my projects',
-        'contact - Display contact information',
-        'services - Show my services',
-        'clear - Clear the screen',
+        '• about - Display information about me',
+        '• projects - Show my projects',
+        '• contact - Display contact information',
+        '• services - Show my services',
+        '• clear - Clear the screen',
       ];
 
     case 'about':

@@ -5,19 +5,18 @@ import { CommandHandler } from './components/CommandHandler'
 import { FormHandler } from './components/FormHandler'
 import { OutputDisplay } from './components/OutputDisplay'
 import { CommandInput } from './components/CommandInput'
-import welcomeContent from './content/welcome.json'
 
 const vt323 = VT323({ weight: '400', subsets: ['latin'] })
 
 const GREETING = ['Hello anon, my name is Alfredo. Welcome to my portfolio. Type a command to begin.', 'Type "help" to see available commands.']
 
 const WELCOME_ASCII = [
-  '   ___  __    ______              __     ',
-  '  / _ |/ /   / __/ /  ___ ___  __/ /____ ',
-  ' / __ / /___/ _// _ \\/ -_) _ \\/ _ \\ / -_)',
-  '/_/ |_/____/_/ /_//_/\\__/_//_/\\_,_/_\\__/ ',
-  '                                          ',
-  'Welcome to my interactive portfolio!      '
+    " _   _      _ _       ",
+    "| | | | ___| | | ___  ",
+    "| |_| |/ _ \\ | |/ _ \\ ",
+    "|  _  |  __/ | | (_) |",
+    "|_| |_|\\___|_|_|\\___/ ",
+    "                      "
 ]
 
 export default function Portfolio() {
