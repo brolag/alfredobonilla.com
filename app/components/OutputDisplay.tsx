@@ -5,19 +5,34 @@ interface OutputDisplayProps {
   asciiArt?: string[];
 }
 
-export const OutputDisplay: React.FC<OutputDisplayProps> = ({ output, asciiArt }) => {
+export const OutputDisplay: React.FC<OutputDisplayProps> = ({ output }) => {
+  const renderLine = (line: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = line.split(urlRegex);
+
+    return parts.map((part) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={uuidv4()}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white hover:underline"
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div className="mb-4">
-      {asciiArt && (
-        <pre className="mb-4">
-          {asciiArt.map((line) => (
-            <div key={uuidv4()}>{line}</div>
-          ))}
-        </pre>
-      )}
       {output.map((line) => (
         <div key={uuidv4()} className="whitespace-pre-wrap">
-          {line}
+          {renderLine(line)}
         </div>
       ))}
     </div>

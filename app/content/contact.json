@@ -3,17 +3,17 @@
   "details": [
     {
       "type": "🐙 GitHub",
-      "value": "https://github.com/brolag",
+      "url": "https://github.com/brolag",
       "emoji": "🐙"
     },
     {
       "type": "💼 LinkedIn",
-      "value": "https://www.linkedin.com/in/brolag/",
+      "url": "https://www.linkedin.com/in/brolag/",
       "emoji": "💼"
     },
     {
       "type": "📸 Instagram",
-      "value": "https://www.instagram.com/brolag/",
+      "url": "https://www.instagram.com/brolag/",
       "emoji": "📸"
     }
   ]

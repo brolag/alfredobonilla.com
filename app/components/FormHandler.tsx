@@ -56,6 +56,6 @@ const handleServicesForm = (
   return [
     `You've selected: ${selectedService.name}`,
     `Description: ${selectedService.description}`,
-    `To proceed, please visit: ${selectedService.link}`
+    `To proceed, please visit: ${selectedService.url}`
   ];
 };

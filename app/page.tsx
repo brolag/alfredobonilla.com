@@ -24,6 +24,7 @@ export default function Portfolio() {
   const [output, setOutput] = useState<string[]>([])
   const [currentForm, setCurrentForm] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const outputRef = useRef<HTMLDivElement>(null)
 
   const handleCommand = useCallback((cmd: string) => {
     return CommandHandler(cmd, setCurrentForm, setOutput)
@@ -39,6 +40,11 @@ export default function Portfolio() {
       if (input.trim().toLowerCase() !== 'clear') {
         Promise.resolve(result).then(resolvedResult => {
           setOutput(prev => [...prev, `> ${input}`, ...resolvedResult]);
+          setTimeout(() => {
+            if (outputRef.current) {
+              outputRef.current.scrollTop = outputRef.current.scrollHeight;
+            }
+          }, 0);
         });
       } else {
         setOutput([]);
@@ -50,6 +56,12 @@ export default function Portfolio() {
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
+
+  useEffect(() => {
+    if (outputRef.current) {
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+    }
+  }, []) // Remove 'output' from the dependency array
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if ((e.ctrlKey && e.key === 'u') || (e.ctrlKey && e.key === 'c')) {
@@ -66,6 +78,7 @@ export default function Portfolio() {
       style={{ fontSize: '1.2rem' }}
       onClick={() => inputRef.current?.focus()}
       onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.focus()}
+      ref={outputRef}
     >
       <OutputDisplay output={[...WELCOME_ASCII, '', ...GREETING, ...output]} />
       <CommandInput 

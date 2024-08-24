@@ -35,7 +35,7 @@ export const CommandHandler = (
     case 'contact':
       return [
         contactData.title,
-        ...contactData.details.map((detail) => `${detail.type}: ${detail.value}`)
+        ...contactData.details.map((detail) => `${detail.type}: ${detail.url}`)
       ];
 
     case 'services':
