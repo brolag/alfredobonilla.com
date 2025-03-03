@@ -2,9 +2,9 @@
   "title": "💼 My Most Recent Projects",
   "projects": [
     {
-      "name": "• ZK Multiverse",
-      "description": "A web game to learn cryptography and zk circuits using Circom or Noir",
-      "url": "https://github.com/brolag/zk-multiverse"
+      "name": "• Cofiblocks",
+      "description": "A Starknet web3 platform to innovate Costa Rica coffee industry",
+      "url": "https://github.com/Vagabonds-Labs/cofiblocks"
     },
     {
       "name": "• Semaphore Paymaster Frontend",
@@ -15,11 +15,6 @@
       "name": "• Clean Front-End Code",
       "description": "A general purpose clean code manual for Front End Developers",
       "url": "https://github.com/brolag/clean-front-end-code"
-    },
-    {
-      "name": "• Cofiblocks Marketplace",
-      "description": "A Starknet web3 platform to innovate Costa Rica coffee industry",
-      "url": "https://github.com/Vagabonds-Labs/marketplace"
     },
     {
       "name": "• Starknet Frontend Workshop",

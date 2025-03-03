@@ -1,0 +1,25 @@
+{
+  "title": "Technical Skills",
+  "categories": [
+    {
+      "name": "Frontend Development",
+      "skills": ["React", "Next.js", "TypeScript", "JavaScript", "HTML5", "CSS3", "Tailwind CSS", "Redux", "Responsive Design", "Web3.js"]
+    },
+    {
+      "name": "Backend Development",
+      "skills": ["Node.js", "Express", "RESTful APIs", "GraphQL", "MongoDB", "PostgreSQL", "Firebase", "AWS", "Serverless"]
+    },
+    {
+      "name": "Blockchain & Web3",
+      "skills": ["Solidity", "Smart Contracts", "Ethereum", "Web3.js", "Hardhat", "Truffle", "IPFS", "NFTs", "DeFi", "DAOs"]
+    },
+    {
+      "name": "DevOps & Tools",
+      "skills": ["Git", "GitHub", "CI/CD", "Docker", "Kubernetes", "AWS", "Vercel", "Netlify", "Testing (Jest, Cypress)", "Performance Optimization"]
+    },
+    {
+      "name": "Design & UX",
+      "skills": ["Figma", "Adobe XD", "UI/UX Design Principles", "Wireframing", "Prototyping", "Accessibility", "User Research"]
+    }
+  ]
+} 
