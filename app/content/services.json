@@ -2,9 +2,32 @@
   "title": "🛠️ My Services",
   "services": [
     {
-      "name": "🧑‍🏫 Mentoring",
-      "description": "🚀 Guidance and support for aspiring developers",
-      "url": "https://www.skool.com/dojo-coding/about"
+      "name": "🤖 AI Solutions & Consulting",
+      "description": "Custom AI agents, RAG systems, and automation solutions for businesses",
+      "price": "Starting at $5,000/project",
+      "cta": "Get AI Consultation",
+      "url": "mailto:alfredo@alfredobonilla.com?subject=AI Solutions Consultation"
+    },
+    {
+      "name": "🎓 Indie Mind Education",
+      "description": "AI-first educational products, bootcamps, and focus groups sintéticos",
+      "price": "From $497/course",
+      "cta": "Explore Courses",
+      "url": "https://indie-mind.com"
+    },
+    {
+      "name": "🏗️ Technical Leadership",
+      "description": "CTO as a Service, technical strategy, and system architecture design",
+      "price": "$8,000-15,000/month",
+      "cta": "Book Strategy Call",
+      "url": "https://calendly.com/brolag/sesion-1-1"
+    },
+    {
+      "name": "🧑‍🏫 Mentoring & Training",
+      "description": "Technical guidance for developers in AI, blockchain, and modern web development",
+      "price": "$200/hour or $1,500/month",
+      "cta": "Start Mentoring",
+      "url": "mailto:alfredo@alfredobonilla.com?subject=Mentoring Request"
     }
   ]
 }

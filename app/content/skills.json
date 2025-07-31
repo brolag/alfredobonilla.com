@@ -2,24 +2,24 @@
   "title": "Technical Skills",
   "categories": [
     {
-      "name": "Frontend Development",
-      "skills": ["React", "Next.js", "TypeScript", "JavaScript", "HTML5", "CSS3", "Tailwind CSS", "Redux", "Responsive Design", "Web3.js"]
+      "name": "AI & Automation",
+      "skills": ["Claude Code", "OpenAI API", "Google AI SDK", "n8n", "LangChain", "RAG Systems", "AI Agents", "Prompt Engineering", "Focus Groups Sintéticos", "Content Automation", "Business Process Automation"]
     },
     {
-      "name": "Backend Development",
-      "skills": ["Node.js", "Express", "RESTful APIs", "GraphQL", "MongoDB", "PostgreSQL", "Firebase", "AWS", "Serverless"]
+      "name": "Frontend Development",
+      "skills": ["Next.js", "TypeScript", "React", "TailwindCSS", "TRPC", "wagmi", "ethers.js", "Responsive Design", "Web3 Integration", "UI/UX Implementation"]
     },
     {
       "name": "Blockchain & Web3",
-      "skills": ["Solidity", "Smart Contracts", "Ethereum", "Web3.js", "Hardhat", "Truffle", "IPFS", "NFTs", "DeFi", "DAOs"]
+      "skills": ["Solidity", "Cairo", "Starknet.js", "Smart Contracts", "Hardhat", "Ethereum", "DeFi", "NFTs", "Web3 Architecture", "Blockchain Security"]
     },
     {
-      "name": "DevOps & Tools",
-      "skills": ["Git", "GitHub", "CI/CD", "Docker", "Kubernetes", "AWS", "Vercel", "Netlify", "Testing (Jest, Cypress)", "Performance Optimization"]
+      "name": "Backend & Infrastructure",
+      "skills": ["Node.js", "CI/CD", "ADRs", "System Reliability (99.9%)", "API Design", "Testing (Cypress, Jest)", "Performance Optimization", "Database Design", "Microservices"]
     },
     {
-      "name": "Design & UX",
-      "skills": ["Figma", "Adobe XD", "UI/UX Design Principles", "Wireframing", "Prototyping", "Accessibility", "User Research"]
+      "name": "Knowledge Management & Productivity",
+      "skills": ["Obsidian", "Second Brain Systems", "PARA Method", "GTD", "Raycast", "Git", "GitHub", "Automation Scripts", "PKM Systems", "Heavy Automation"]
     }
   ]
 } 

@@ -1,12 +1,12 @@
 {
   "title": "🧑🏽‍💻 About Me",
   "content": [
-    "I'm Alfredo Bonilla, a Full-Stack Developer with over 13 years of experience, specializing in AI-driven solutions and blockchain technologies.",
-    "My expertise includes TypeScript, React, Next.js, Solidity, and various blockchain frameworks. I'm passionate about building intuitive, scalable, and decentralized applications, particularly in the Web3 space.",
-    "I'm currently working at Dojo Coding, where I focus on developer advocacy, community growth, and supporting Web3 projects by fostering innovation and education.",
-    "I've worked on multiple Web3 projects, including Cofiblocks, Lago Finance, and Apy-Vision, where I've designed and built blockchain applications that enhance decentralization and user experience.",
-    "Beyond coding, I'm an active mentor, having taught over 1000 students about Web3 and blockchain. I've participated in various hackathons and hacker houses, contributing to projects like Semaphore Paymaster and OpenTribe.",
-    "When I'm not immersed in the world of Web3, you can find me sharing knowledge through podcasts, speaking at tech events, or creating educational content about AI, blockchain, and product development."
+    "I'm Alfredo Bonilla, CTO at Dojo Coding with over 13 years of experience, specializing in AI-driven solutions and blockchain technologies from Costa Rica.",
+    "As CTO (since March 2025), I lead technical strategy, innovation, and education for our community. My focus areas include technical guidance, developer education, CI/CD implementation, and ensuring system reliability with 99.9% uptime.",
+    "I'm also the Founder of Indie Mind, where I'm building AI-first educational products and services, including focus groups sintéticos for idea validation and content automation agents for businesses.",
+    "My technical expertise spans Next.js, TypeScript, TailwindCSS, TRPC, Solidity, Cairo (Starknet), and AI tools like Claude Code, OpenAI, n8n, and LangChain. I'm passionate about creating systems that work for me through heavy automation.",
+    "I've worked on multiple Web3 projects including Cofiblocks, Lago Finance, and Apy-Vision, and I'm actively developing AI automation agents and educational content for businesses.",
+    "My philosophy centers on 'Systems over willpower' - I believe in building automated frameworks and using AI as a co-pilot for technical, creative, and strategic decisions. I've created an open-source Second Brain template for Obsidian to help others build their own knowledge management systems. When I'm not coding, you'll find me enjoying board games with friends, exploring nature, or creating music."
   ],
   "asciiArt": [
     "  ____            _             ",

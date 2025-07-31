@@ -8,30 +8,39 @@ export const OutputDisplay: React.FC<OutputDisplayProps> = ({ output }) => {
   return (
     <div className="mb-4 font-mono">
       {output.map((line, index) => {
+        // Safety check for undefined lines
+        if (!line && line !== '') return null;
+        
         // Determine the appropriate styling based on the line content
-        let className = "";
+        let className = "transition-all duration-300";
         
         if (line.startsWith('>')) {
-          className = "text-cyber-yellow font-bold";
-        } else if (line.startsWith('-') && (
-          line.includes('"about"') || 
-          line.includes('"skills"') || 
-          line.includes('"projects"') || 
-          line.includes('"contact"') || 
-          line.includes('"help"')
-        )) {
-          className = "text-cyber-teal";
+          className += " text-cyber-yellow font-bold text-glow-yellow";
+        } else if (line.startsWith('  •') || line.startsWith('  about') || line.startsWith('  skills') || line.startsWith('  projects') || line.startsWith('  contact') || line.startsWith('  services') || line.startsWith('  help') || line.startsWith('  clear')) {
+          className += " text-cyber-teal text-glow-cyan hover:text-cyber-green cursor-pointer";
         } else if (line.includes('TERMINAL') || 
             line.includes('CONNECTION') || 
             line.includes('INITIALIZING') || 
-            line.includes('LOADING')) {
-          className = "text-cyber-blue";
+            line.includes('LOADING') ||
+            line.includes('BIOS') ||
+            line.includes('Memory Test') ||
+            line.includes('CPU:') ||
+            line.includes('GPU:') ||
+            line.includes('BOOTING') ||
+            line.includes('SYSTEM READY')) {
+          className += " text-cyber-blue text-glow-cyan";
         } else if (line.includes('ERROR') || line.includes('DENIED') || line.includes('FAILED')) {
-          className = "text-cyber-red";
-        } else if (line.includes('SUCCESS') || line.includes('COMPLETE') || line.includes('VERIFIED')) {
-          className = "text-cyber-green";
+          className += " text-cyber-red";
+        } else if (line.includes('SUCCESS') || line.includes('COMPLETE') || line.includes('VERIFIED') || line.includes('OK')) {
+          className += " text-cyber-green";
         } else if (line.includes('IDENTITY') || line === 'Copyright (c) 2025 Alfredo Bonilla') {
-          className = "text-cyber-pink";
+          className += " text-cyber-pink text-glow-magenta";
+        } else if (line.includes('█')) {
+          className += " text-cyber-green text-glow-cyan";
+        } else if (line.includes('━')) {
+          className += " text-cyber-teal opacity-60";
+        } else if (line.includes('⚡')) {
+          className += " text-cyber-yellow text-glow-yellow";
         }
         
         // Create a unique key using both index and content

@@ -56,6 +56,8 @@ const handleServicesForm = (
   return [
     `You've selected: ${selectedService.name}`,
     `Description: ${selectedService.description}`,
-    `To proceed, please visit: ${selectedService.url}`
+    `💰 Investment: ${selectedService.price}`,
+    `🚀 Ready to start? ${selectedService.cta}: ${selectedService.url}`
   ];
 };
+

@@ -2,24 +2,34 @@
   "title": "💼 My Most Recent Projects",
   "projects": [
     {
+      "name": "• Indie Mind",
+      "description": "AI-first educational platform with focus groups sintéticos for idea validation and automated content generation",
+      "url": "https://indie-mind.com"
+    },
+    {
+      "name": "• Second Brain Template",
+      "description": "Open-source Obsidian template for personal knowledge management using PARA method",
+      "url": "https://github.com/brolag/second-brain"
+    },
+    {
+      "name": "• Dojo Coding",
+      "description": "Technical education platform where I serve as CTO, fostering innovation and community growth",
+      "url": "https://dojocoding.io/"
+    },
+    {
       "name": "• Cofiblocks",
       "description": "A Starknet web3 platform to innovate Costa Rica coffee industry",
       "url": "https://github.com/Vagabonds-Labs/cofiblocks"
     },
     {
+      "name": "• AI Content Automation Agents",
+      "description": "Suite of AI agents for business automation and content creation",
+      "url": "#"
+    },
+    {
       "name": "• Semaphore Paymaster Frontend",
       "description": "Frontend for a Semaphore + Paymaster project using Next.js",
       "url": "https://github.com/semaphore-paymaster/frontend"
-    },
-    {
-      "name": "• Clean Front-End Code",
-      "description": "A general purpose clean code manual for Front End Developers",
-      "url": "https://github.com/brolag/clean-front-end-code"
-    },
-    {
-      "name": "• Starknet Frontend Workshop",
-      "description": "Learn to build a frontend application using Starknet and Next.js",
-      "url": "https://github.com/brolag/starknet-bootcamp-frontend"
     }
   ]
 }

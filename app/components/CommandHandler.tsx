@@ -27,9 +27,11 @@ export const CommandHandler = (
         '• services - Explore services I offer',
         '• clear - Clear the terminal screen',
         '',
+        '💡 Quick Actions: Use the colorful buttons above for immediate contact!',
         'Type any command to continue, or try combining commands.',
         'Example: "about skills" will show both my background and skills.'
       ];
+
 
     case 'about':
       return [
@@ -72,10 +74,10 @@ export const CommandHandler = (
       return [
         '=== SERVICES OFFERED ===',
         ...servicesData.services.map(
-          (service, index) => `[${index + 1}] ${service.name}\n    ${service.description}`
+          (service, index) => `[${index + 1}] ${service.name}\n    ${service.description}\n    💰 ${service.price}\n    🔗 ${service.cta}: ${service.url}`
         ),
         '',
-        'Please enter the number of the service you\'re interested in to learn more:'
+        'Ready to work together? Use the action buttons above or type the service number for more details.'
       ];
 
     case 'clear':
