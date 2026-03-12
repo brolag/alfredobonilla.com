@@ -1,12 +1,11 @@
 {
   "title": "🧑🏽‍💻 About Me",
   "content": [
-    "I'm Alfredo Bonilla, CTO at Dojo Coding with over 13 years of experience, specializing in AI-driven solutions and blockchain technologies from Costa Rica.",
-    "As CTO (since March 2025), I lead technical strategy, innovation, and education for our community. My focus areas include technical guidance, developer education, CI/CD implementation, and ensuring system reliability with 99.9% uptime.",
-    "I'm also the Founder of Indie Mind, where I'm building AI-first educational products and services, including focus groups sintéticos for idea validation and content automation agents for businesses.",
-    "My technical expertise spans Next.js, TypeScript, TailwindCSS, TRPC, Solidity, Cairo (Starknet), and AI tools like Claude Code, OpenAI, n8n, and LangChain. I'm passionate about creating systems that work for me through heavy automation.",
-    "I've worked on multiple Web3 projects including Cofiblocks, Lago Finance, and Apy-Vision, and I'm actively developing AI automation agents and educational content for businesses.",
-    "My philosophy centers on 'Systems over willpower' - I believe in building automated frameworks and using AI as a co-pilot for technical, creative, and strategic decisions. I've created an open-source Second Brain template for Obsidian to help others build their own knowledge management systems. When I'm not coding, you'll find me enjoying board games with friends, exploring nature, or creating music."
+    "I'm Alfredo Bonilla, Founder of Indie Mind with over 14 years of experience, specializing in AI-driven solutions, agentic coding, and blockchain technologies from Costa Rica.",
+    "At Indie Mind, I build AI-first products and services — from multi-agent orchestration systems to content automation pipelines and educational platforms for developers.",
+    "My technical expertise spans Next.js, TypeScript, TailwindCSS, Claude Code, OpenAI, multi-AI orchestration (Opus + Codex), n8n, and blockchain technologies (Solidity, Cairo/Starknet).",
+    "I've built open-source tools like Neural Claude Code (agentic coding framework), Mission Control (AI fleet management), and Cortex (quality gates for AI workflows). On the Web3 side, I've contributed to Cofiblocks, Lago Finance, and Apy-Vision.",
+    "My philosophy centers on 'Systems over willpower' - I believe in building automated frameworks and using AI as a co-pilot for technical, creative, and strategic decisions. When I'm not coding, you'll find me enjoying board games with friends, exploring nature, or creating music."
   ],
   "asciiArt": [
     "  ____            _             ",

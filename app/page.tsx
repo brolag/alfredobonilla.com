@@ -22,15 +22,15 @@ const BOOT_SEQUENCE = [
 
 const GREETING = [
   'TERMINAL v1.0.1 [Secure Connection Established]',
-  'Copyright (c) 2025 Alfredo Bonilla',
+  'Copyright (c) 2026 Alfredo Bonilla',
   '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
   'INITIALIZING SESSION...',
   'LOADING PORTFOLIO DATA...',
   'CONNECTION ESTABLISHED',
-  'IDENTITY: Alfredo Bonilla [CTO @ Dojo Coding | AI & Blockchain Developer]',
+  'IDENTITY: Alfredo Bonilla [Founder @ Indie Mind | AI Engineer & Educator]',
   '',
   'Welcome to my interactive portfolio terminal.',
-  'I\'m Alfredo, CTO at Dojo Coding and Founder of Indie Mind, specializing in AI-driven solutions and blockchain technologies.',
+  'I\'m Alfredo, Founder of Indie Mind, specializing in AI-driven solutions, agentic coding, and blockchain technologies.',
   '',
   '⚡ Enhanced Terminal Features:',
   '  • Tab completion for commands',

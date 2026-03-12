@@ -2,24 +2,28 @@
   "title": "Technical Skills",
   "categories": [
     {
+      "name": "Agentic AI & Orchestration",
+      "skills": ["Claude Code Agents", "Multi-AI Orchestration (Opus + Codex)", "Autonomous Dev Loops", "Spec-Driven Development", "AI Fleet Management", "Quality Gates (Cortex)"]
+    },
+    {
       "name": "AI & Automation",
-      "skills": ["Claude Code", "OpenAI API", "Google AI SDK", "n8n", "LangChain", "RAG Systems", "AI Agents", "Prompt Engineering", "Focus Groups Sintéticos", "Content Automation", "Business Process Automation"]
+      "skills": ["Claude API", "OpenAI API", "Google AI SDK", "n8n", "LangChain", "RAG Systems", "Prompt Engineering", "Content Automation", "Business Process Automation"]
     },
     {
       "name": "Frontend Development",
-      "skills": ["Next.js", "TypeScript", "React", "TailwindCSS", "TRPC", "wagmi", "ethers.js", "Responsive Design", "Web3 Integration", "UI/UX Implementation"]
+      "skills": ["Next.js", "TypeScript", "React", "TailwindCSS", "TRPC", "wagmi", "ethers.js", "Responsive Design", "Web3 Integration"]
     },
     {
       "name": "Blockchain & Web3",
-      "skills": ["Solidity", "Cairo", "Starknet.js", "Smart Contracts", "Hardhat", "Ethereum", "DeFi", "NFTs", "Web3 Architecture", "Blockchain Security"]
+      "skills": ["Solidity", "Cairo", "Starknet.js", "Smart Contracts", "Hardhat", "Ethereum", "DeFi", "Web3 Architecture"]
     },
     {
       "name": "Backend & Infrastructure",
-      "skills": ["Node.js", "CI/CD", "ADRs", "System Reliability (99.9%)", "API Design", "Testing (Cypress, Jest)", "Performance Optimization", "Database Design", "Microservices"]
+      "skills": ["Node.js", "Python", "CI/CD", "System Architecture", "API Design", "Testing (Cypress, Jest, Playwright)", "Database Design", "DevOps"]
     },
     {
       "name": "Knowledge Management & Productivity",
-      "skills": ["Obsidian", "Second Brain Systems", "PARA Method", "GTD", "Raycast", "Git", "GitHub", "Automation Scripts", "PKM Systems", "Heavy Automation"]
+      "skills": ["Obsidian", "Second Brain Systems", "PARA Method", "PKM Systems", "Heavy Automation"]
     }
   ]
-} 
+}
