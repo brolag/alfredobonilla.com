@@ -3,18 +3,23 @@
   "projects": [
     {
       "name": "• Indie Mind",
-      "description": "AI-first educational platform with focus groups sintéticos for idea validation and automated content generation",
+      "description": "AI-first educational platform with automated content generation and developer tools",
       "url": "https://indie-mind.com"
     },
     {
-      "name": "• Second Brain Template",
-      "description": "Open-source Obsidian template for personal knowledge management using PARA method",
-      "url": "https://github.com/brolag/second-brain"
+      "name": "• Neural Claude Code",
+      "description": "Open-source agentic coding framework with multi-AI orchestration and self-improving agents",
+      "url": "https://github.com/brolag/neural-claude-code-plugin"
     },
     {
-      "name": "• Dojo Coding",
-      "description": "Technical education platform where I serve as CTO, fostering innovation and community growth",
-      "url": "https://dojocoding.io/"
+      "name": "• Mission Control",
+      "description": "AI fleet management dashboard for orchestrating multiple AI agents and devices",
+      "url": "https://github.com/brolag"
+    },
+    {
+      "name": "• Cortex",
+      "description": "Quality gates framework (DMAIC + ISO 42001) for AI agent workflows",
+      "url": "https://github.com/brolag"
     },
     {
       "name": "• Cofiblocks",
@@ -22,14 +27,9 @@
       "url": "https://github.com/Vagabonds-Labs/cofiblocks"
     },
     {
-      "name": "• AI Content Automation Agents",
-      "description": "Suite of AI agents for business automation and content creation",
-      "url": "#"
-    },
-    {
-      "name": "• Semaphore Paymaster Frontend",
-      "description": "Frontend for a Semaphore + Paymaster project using Next.js",
-      "url": "https://github.com/semaphore-paymaster/frontend"
+      "name": "• Second Brain Template",
+      "description": "Open-source Obsidian template for personal knowledge management using PARA method",
+      "url": "https://github.com/brolag/second-brain"
     }
   ]
 }
