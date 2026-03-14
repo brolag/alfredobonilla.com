@@ -27,7 +27,7 @@ const GREETING = [
   'INITIALIZING SESSION...',
   'LOADING PORTFOLIO DATA...',
   'CONNECTION ESTABLISHED',
-  'IDENTITY: Alfredo Bonilla [Founder @ Indie Mind | AI Engineer & Educator]',
+  'IDENTITY: Alfredo Bonilla [Founder @ Indie Mind | Software Engineer & Educator]',
   '',
   'Welcome to my interactive portfolio terminal.',
   'I\'m Alfredo, Founder of Indie Mind, specializing in AI-driven solutions, agentic coding, and blockchain technologies.',
@@ -49,7 +49,16 @@ const GREETING = [
   '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
 ]
 
-const WELCOME_ASCII = [
+const WELCOME_ASCII_DESKTOP = [
+    "    _    _  __               _         ____              _ _ _       ",
+    "   / \\  | |/ _|_ __ ___  __| | ___   | __ )  ___  _ __ (_) | | __ _ ",
+    "  / _ \\ | | |_| '__/ _ \\/ _` |/ _ \\  |  _ \\ / _ \\| '_ \\| | | |/ _` |",
+    " / ___ \\| |  _| | |  __/ (_| | (_) | | |_) | (_) | | | | | | | (_| |",
+    "/_/   \\_\\_|_| |_|  \\___|\\__,_|\\___/  |____/ \\___/|_| |_|_|_|_|\\__,_|",
+    "                                                                      "
+]
+
+const WELCOME_ASCII_MOBILE = [
     "    _    _  __               _       ",
     "   / \\  | |/ _|_ __ ___  __| | ___  ",
     "  / _ \\ | | |_| '__/ _ \\/ _` |/ _ \\ ",
@@ -70,8 +79,17 @@ export default function Portfolio() {
   const [currentForm, setCurrentForm] = useState<string | null>(null)
   const [bootComplete, setBootComplete] = useState(false)
   const [displayedBootLines, setDisplayedBootLines] = useState<string[]>([])
+  const [isMobile, setIsMobile] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const outputRef = useRef<HTMLDivElement>(null)
+
+  // Detect mobile for ASCII art layout
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   // Boot sequence animation
   useEffect(() => {
@@ -170,7 +188,7 @@ export default function Portfolio() {
           </button>
         </div>
       ) : (
-        <OutputDisplay output={[...WELCOME_ASCII, '', ...GREETING, ...output]} />
+        <OutputDisplay output={[...(isMobile ? WELCOME_ASCII_MOBILE : WELCOME_ASCII_DESKTOP), '', ...GREETING, ...output]} />
       )}
       {bootComplete && (
         <>
