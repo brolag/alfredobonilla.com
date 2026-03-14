@@ -17,7 +17,7 @@ const vt323 = VT323({
 
 export const metadata: Metadata = {
   title: "Alfredo Bonilla - Senior Software Engineer",
-  description: "Personal website of Alfredo Bonilla, a Senior Software Engineer specializing in Web3 and blockchain technologies.",
+  description: "Personal website of Alfredo Bonilla, a Senior Software Engineer specializing in AI-driven solutions and agentic coding.",
 };
 
 export default function RootLayout({
