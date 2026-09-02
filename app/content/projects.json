@@ -2,34 +2,40 @@
   "title": "💼 My Most Recent Projects",
   "projects": [
     {
-      "name": "• Indie Mind",
-      "description": "AI-first educational platform with automated content generation and developer tools",
-      "url": "https://indie-mind.com"
+      "name": "Indie Mind",
+      "description": "AI-first educational platform with automated content generation and developer tools.",
+      "url": "https://indie-mind.com",
+      "tags": ["Next.js", "AI", "Education"]
     },
     {
-      "name": "• Neural Claude Code",
-      "description": "Open-source agentic coding framework with multi-AI orchestration and self-improving agents",
-      "url": "https://github.com/brolag/neural-claude-code-plugin"
+      "name": "Neural Claude Code",
+      "description": "Open-source agentic coding framework with multi-AI orchestration and self-improving agents.",
+      "url": "https://github.com/brolag/neural-claude-code-plugin",
+      "tags": ["Claude Code", "Agents", "OSS"]
     },
     {
-      "name": "• Mission Control",
-      "description": "AI fleet management dashboard for orchestrating multiple AI agents and devices",
-      "url": "https://github.com/brolag"
+      "name": "Mission Control",
+      "description": "AI fleet management dashboard for orchestrating multiple AI agents and devices.",
+      "url": "https://github.com/brolag",
+      "tags": ["Agents", "Dashboard"]
     },
     {
-      "name": "• Cortex",
-      "description": "Quality gates framework (DMAIC + ISO 42001) for AI agent workflows",
-      "url": "https://github.com/brolag"
+      "name": "Cortex",
+      "description": "Quality gates framework (DMAIC + ISO 42001) for AI agent workflows.",
+      "url": "https://github.com/brolag",
+      "tags": ["Quality", "AI Ops"]
     },
     {
-      "name": "• Cofiblocks",
-      "description": "A Starknet web3 platform to innovate Costa Rica coffee industry",
-      "url": "https://github.com/Vagabonds-Labs/cofiblocks"
+      "name": "Cofiblocks",
+      "description": "A Starknet web3 platform to innovate Costa Rica's coffee industry.",
+      "url": "https://github.com/Vagabonds-Labs/cofiblocks",
+      "tags": ["Starknet", "Web3", "Costa Rica"]
     },
     {
-      "name": "• Second Brain Template",
-      "description": "Open-source Obsidian template for personal knowledge management using PARA method",
-      "url": "https://github.com/brolag/second-brain"
+      "name": "Second Brain Template",
+      "description": "Open-source Obsidian template for personal knowledge management using the PARA method.",
+      "url": "https://github.com/brolag/second-brain",
+      "tags": ["Obsidian", "PKM", "OSS"]
     }
   ]
 }

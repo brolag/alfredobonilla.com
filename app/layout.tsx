@@ -1,23 +1,28 @@
 import type { Metadata } from "next";
-import { VT323, Fira_Code } from "next/font/google";
+import { JetBrains_Mono, Nunito } from "next/font/google";
 import "./globals.css";
+import "./styles/theme.css";
+import "./styles/terminal.css";
+import "./styles/paper.css";
+import "./styles/legacy-crt.css";
 
-// Terminal monospace font
-const firaCode = Fira_Code({ 
+// Terminal monospace font (prompt, commands, banner)
+const mono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: '--font-fira-code',
+  variable: "--font-mono",
 });
 
-// Terminal display font
-const vt323 = VT323({ 
-  weight: '400', 
+// Rounded UI font, only used for prose in "paper" mode
+const ui = Nunito({
   subsets: ["latin"],
-  variable: '--font-vt323',
+  weight: ["500", "700"],
+  variable: "--font-ui",
 });
 
 export const metadata: Metadata = {
-  title: "Alfredo Bonilla - Senior Software Engineer",
-  description: "Personal website of Alfredo Bonilla, a Senior Software Engineer specializing in AI-driven solutions and agentic coding.",
+  title: "Alfredo Bonilla — brolag@portfolio",
+  description:
+    "Personal website of Alfredo Bonilla, Founder of Indie Mind. Software engineer specializing in AI-driven solutions and agentic coding. Type `help` to start.",
 };
 
 export default function RootLayout({
@@ -25,21 +30,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // suppressHydrationWarning: data-theme is applied client-side from localStorage
   return (
-    <html lang="en">
-      <body className={`${firaCode.variable} ${vt323.variable} font-mono`}>
-        <div className="terminal-container min-h-screen p-4 md:p-6 lg:p-8">
-          <div className="terminal-header">
-            <div className="flex items-center">
-              <span className="text-terminal-text text-xs font-bold">ALFREDO BONILLA | TERMINAL</span>
-            </div>
-            <div className="text-xs text-terminal-text opacity-70">
-              {new Date().toLocaleString()}
-            </div>
-          </div>
-          {children}
-        </div>
-      </body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${mono.variable} ${ui.variable}`}>{children}</body>
     </html>
   );
 }

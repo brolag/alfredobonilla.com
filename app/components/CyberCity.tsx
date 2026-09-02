@@ -743,14 +743,12 @@ function BuildingContent({ buildingKey }: { buildingKey: BuildingKey }) {
       return (
         <div>
           <Line>Conectá con Alfredo en la red:</Line>
+          {/* email + calendly now live in contact.json, so no hardcoded line here */}
           {contactData.details.map((c) => (
             <Line key={c.type}>
-              {c.emoji} <NeonLink href={c.url}>{c.url.replace('https://', '').replace('www.', '')}</NeonLink>
+              {c.emoji} <NeonLink href={c.url}>{c.url.replace('https://', '').replace('www.', '').replace('mailto:', '')}</NeonLink>
             </Line>
           ))}
-          <Line>
-            ✉️ <NeonLink href="mailto:info@alfredobonilla.com" color={NEON.yellow}>info@alfredobonilla.com</NeonLink>
-          </Line>
         </div>
       );
 

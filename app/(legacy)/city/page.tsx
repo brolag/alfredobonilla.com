@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import CyberCity from '../components/CyberCity';
+import CyberCity from '../../components/CyberCity';
 
 export const metadata: Metadata = {
   title: 'Neo San José 2099 — Alfredo Bonilla',

@@ -2,27 +2,33 @@
   "title": "Technical Skills",
   "categories": [
     {
-      "name": "Agentic AI & Orchestration",
+      "name": "Agentic AI",
+      "level": 94,
       "skills": ["Claude Code Agents", "Multi-AI Orchestration (Opus + Codex)", "Autonomous Dev Loops", "Spec-Driven Development", "AI Fleet Management", "Quality Gates (Cortex)"]
     },
     {
       "name": "AI & Automation",
+      "level": 90,
       "skills": ["Claude API", "OpenAI API", "Google AI SDK", "n8n", "LangChain", "RAG Systems", "Prompt Engineering", "Content Automation", "Business Process Automation"]
     },
     {
-      "name": "Frontend Development",
+      "name": "Frontend",
+      "level": 88,
       "skills": ["Next.js", "TypeScript", "React", "TailwindCSS", "TRPC", "wagmi", "ethers.js", "Responsive Design", "Web3 Integration"]
     },
     {
-      "name": "Blockchain & Web3",
-      "skills": ["Solidity", "Cairo", "Starknet.js", "Smart Contracts", "Hardhat", "Ethereum", "DeFi", "Web3 Architecture"]
-    },
-    {
-      "name": "Backend & Infrastructure",
+      "name": "Backend & Infra",
+      "level": 80,
       "skills": ["Node.js", "Python", "CI/CD", "System Architecture", "API Design", "Testing (Cypress, Jest, Playwright)", "Database Design", "DevOps"]
     },
     {
-      "name": "Knowledge Management & Productivity",
+      "name": "Web3",
+      "level": 72,
+      "skills": ["Solidity", "Cairo", "Starknet.js", "Smart Contracts", "Hardhat", "Ethereum", "DeFi", "Web3 Architecture"]
+    },
+    {
+      "name": "Knowledge Mgmt",
+      "level": 86,
       "skills": ["Obsidian", "Second Brain Systems", "PARA Method", "PKM Systems", "Heavy Automation"]
     }
   ]

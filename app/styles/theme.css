@@ -1,0 +1,95 @@
+/*
+  Color tokens. Switch themes with `data-theme` on <html>.
+  Everything in terminal.css / paper.css reads from these variables,
+  so a theme change is just a re-paint (with CSS transitions).
+*/
+
+:root {
+  /* desktop wallpaper gradient stops */
+  --desk-a: #1b1f3a;
+  --desk-b: #3b2a6b;
+  --desk-c: #0f4c5c;
+  --desk-edge: #08090f;
+
+  /* dracula */
+  --bg: #282a36;
+  --bg2: #21222c;
+  --fg: #f8f8f2;
+  --accent: #bd93f9;
+  --green: #50fa7b;
+  --pink: #ff79c6;
+  --cyan: #8be9fd;
+  --yellow: #f1fa8c;
+  --comment: #6272a4;
+  --err: #ff6e6e;
+  --sel: rgba(189, 147, 249, 0.18);
+
+  --chrome: rgba(40, 42, 54, 0.78);
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 40px 90px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* font used for prose-y output; mono everywhere by default */
+  --font-body: var(--font-mono);
+}
+
+[data-theme="nord"] {
+  --desk-a: #1f2430;
+  --desk-b: #3b4a6b;
+  --desk-c: #2e5a5e;
+  --bg: #2e3440;
+  --bg2: #272c36;
+  --fg: #d8dee9;
+  --accent: #88c0d0;
+  --green: #a3be8c;
+  --pink: #b48ead;
+  --cyan: #8fbcbb;
+  --yellow: #ebcb8b;
+  --comment: #616e88;
+  --err: #bf616a;
+  --sel: rgba(136, 192, 208, 0.18);
+  --chrome: rgba(46, 52, 64, 0.8);
+}
+
+[data-theme="solarized"] {
+  --desk-a: #07303a;
+  --desk-b: #5a4a10;
+  --desk-c: #0b4f3c;
+  --bg: #002b36;
+  --bg2: #073642;
+  --fg: #93a1a1;
+  --accent: #b58900;
+  --green: #859900;
+  --pink: #d33682;
+  --cyan: #2aa198;
+  --yellow: #cb4b16;
+  --comment: #586e75;
+  --err: #dc322f;
+  --sel: rgba(181, 137, 0, 0.18);
+  --chrome: rgba(0, 43, 54, 0.8);
+}
+
+/*
+  Paper: warm cream sheet. --paper / --paper-ink are interpolated by the
+  time-of-day slider (dusk -> night) so the sheet dims with the scene.
+*/
+[data-theme="paper"] {
+  --paper: #f6ead6;
+  --paper-ink: #3b2a2a;
+
+  --bg: var(--paper);
+  --bg2: rgba(0, 0, 0, 0.05);
+  --fg: var(--paper-ink);
+  --accent: #b3541e;
+  --green: #3b7d3a;
+  --pink: #a8325e;
+  --cyan: #1d6f8a;
+  --yellow: #a67c00;
+  --comment: #8a857a;
+  --err: #b0362f;
+  --sel: rgba(179, 84, 30, 0.12);
+  --chrome: var(--paper);
+  --border: rgba(0, 0, 0, 0.08);
+  --shadow: 0 30px 40px -16px rgba(30, 15, 40, 0.55), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+
+  --font-body: var(--font-ui);
+}
