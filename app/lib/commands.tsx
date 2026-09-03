@@ -117,6 +117,7 @@ export const commands: Record<string, Command> = {
   },
   matrix: { desc: "there is no spoon", run: (_a, ctx) => ctx.runMatrix() },
   city: { desc: "walk into Neo San José 2099", run: (_a, ctx) => ctx.navigate("/city") },
+  gui: { desc: "the visual version, no commands needed", run: (_a, ctx) => ctx.navigate("/paper") },
   ls: {
     desc: "list files",
     hidden: true,

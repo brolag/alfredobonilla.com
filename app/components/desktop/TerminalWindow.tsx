@@ -32,6 +32,10 @@ export function TerminalWindow({ theme, setTheme, time, setTime, navigate }: Pro
           <span className="hint-long">
             type <kbd>help</kbd> · <kbd>Tab</kbd> to complete
           </span>
+          {/* escape hatch for non-technical visitors */}
+          <a className="gui-btn" href="/paper" title="Visual version, no commands needed">
+            <span className="long">Not a terminal person?</span> Visual version →
+          </a>
         </div>
       </div>
       <Terminal theme={theme} setTheme={setTheme} setTime={setTime} navigate={navigate} />

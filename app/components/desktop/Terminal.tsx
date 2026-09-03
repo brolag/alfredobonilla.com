@@ -38,6 +38,11 @@ export function Terminal({ theme, setTheme, setTime, navigate }: Props) {
         <span className="c-acc">help</span> to get started, or press <span className="c-acc">Tab</span> to complete.
       </span>,
     );
+    print(
+      <span className="c-cm">
+        Not a terminal person? Type <span className="c-acc">gui</span> or use the button top-right.
+      </span>,
+    );
     print(" ");
     setBooted(true);
   }, [print]);
