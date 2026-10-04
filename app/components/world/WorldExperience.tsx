@@ -89,14 +89,18 @@ export default function WorldExperience() {
   const [activePlace, setActivePlace] = useState<PlaceId | null>(null);
   const [nearPlace, setNearPlace] = useState<PlaceId | null>(null);
   const [mapOpen, setMapOpen] = useState(false);
+  const [visited, setVisited] = useState<PlaceId[]>([]);
   const [webglFailed, setWebglFailed] = useState(false);
   const [sceneReady, setSceneReady] = useState(false);
+  const [lookLocked, setLookLocked] = useState(false);
 
   const openPlace = useCallback((id: PlaceId) => {
+    if (document.pointerLockElement) document.exitPointerLock();
     if (!activePlace) returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setStarted(true);
     setMapOpen(false);
     setActivePlace(id);
+    setVisited((previous) => previous.includes(id) ? previous : [...previous, id]);
     world.current?.travelTo(id);
     world.current?.focus(id);
   }, [activePlace]);
@@ -130,9 +134,45 @@ export default function WorldExperience() {
   }, []);
 
   useEffect(() => { world.current?.setExploring(started); }, [started, sceneReady]);
+  useEffect(() => { world.current?.setPaused(mapOpen || activePlace !== null); }, [mapOpen, activePlace, sceneReady]);
   useEffect(() => { if (activePlace) closeButton.current?.focus(); }, [activePlace]);
 
   const enterWorld = () => { setStarted(true); setActivePlace(null); world.current?.focus(null); };
+
+  useEffect(() => {
+    const canvas = sceneMount.current?.querySelector("canvas");
+    if (!canvas || !sceneReady) return;
+    let dragging = false;
+    let lastX = 0, lastY = 0;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!started || activePlace || mapOpen) return;
+      dragging = true;
+      lastX = event.clientX; lastY = event.clientY;
+      if (event.pointerType === "mouse") canvas.requestPointerLock?.().catch(() => {});
+      else canvas.setPointerCapture(event.pointerId);
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      if (document.pointerLockElement === canvas) world.current?.setLookDelta(event.movementX, event.movementY);
+      else if (dragging) {
+        world.current?.setLookDelta(event.clientX - lastX, event.clientY - lastY);
+        lastX = event.clientX; lastY = event.clientY;
+      }
+    };
+    const onPointerUp = () => { dragging = false; };
+    const onLockChange = () => setLookLocked(document.pointerLockElement === canvas);
+    canvas.addEventListener("pointerdown", onPointerDown);
+    canvas.addEventListener("pointermove", onPointerMove);
+    canvas.addEventListener("pointerup", onPointerUp);
+    canvas.addEventListener("pointercancel", onPointerUp);
+    document.addEventListener("pointerlockchange", onLockChange);
+    return () => {
+      canvas.removeEventListener("pointerdown", onPointerDown);
+      canvas.removeEventListener("pointermove", onPointerMove);
+      canvas.removeEventListener("pointerup", onPointerUp);
+      canvas.removeEventListener("pointercancel", onPointerUp);
+      document.removeEventListener("pointerlockchange", onLockChange);
+    };
+  }, [sceneReady, started, activePlace, mapOpen]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -147,7 +187,7 @@ export default function WorldExperience() {
         return;
       }
       if (event.target instanceof HTMLElement && ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName)) return;
-      if (key === "escape") { if (activePlace) closePlace(); else if (mapOpen) setMapOpen(false); return; }
+      if (key === "escape") { if (activePlace) closePlace(); else if (mapOpen) setMapOpen(false); else if (document.pointerLockElement) document.exitPointerLock(); return; }
       if (activePlace || mapOpen) return;
       if (!started) { if (key === "enter" && event.target === document.body) enterWorld(); return; }
       if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", "e"].includes(key)) event.preventDefault();
@@ -177,16 +217,16 @@ export default function WorldExperience() {
     {!started && <section className="world-intro" aria-label="Bienvenida">
       <p className="world-kicker"><span/> UN PORTAFOLIO PARA RECORRER</p>
       <h1>Un mundo por <em>explorar.</em></h1>
-      <p className="world-intro__copy">Soy Alfredo. Construyo productos, sistemas de IA y espacios para aprender. Te invito a conocer mi trabajo caminando por este pequeño poblado.</p>
-      <div className="world-intro__actions"><button className="world-enter" onClick={enterWorld}>Entrar al mundo <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("projects")}>Ir a los proyectos</button></div>
-      <span className="world-intro__footnote">Explora a tu ritmo · Seis lugares por descubrir</span>
+      <p className="world-intro__copy">Soy Alfredo. Construyo productos, sistemas de IA y espacios para aprender. Recorre este poblado desde tus propios ojos y descubre cada lugar.</p>
+      <div className="world-intro__actions"><button className="world-enter" onClick={enterWorld}>Entrar al mundo <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("projects")}>Ver proyectos</button></div>
+      <span className="world-intro__footnote">Una aventura en primera persona · Descubre los seis lugares</span>
     </section>}
 
-    {started && !active && <div className="world-hud" aria-live="polite"><div className="world-hud__location"><span className="world-hud__dot"/> ESTÁS EXPLORANDO <strong>{nearPlace ? `Cerca de ${placeById[nearPlace].name}` : "El poblado"}</strong></div><div className="world-hud__controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>mover</span><kbd>E</kbd><span>entrar</span></div></div>}
-    {started && nearPlace && !active && <button className="world-near" onClick={() => openPlace(nearPlace)}><span>ENTRAR</span><strong>{placeById[nearPlace].name}</strong><kbd>E</kbd></button>}
+    {started && !active && <><div className="world-crosshair" aria-hidden="true"/><div className="world-hud" aria-live="polite"><div className="world-hud__location"><span className="world-hud__dot"/> EXPLORANDO <strong>{nearPlace ? `Cerca de ${placeById[nearPlace].name}` : "El poblado"}</strong></div><div className="world-hud__controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>caminar</span><kbd>←</kbd><kbd>→</kbd><span>girar</span><kbd>E</kbd><span>entrar</span></div><span className="world-hud__progress" aria-label={`${visited.length} de 6 lugares descubiertos`}>{visited.length}<small>/ 6</small> lugares</span></div><p className="world-look-hint"><span className="world-look-hint__desktop">{lookLocked ? "Mueve el ratón para mirar · Esc libera el cursor" : "Haz clic y arrastra para mirar · WASD para caminar · E para entrar"}</span><span className="world-look-hint__touch">Desliza para mirar · Usa los botones para caminar</span></p></>}
+    {started && nearPlace && !active && <button className="world-near" onClick={() => openPlace(nearPlace)}><span>{visited.includes(nearPlace) ? "VOLVER" : "DESCUBRIR"}</span><strong>{placeById[nearPlace].name}</strong><kbd>E</kbd></button>}
 
     {mapOpen && <aside id="world-map" className="world-map world-map--open" aria-label="Mapa del poblado">
-      <div className="world-map__top"><span>EL POBLADO</span><button onClick={() => setMapOpen(false)} aria-label="Cerrar mapa">×</button></div><h2>Elige un destino.</h2><p>Puedes caminar o viajar directamente.</p><div className="world-map__list">{places.map((place, index) => <button key={place.id} onClick={() => openPlace(place.id)} tabIndex={mapOpen ? 0 : -1}><span className="world-map__number">0{index + 1}</span><span className="world-map__glyph" style={{ color: place.color }}><PlaceIcon id={place.id}/></span><span><strong>{place.name}</strong><small>{place.shortName}</small></span><ArrowIcon/></button>)}</div>
+      <div className="world-map__top"><span>EL POBLADO · {visited.length}/6 DESCUBIERTOS</span><button onClick={() => setMapOpen(false)} aria-label="Cerrar mapa">×</button></div><h2>Elige un destino.</h2><p>{visited.length === places.length ? "¡Recorrido completo! Puedes volver a cualquier lugar." : "Camina o viaja directamente para descubrir cada lugar."}</p><div className="world-map__list">{places.map((place, index) => <button key={place.id} onClick={() => openPlace(place.id)} tabIndex={mapOpen ? 0 : -1}><span className="world-map__number">0{index + 1}</span><span className="world-map__glyph" style={{ color: place.color }}><PlaceIcon id={place.id}/></span><span><strong>{place.name}</strong><small>{place.shortName} · {visited.includes(place.id) ? "descubierto" : "sin descubrir"}</small></span><ArrowIcon/></button>)}</div>
     </aside>}
 
     {active && <><button className="world-panel-backdrop" aria-label="Cerrar sección" onClick={closePlace}/><aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title"><div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: active.color }}/>{active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Cerrar sección">×</button></div><div className="world-panel__icon" style={{ color: active.color }}><PlaceIcon id={active.id} size={31}/></div><h2 id="world-panel-title">{active.name}</h2><p className="world-panel__summary">{active.description}</p><div className="world-panel__rule"/><div className="world-panel__body"><PlaceContent id={active.id} onNavigate={openPlace}/></div><div className="world-panel__footer"><span>ALFREDO BONILLA / UN MUNDO POR EXPLORAR</span><button onClick={closePlace}>Volver al mundo <ArrowIcon/></button></div></aside></>}

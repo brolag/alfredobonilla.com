@@ -9,6 +9,8 @@ interface WorldEvents {
 export interface WorldController {
   setExploring: (exploring: boolean) => void;
   setInput: (key: string, down: boolean) => void;
+  setLookDelta: (dx: number, dy: number) => void;
+  setPaused: (paused: boolean) => void;
   clearInput: () => void;
   interact: () => PlaceId | null;
   travelTo: (id: PlaceId) => void;
@@ -42,6 +44,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   renderer.domElement.setAttribute("aria-hidden", "true");
 
   const camera = new THREE.OrthographicCamera(-20, 20, 12, -12, 0.1, 120);
+  const eyeCamera = new THREE.PerspectiveCamera(67, 1, 0.08, 120);
   const cameraOffset = new THREE.Vector3(25, 28, 34);
   const cameraTarget = new THREE.Vector3(0, 0, 0);
   const desiredTarget = new THREE.Vector3();
@@ -321,7 +324,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   }
   animated.push((time) => { if (!reducedMotion) turbines.forEach((rotor, i) => { rotor.rotation.z = time * (i ? -0.26 : 0.22); }); });
 
-  const avatarRoot = new THREE.Group(); avatarRoot.position.set(0, 0.1, 5.2); avatarRoot.scale.setScalar(1.12); scene.add(avatarRoot);
+  const avatarRoot = new THREE.Group(); avatarRoot.position.set(3.3, 0.1, 4.5); avatarRoot.scale.setScalar(1.12); scene.add(avatarRoot);
   const avatarBody = new THREE.Group(); avatarRoot.add(avatarBody);
   const skin = material("#c58d6c"), hair = material("#323b34"), jacket = material("#397463");
   const jacketDark = material("#28594f"), jacketLight = material("#77a489"), pants = material("#465e5c");
@@ -380,15 +383,16 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     mount.appendChild(label); labels.push(label);
   }
 
-  let exploring = false, focused: PlaceId | null = null, near: PlaceId | null = null, disposed = false;
-  let currentView = mount.clientWidth < 700 ? 28 : 16.5;
+  let exploring = false, focused: PlaceId | null = null, near: PlaceId | null = null, disposed = false, paused = false;
+  let yaw = 0, pitch = 0;
+  let currentView = mount.clientWidth < 700 ? 28 : mount.clientWidth <= 1100 ? 20 : mount.clientWidth <= 1500 ? 19 : 16.5;
   const pressed = new Set<string>();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let frame = 0;
   const projector = new THREE.Vector3();
 
   function nearest(): PlaceId | null {
-    let best: PlaceId | null = null, distance = 2.8;
+    let best: PlaceId | null = null, distance = 3.8;
     for (const p of places) {
       const front = p.z < 0 ? 1 : -1;
       const d = Math.hypot(avatarRoot.position.x - p.x, avatarRoot.position.z - (p.z + front * 2.75));
@@ -398,6 +402,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   }
   function allowed(x: number, z: number) {
     if (Math.abs(x) > 16.4 || Math.abs(z) > 12.6) return false;
+    if (Math.hypot(x, z) < 1.25) return false;
     return !places.some((p) => Math.abs(x - p.x) < (p.id === "agents" ? 1.82 : 2.18) && Math.abs(z - p.z) < (p.id === "academy" ? 1.65 : 1.82));
   }
   function resize() {
@@ -406,6 +411,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     const aspect = width / height;
     camera.left = -currentView * aspect; camera.right = currentView * aspect;
     camera.top = currentView; camera.bottom = -currentView; camera.updateProjectionMatrix();
+    eyeCamera.aspect = aspect; eyeCamera.fov = width < 700 ? 78 : 67; eyeCamera.updateProjectionMatrix();
   }
   function widthForLayout() { return mount.clientWidth || window.innerWidth; }
   const observer = new ResizeObserver(resize); observer.observe(mount); resize();
@@ -417,23 +423,24 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     lastFrameTime = now;
     sceneTime += delta;
     const time = sceneTime;
-    let dx = 0, dz = 0;
-    if (exploring && !focused) {
-      if (pressed.has("w") || pressed.has("arrowup")) dz -= 1;
-      if (pressed.has("s") || pressed.has("arrowdown")) dz += 1;
-      if (pressed.has("a") || pressed.has("arrowleft")) dx -= 1;
-      if (pressed.has("d") || pressed.has("arrowright")) dx += 1;
+    let forward = 0, strafe = 0;
+    if (exploring && !focused && !paused) {
+      if (pressed.has("w") || pressed.has("arrowup")) forward += 1;
+      if (pressed.has("s") || pressed.has("arrowdown")) forward -= 1;
+      if (pressed.has("a")) strafe -= 1;
+      if (pressed.has("d")) strafe += 1;
+      if (pressed.has("arrowleft")) yaw += delta * 1.75;
+      if (pressed.has("arrowright")) yaw -= delta * 1.75;
     }
+    const dx = -Math.sin(yaw) * forward + Math.cos(yaw) * strafe;
+    const dz = -Math.cos(yaw) * forward - Math.sin(yaw) * strafe;
     const moving = dx !== 0 || dz !== 0;
     if (moving) {
-      const length = Math.hypot(dx, dz), speed = 5.3;
+      const length = Math.hypot(dx, dz), speed = pressed.has("shift") ? 8 : 5.3;
       const nextX = avatarRoot.position.x + dx / length * speed * delta;
       const nextZ = avatarRoot.position.z + dz / length * speed * delta;
       if (allowed(nextX, avatarRoot.position.z)) avatarRoot.position.x = nextX;
       if (allowed(avatarRoot.position.x, nextZ)) avatarRoot.position.z = nextZ;
-      // The face points toward +Z in model space. Rotate toward travel, including when going back.
-      const angle = Math.atan2(dx, dz);
-      avatarRoot.rotation.y += Math.atan2(Math.sin(angle - avatarRoot.rotation.y), Math.cos(angle - avatarRoot.rotation.y)) * Math.min(1, delta * 12);
     }
     const stride = moving && !reducedMotion ? Math.sin(time * 11) * 0.37 : 0;
     arms[0].rotation.x = -stride; arms[1].rotation.x = stride;
@@ -443,34 +450,43 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     playerShadow.position.set(avatarRoot.position.x, 0.11, avatarRoot.position.z);
     const nextNear = exploring && !focused ? nearest() : null;
     if (near !== nextNear) { near = nextNear; events.onNear(nextNear); }
-    if (focused) {
-      const p = placeById[focused]; desiredTarget.set(p.x * 0.65, 0.5, p.z * 0.65);
-    } else if (exploring) desiredTarget.set(avatarRoot.position.x * 0.55, 0.1, avatarRoot.position.z * 0.52);
-    else desiredTarget.set(widthForLayout() < 700 ? 0 : -5.5, 0.3, 0);
+    desiredTarget.set(widthForLayout() <= 1100 ? 0 : -5.5, 0.3, 0);
     cameraTarget.lerp(desiredTarget, 1 - Math.exp(-delta * 2.8));
     camera.position.copy(cameraTarget).add(cameraOffset); camera.lookAt(cameraTarget);
-    const mobile = widthForLayout() < 700;
-    const targetView = focused ? (mobile ? 14 : 8.8) : exploring ? (mobile ? 13.5 : 10.5) : (mobile ? 28 : 16.5);
+    eyeCamera.position.set(avatarRoot.position.x, 1.75 + (moving && !reducedMotion ? Math.sin(time * 10) * 0.035 : 0), avatarRoot.position.z);
+    eyeCamera.rotation.order = "YXZ";
+    eyeCamera.rotation.set(pitch, yaw, 0);
+    avatarRoot.visible = !exploring;
+    playerShadow.visible = !exploring;
+    const layoutWidth = widthForLayout();
+    const mobile = layoutWidth < 700;
+    const targetView = mobile ? 28 : layoutWidth <= 1100 ? 20 : layoutWidth <= 1500 ? 19 : 16.5;
     const nextView = THREE.MathUtils.lerp(currentView, targetView, 1 - Math.exp(-delta * 2.6));
     if (Math.abs(nextView - currentView) > 0.002) { currentView = nextView; const width = mount.clientWidth || window.innerWidth, height = mount.clientHeight || window.innerHeight; const aspect = width / height; camera.left = -currentView * aspect; camera.right = currentView * aspect; camera.top = currentView; camera.bottom = -currentView; camera.updateProjectionMatrix(); }
     const width = mount.clientWidth || window.innerWidth, height = mount.clientHeight || window.innerHeight;
+    const activeCamera = exploring ? eyeCamera : camera;
     places.forEach((p, index) => {
-      projector.set(p.x, p.id === "agents" ? 6.5 : p.id === "academy" ? 4.4 : 4, p.z).project(camera);
+      const labelY = exploring ? 2.55 : p.id === "agents" ? 6.5 : p.id === "academy" ? 4.4 : 4;
+      projector.set(p.x, labelY, p.z).project(activeCamera);
       const label = labels[index]; label.style.left = `${(projector.x * 0.5 + 0.5) * width}px`; label.style.top = `${(-projector.y * 0.5 + 0.5) * height}px`;
-      label.hidden = projector.z > 1 || (mobile && (!exploring || (!focused && Math.hypot(avatarRoot.position.x - p.x, avatarRoot.position.z - p.z) > 8)));
+      const labelX = (projector.x * 0.5 + 0.5) * width;
+      const distance = Math.hypot(avatarRoot.position.x - p.x, avatarRoot.position.z - p.z);
+      label.hidden = projector.z > 1 || Math.abs(projector.x) > 0.84 || Math.abs(projector.y) > 0.77 || (exploring && (distance > 18 || near === p.id || focused !== null)) || (!exploring && width <= 1100) || (!exploring && width <= 1500 && labelX < Math.min(width * 0.55, 720));
     });
     animated.forEach((fn) => fn(time, delta));
-    renderer.render(scene, camera);
+    renderer.render(scene, activeCamera);
     frame = window.requestAnimationFrame(update);
   }
   update();
 
   return {
-    setExploring(value) { exploring = value; if (!value) { pressed.clear(); focused = null; avatarRoot.position.set(0, 0.1, 5.2); avatarRoot.rotation.y = 0; near = null; events.onNear(null); } },
+    setExploring(value) { exploring = value; if (!value) { pressed.clear(); focused = null; avatarRoot.position.set(3.3, 0.1, 4.5); yaw = 0; pitch = 0; near = null; events.onNear(null); } },
     setInput(key, down) { if (down) pressed.add(key); else pressed.delete(key); },
+    setLookDelta(dx, dy) { if (exploring && !focused && !paused) { yaw -= dx * 0.0025; pitch = THREE.MathUtils.clamp(pitch - dy * 0.0022, -0.62, 0.55); } },
+    setPaused(value) { paused = value; if (value) pressed.clear(); },
     clearInput() { pressed.clear(); },
     interact() { return exploring && !focused ? nearest() : null; },
-    travelTo(id) { const p = placeById[id], front = p.z < 0 ? 1 : -1; avatarRoot.position.set(p.x, 0.1, p.z + front * 3.2); avatarRoot.rotation.y = front > 0 ? Math.PI : 0; near = id; events.onNear(id); },
+    travelTo(id) { const p = placeById[id], front = p.z < 0 ? 1 : -1; avatarRoot.position.set(p.x, 0.1, p.z + front * 6.2); yaw = front > 0 ? 0 : Math.PI; pitch = 0.08; near = id; events.onNear(id); },
     focus(id) { focused = id; pressed.clear(); if (id) { near = null; events.onNear(null); } },
     dispose() {
       disposed = true; window.cancelAnimationFrame(frame); observer.disconnect();
