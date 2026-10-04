@@ -1,9 +1,13 @@
 import * as THREE from "three";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { placeById, places, type PlaceId, type WorldPlace } from "./places";
+import { createInteriors } from "./WorldInteriors";
+import { roomActivities } from "./roomActivities";
 
 interface WorldEvents {
   onNear: (id: PlaceId | null) => void;
   onPick: (id: PlaceId) => void;
+  onRoomObject: (id: PlaceId, itemId: string) => void;
 }
 
 export interface WorldController {
@@ -13,6 +17,10 @@ export interface WorldController {
   setPaused: (paused: boolean) => void;
   clearInput: () => void;
   interact: () => PlaceId | null;
+  interactRoom: () => string | null;
+  enterRoom: (id: PlaceId) => void;
+  exitRoom: () => void;
+  activateRoomObject: (id: PlaceId, itemId: string) => void;
   travelTo: (id: PlaceId) => void;
   focus: (id: PlaceId | null) => void;
   dispose: () => void;
@@ -32,9 +40,11 @@ function createRandom(seed: number) { return () => { seed = (seed * 1664525 + 10
 
 export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldController {
   const scene = new THREE.Scene();
+  const interiors = createInteriors();
   scene.fog = new THREE.Fog("#deebe1", 36, 80);
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mount.clientWidth < 700 ? 1.25 : 1.7));
+  let renderRatio = Math.min(window.devicePixelRatio || 1, mount.clientWidth < 700 ? 1.25 : 1.7);
+  renderer.setPixelRatio(renderRatio);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.65;
@@ -45,6 +55,8 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
 
   const camera = new THREE.OrthographicCamera(-20, 20, 12, -12, 0.1, 120);
   const eyeCamera = new THREE.PerspectiveCamera(67, 1, 0.08, 120);
+  const roomCamera = new THREE.PerspectiveCamera(67, 1, 0.08, 30);
+  roomCamera.position.set(0, 2.2, 7.5);
   const cameraOffset = new THREE.Vector3(25, 28, 34);
   const cameraTarget = new THREE.Vector3(0, 0, 0);
   const desiredTarget = new THREE.Vector3();
@@ -53,6 +65,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   const random = createRandom(71413);
   const animated: Array<(time: number, delta: number) => void> = [];
   const labels: HTMLButtonElement[] = [];
+  const roomLabels: HTMLButtonElement[] = [];
   const material = (color: string, options: Partial<THREE.MeshStandardMaterialParameters> = {}): Material => new THREE.MeshStandardMaterial({ color, roughness: 0.86, metalness: 0, ...options });
   const m = {
     grass: material(palette.grass), grassLight: material(palette.grassLight), grassDark: material(palette.grassDark),
@@ -373,6 +386,33 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   const playerShadow = mesh(scene, new THREE.CircleGeometry(0.57, 20), material("#42674f", { transparent: true, opacity: 0.22, depthWrite: false }), avatarRoot.position.x, 0.11, avatarRoot.position.z, false);
   playerShadow.rotation.x = -Math.PI / 2;
 
+  // Bake stationary pieces by material to keep first-person draw calls bounded.
+  scene.updateMatrixWorld(true);
+  const staticBuckets = new Map<string, THREE.Mesh[]>();
+  scene.traverse((object) => {
+    if (!(object instanceof THREE.Mesh) || object instanceof THREE.InstancedMesh || object === playerShadow || Array.isArray(object.material) || object.material.transparent) return;
+    let ancestor: THREE.Object3D | null = object;
+    while (ancestor) { if (ancestor === avatarRoot || turbines.includes(ancestor as THREE.Group)) return; ancestor = ancestor.parent; }
+    const attributes = Object.entries(object.geometry.attributes).map(([name, raw]) => { const value = raw as THREE.BufferAttribute; return `${name}:${value.itemSize}:${value.normalized}:${value.array.constructor.name}`; }).sort().join("|");
+    const key = `${object.material.uuid}:${object.castShadow}:${object.receiveShadow}:${object.geometry.index !== null}:${attributes}`;
+    const bucket = staticBuckets.get(key) ?? [];
+    bucket.push(object);
+    staticBuckets.set(key, bucket);
+  });
+  for (const bucket of staticBuckets.values()) {
+    if (bucket.length < 2) continue;
+    const material = bucket[0].material as THREE.Material;
+    const geometries = bucket.map((object) => object.geometry.clone().applyMatrix4(object.matrixWorld));
+    const merged = mergeGeometries(geometries);
+    geometries.forEach((geometry) => geometry.dispose());
+    if (!merged) continue;
+    const combined = new THREE.Mesh(merged, material);
+    combined.castShadow = bucket[0].castShadow;
+    combined.receiveShadow = bucket[0].receiveShadow;
+    scene.add(combined);
+    bucket.forEach((object) => { object.parent?.remove(object); object.geometry.dispose(); });
+  }
+
   for (const [index, place] of places.entries()) {
     const label = document.createElement("button");
     label.type = "button"; label.className = "world-scene-label";
@@ -384,11 +424,15 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   }
 
   let exploring = false, focused: PlaceId | null = null, near: PlaceId | null = null, disposed = false, paused = false;
+  let activeRoom: PlaceId | null = null, roomYaw = 0, roomPitch = 0;
   let yaw = 0, pitch = 0;
   let currentView = mount.clientWidth < 700 ? 28 : mount.clientWidth <= 1100 ? 20 : mount.clientWidth <= 1500 ? 19 : 16.5;
   const pressed = new Set<string>();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let frame = 0;
+  let frameCount = 0;
+  let quality: "high" | "balanced" | "low" = "high";
+  const frameSamples: number[] = [];
   const projector = new THREE.Vector3();
 
   function nearest(): PlaceId | null {
@@ -407,11 +451,14 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   }
   function resize() {
     const width = mount.clientWidth || window.innerWidth, height = mount.clientHeight || window.innerHeight;
+    const layoutCap = Math.min(window.devicePixelRatio || 1, width < 700 ? 1.25 : 1.7);
+    if (renderRatio > layoutCap) { renderRatio = layoutCap; renderer.setPixelRatio(renderRatio); }
     renderer.setSize(width, height, false);
     const aspect = width / height;
     camera.left = -currentView * aspect; camera.right = currentView * aspect;
     camera.top = currentView; camera.bottom = -currentView; camera.updateProjectionMatrix();
     eyeCamera.aspect = aspect; eyeCamera.fov = width < 700 ? 78 : 67; eyeCamera.updateProjectionMatrix();
+    roomCamera.aspect = aspect; roomCamera.fov = width < 700 ? 78 : 67; roomCamera.updateProjectionMatrix();
   }
   function widthForLayout() { return mount.clientWidth || window.innerWidth; }
   const observer = new ResizeObserver(resize); observer.observe(mount); resize();
@@ -421,6 +468,11 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     const now = performance.now();
     const delta = Math.min((now - lastFrameTime) / 1000, 0.05);
     lastFrameTime = now;
+    frameCount += 1;
+    if (frameCount > 30 && document.visibilityState === "visible") {
+      frameSamples.push(delta);
+      if (frameSamples.length > 120) frameSamples.shift();
+    }
     sceneTime += delta;
     const time = sceneTime;
     let forward = 0, strafe = 0;
@@ -429,9 +481,10 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       if (pressed.has("s") || pressed.has("arrowdown")) forward -= 1;
       if (pressed.has("a")) strafe -= 1;
       if (pressed.has("d")) strafe += 1;
-      if (pressed.has("arrowleft")) yaw += delta * 1.75;
-      if (pressed.has("arrowright")) yaw -= delta * 1.75;
+      if (pressed.has("arrowleft")) { if (activeRoom) roomYaw += delta * 1.75; else yaw += delta * 1.75; }
+      if (pressed.has("arrowright")) { if (activeRoom) roomYaw -= delta * 1.75; else yaw -= delta * 1.75; }
     }
+    if (activeRoom) { forward = 0; strafe = 0; roomYaw = THREE.MathUtils.clamp(roomYaw, -0.7, 0.7); }
     const dx = -Math.sin(yaw) * forward + Math.cos(yaw) * strafe;
     const dz = -Math.cos(yaw) * forward - Math.sin(yaw) * strafe;
     const moving = dx !== 0 || dz !== 0;
@@ -448,7 +501,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     avatarBody.position.y = moving && !reducedMotion ? Math.abs(Math.sin(time * 11)) * 0.045 : (reducedMotion ? 0 : Math.sin(time * 1.8) * 0.018);
     head.rotation.z = reducedMotion ? 0 : Math.sin(time * 1.5) * 0.025;
     playerShadow.position.set(avatarRoot.position.x, 0.11, avatarRoot.position.z);
-    const nextNear = exploring && !focused ? nearest() : null;
+    const nextNear = exploring && !focused && !activeRoom ? nearest() : null;
     if (near !== nextNear) { near = nextNear; events.onNear(nextNear); }
     desiredTarget.set(widthForLayout() <= 1100 ? 0 : -5.5, 0.3, 0);
     cameraTarget.lerp(desiredTarget, 1 - Math.exp(-delta * 2.8));
@@ -456,6 +509,8 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     eyeCamera.position.set(avatarRoot.position.x, 1.75 + (moving && !reducedMotion ? Math.sin(time * 10) * 0.035 : 0), avatarRoot.position.z);
     eyeCamera.rotation.order = "YXZ";
     eyeCamera.rotation.set(pitch, yaw, 0);
+    roomCamera.rotation.order = "YXZ";
+    roomCamera.rotation.set(roomPitch, roomYaw, 0);
     avatarRoot.visible = !exploring;
     playerShadow.visible = !exploring;
     const layoutWidth = widthForLayout();
@@ -464,37 +519,87 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     const nextView = THREE.MathUtils.lerp(currentView, targetView, 1 - Math.exp(-delta * 2.6));
     if (Math.abs(nextView - currentView) > 0.002) { currentView = nextView; const width = mount.clientWidth || window.innerWidth, height = mount.clientHeight || window.innerHeight; const aspect = width / height; camera.left = -currentView * aspect; camera.right = currentView * aspect; camera.top = currentView; camera.bottom = -currentView; camera.updateProjectionMatrix(); }
     const width = mount.clientWidth || window.innerWidth, height = mount.clientHeight || window.innerHeight;
-    const activeCamera = exploring ? eyeCamera : camera;
+    const activeCamera = activeRoom ? roomCamera : exploring ? eyeCamera : camera;
     places.forEach((p, index) => {
       const labelY = exploring ? 2.55 : p.id === "agents" ? 6.5 : p.id === "academy" ? 4.4 : 4;
       projector.set(p.x, labelY, p.z).project(activeCamera);
       const label = labels[index]; label.style.left = `${(projector.x * 0.5 + 0.5) * width}px`; label.style.top = `${(-projector.y * 0.5 + 0.5) * height}px`;
       const labelX = (projector.x * 0.5 + 0.5) * width;
       const distance = Math.hypot(avatarRoot.position.x - p.x, avatarRoot.position.z - p.z);
-      label.hidden = projector.z > 1 || Math.abs(projector.x) > 0.84 || Math.abs(projector.y) > 0.77 || (exploring && (distance > 18 || near === p.id || focused !== null)) || (!exploring && width <= 1100) || (!exploring && width <= 1500 && labelX < Math.min(width * 0.55, 720));
+      label.hidden = activeRoom !== null || projector.z > 1 || Math.abs(projector.x) > 0.84 || Math.abs(projector.y) > 0.77 || (exploring && (distance > 18 || near === p.id || focused !== null)) || (!exploring && width <= 1100) || (!exploring && width <= 1500 && labelX < Math.min(width * 0.55, 720));
+    });
+    if (activeRoom) interiors.objects(activeRoom).forEach((object, index) => {
+      projector.copy(object.position).project(roomCamera);
+      const label = roomLabels[index];
+      label.style.left = `${(projector.x * 0.5 + 0.5) * width}px`;
+      label.style.top = `${(-projector.y * 0.5 + 0.5) * height}px`;
+      label.hidden = focused !== null || projector.z > 1 || Math.abs(projector.x) > 0.82 || Math.abs(projector.y) > 0.72;
     });
     animated.forEach((fn) => fn(time, delta));
-    renderer.render(scene, activeCamera);
+    const currentScene = activeRoom ? interiors.scene : scene;
+    renderer.render(currentScene, activeCamera);
+    if (frameCount % 120 === 0 && frameSamples.length >= 60) {
+      const average = frameSamples.reduce((sum, value) => sum + value, 0) / frameSamples.length;
+      const minimumRatio = widthForLayout() < 700 ? 0.75 : 0.9;
+      if (average > 0.029 && renderRatio > minimumRatio + 0.04) {
+        renderRatio = Math.max(minimumRatio, renderRatio - 0.25);
+        renderer.setPixelRatio(renderRatio);
+        quality = renderRatio <= minimumRatio + 0.04 ? "low" : "balanced";
+      }
+      let sceneObjects = 0;
+      currentScene.traverse(() => { sceneObjects += 1; });
+      mount.dataset.worldMetrics = JSON.stringify({ fps: Math.round(1 / average), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, sceneObjects, pixelRatio: Number(renderRatio.toFixed(2)), quality, room: activeRoom ?? "town" });
+    }
     frame = window.requestAnimationFrame(update);
   }
   update();
 
   return {
-    setExploring(value) { exploring = value; if (!value) { pressed.clear(); focused = null; avatarRoot.position.set(3.3, 0.1, 4.5); yaw = 0; pitch = 0; near = null; events.onNear(null); } },
+    setExploring(value) { exploring = value; if (!value) { pressed.clear(); focused = null; activeRoom = null; roomLabels.splice(0).forEach((label) => label.remove()); avatarRoot.position.set(3.3, 0.1, 4.5); yaw = 0; pitch = 0; near = null; events.onNear(null); } },
     setInput(key, down) { if (down) pressed.add(key); else pressed.delete(key); },
-    setLookDelta(dx, dy) { if (exploring && !focused && !paused) { yaw -= dx * 0.0025; pitch = THREE.MathUtils.clamp(pitch - dy * 0.0022, -0.62, 0.55); } },
+    setLookDelta(dx, dy) { if (exploring && !focused && !paused) { if (activeRoom) { roomYaw = THREE.MathUtils.clamp(roomYaw - dx * 0.0025, -0.7, 0.7); roomPitch = THREE.MathUtils.clamp(roomPitch - dy * 0.0022, -0.22, 0.3); } else { yaw -= dx * 0.0025; pitch = THREE.MathUtils.clamp(pitch - dy * 0.0022, -0.62, 0.55); } } },
     setPaused(value) { paused = value; if (value) pressed.clear(); },
     clearInput() { pressed.clear(); },
     interact() { return exploring && !focused ? nearest() : null; },
+    interactRoom() {
+      if (!activeRoom || paused || focused) return null;
+      const forward = new THREE.Vector3(0, 0, -1).applyEuler(roomCamera.rotation);
+      let best: string | null = null, bestDot = 0.86;
+      for (const object of interiors.objects(activeRoom)) {
+        const direction = object.position.clone().sub(roomCamera.position).normalize();
+        const dot = forward.dot(direction);
+        if (dot > bestDot) { bestDot = dot; best = object.id; }
+      }
+      return best;
+    },
+    enterRoom(id) {
+      activeRoom = id; focused = null; paused = false; pressed.clear(); roomYaw = 0; roomPitch = 0;
+      interiors.enter(id);
+      roomLabels.splice(0).forEach((label) => label.remove());
+      for (const item of roomActivities[id].items) {
+        const label = document.createElement("button");
+        label.type = "button"; label.className = "world-room-label";
+        label.textContent = item.label;
+        label.setAttribute("aria-label", `${roomActivities[id].verb}: ${item.label}`);
+        label.addEventListener("click", () => events.onRoomObject(id, item.id));
+        mount.appendChild(label); roomLabels.push(label);
+      }
+      near = null; events.onNear(null);
+    },
+    exitRoom() { activeRoom = null; focused = null; pressed.clear(); roomLabels.splice(0).forEach((label) => label.remove()); },
+    activateRoomObject(id, itemId) { interiors.activate(id, itemId); },
     travelTo(id) { const p = placeById[id], front = p.z < 0 ? 1 : -1; avatarRoot.position.set(p.x, 0.1, p.z + front * 6.2); yaw = front > 0 ? 0 : Math.PI; pitch = 0.08; near = id; events.onNear(id); },
     focus(id) { focused = id; pressed.clear(); if (id) { near = null; events.onNear(null); } },
     dispose() {
       disposed = true; window.cancelAnimationFrame(frame); observer.disconnect();
       labels.forEach((label) => label.remove());
+      roomLabels.forEach((label) => label.remove());
       scene.traverse((object) => {
         if (object instanceof THREE.Mesh) { object.geometry.dispose(); const mats = Array.isArray(object.material) ? object.material : [object.material]; mats.forEach((mat) => mat.dispose()); }
       });
       renderer.dispose(); renderer.domElement.remove();
+      interiors.dispose();
+      delete mount.dataset.worldMetrics;
     },
   };
 }
