@@ -13,6 +13,7 @@ modified:
 commits:
   - 78469fb
   - d04d6ef
+  - 4ec3daa
 agents: []
 related:
   back: []
@@ -80,6 +81,7 @@ related:
 - The Projects room measured 37 draw calls, 852 triangles, and 56 scene objects at a reported 120 fps. After three exit/entry cycles it still had four object labels and the same scene object count.
 - Browser navigation verified all four Projects detail links, the three About memories, three Agents nodes, one Academy path, one Services idea, and coffee action. Completion appeared only after those six place rules were satisfied. Map travel alone left progress at zero in a fresh session.
 - Local browser at 320 and 375px showed the room control panel and touch controls without horizontal overflow. At 768px the DOM width matched the viewport. The desktop scene and keyboard room selection/exit were verified after optimization. No browser console errors were observed in those checks.
+- Commit `4ec3daa` adds short-tap room turning; `npm run build` passed, and the 375px local and Vercel previews visibly rotated after one tap. The Vercel check passed. The current branch preview is `https://alfredobonilla-com-git-feat-solarpunk-world-indie-mind.vercel.app`.
 
 ## Dependency, conflict, and scheduling read
 
