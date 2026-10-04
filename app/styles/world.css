@@ -47,9 +47,6 @@
 .world-enter:hover, .world-primary-link:hover { background: #31745a; transform: translateY(-2px); box-shadow: 0 11px 23px rgba(18,73,50,.2); }
 .world-intro__secondary { padding: 10px 0; border: 0; border-bottom: 1px solid rgba(32,72,58,.45); color: #295842; background: transparent; font-size: 13px; font-weight: 900; }
 .world-intro__secondary:hover { color: #b46b45; border-color: #b46b45; }
-.world-intro__footnote { display: block; margin-top: 22px; color: #788a7b; font-size: 12px; font-weight: 700; }
-.world-bottom-note { position: absolute; z-index: 2; bottom: 27px; left: clamp(24px, 4.2vw, 74px); color: rgba(42,84,65,.55); font: 800 9px var(--font-mono), monospace; letter-spacing: .13em; pointer-events: none; }
-.world-bottom-note span { padding: 0 8px; color: #af8056; }
 .world-scene-label { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 6px; transform: translate(-50%, -50%); min-height: 35px; max-width: 180px; padding: 5px 11px 5px 7px; border: 1px solid rgba(47,86,65,.2); border-radius: 10px; color: #254c3b; background: rgba(253,251,238,.94); box-shadow: 0 5px 0 rgba(34,71,48,.08), 0 10px 24px rgba(37,70,55,.16); white-space: nowrap; transition: transform .2s, background .2s; }
 .world-scene-label[hidden] { display: none; }
 .world-scene-label:hover { transform: translate(-50%, -56%); background: #fff; }
@@ -228,7 +225,6 @@
   .world-intro__copy { max-width: 430px; margin: 17px 0 19px; font-size: 14px; line-height: 1.5; }
   .world-intro__actions { margin-top: 18px; }
   .world-enter { min-height: 46px; }
-  .world-intro__footnote { margin-top: 15px; font-size: 11px; }
   .world-canvas { top: 300px; }
   .world-root:not(.world-root--exploring) .world-canvas canvas { transform: translateY(-40px); }
   .world-root--exploring .world-canvas { top: 0; }
@@ -236,7 +232,6 @@
   .world-root:not(.world-root--exploring) .world-scene-label { display: none; }
   .world-scene-label__name { font-size: 10px; }
   .world-scene-label__index { font-size: 8px; }
-  .world-bottom-note { display: none; }
   .world-hud { bottom: auto; top: 81px; left: 16px; padding: 9px 11px; }
   .world-hud__location { font-size: 9px; }
   .world-hud__location strong { font-size: 11px; }

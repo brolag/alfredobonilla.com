@@ -264,7 +264,6 @@ export default function WorldExperience() {
       <h1>Un mundo por <em>explorar.</em></h1>
       <p className="world-intro__copy">Soy Alfredo. Construyo productos, sistemas de IA y espacios para aprender. Recorre este poblado desde tus propios ojos y descubre cada lugar.</p>
       <div className="world-intro__actions"><button className="world-enter" onClick={enterWorld}>Entrar al mundo <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("projects")}>Ver proyectos</button></div>
-      <span className="world-intro__footnote">Una aventura en primera persona · Descubre los seis lugares</span>
     </section>}
 
     {started && !active && !room && !showFinale && <><div className="world-crosshair" aria-hidden="true"/><div className="world-hud" aria-live="polite"><div className="world-hud__location"><span className="world-hud__dot"/> EXPLORANDO <strong>{nearPlace ? `Cerca de ${placeById[nearPlace].name}` : "El poblado"}</strong></div><div className="world-hud__controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>caminar</span><kbd>←</kbd><kbd>→</kbd><span>girar</span><kbd>E</kbd><span>entrar</span></div><span className="world-hud__progress" aria-label={`${visited.length} de 6 lugares descubiertos`}>{visited.length}<small>/ 6</small> lugares</span></div><p className="world-look-hint"><span className="world-look-hint__desktop">{lookLocked ? "Mueve el ratón para mirar · Esc libera el cursor" : "Haz clic y arrastra para mirar · WASD para caminar · E para entrar"}</span><span className="world-look-hint__touch">Desliza para mirar · Usa los botones para caminar o el mapa</span></p></>}
@@ -291,6 +290,5 @@ export default function WorldExperience() {
 
     {webglFailed && !room && <div className="world-fallback"><p>Tu navegador no pudo mostrar el poblado 3D. Puedes visitar cada lugar desde el mapa.</p><button onClick={() => setMapOpen(true)}>Abrir el mapa <ArrowIcon/></button></div>}
     {!sceneReady && !webglFailed && <div className="world-loading" aria-live="polite"><span className="world-loading__leaf">✳</span> Preparando el poblado…</div>}
-    <div className="world-bottom-note">DISEÑADO PARA LA CURIOSIDAD <span>✳</span> CONSTRUIDO CON INTENCIÓN</div>
   </main>;
 }
