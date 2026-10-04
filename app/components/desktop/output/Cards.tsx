@@ -1,26 +1,25 @@
 import projectsData from "../../../content/projects.json";
+import collaborationsData from "../../../content/collaborations.json";
 import servicesData from "../../../content/services.json";
 
-// `projects` output: staggered cards with tags and an external link.
+function WorkCards({ entries }: { entries: { name: string; description: string; descriptionEn?: string; url: string; tags: string[] }[] }) {
+  return <div className="cards">
+    {entries.map((p) => <article key={p.name} className="card">
+      <h3>{p.name}<a href={p.url} target="_blank" rel="noopener noreferrer">open ↗</a></h3>
+      <p>{p.descriptionEn ?? p.description}</p>
+      <div className="tags">{p.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+    </article>)}
+  </div>;
+}
+
+// `projects` output: collaborations first, followed by independent tools.
 export function Projects() {
   return (
-    <div className="cards">
-      {projectsData.projects.map((p) => (
-        <article key={p.name} className="card">
-          <h3>
-            {p.name}
-            <a href={p.url} target="_blank" rel="noopener noreferrer">
-              open ↗
-            </a>
-          </h3>
-          <p>{p.description}</p>
-          <div className="tags">
-            {p.tags.map((t) => (
-              <span key={t}>{t}</span>
-            ))}
-          </div>
-        </article>
-      ))}
+    <div className="work-groups">
+      <h3>Colaboraciones</h3>
+      <WorkCards entries={collaborationsData.collaborations}/>
+      <h3>Herramientas y código abierto</h3>
+      <WorkCards entries={projectsData.projects}/>
     </div>
   );
 }

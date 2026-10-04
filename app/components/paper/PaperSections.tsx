@@ -67,9 +67,9 @@ export function ServicesSheet() {
 export function WorkSheet() {
   return (
     <Sheet>
-      <span className="eyebrow">03 · selected work</span>
-      <h2>Things I&apos;ve built</h2>
-      <p className="lede">Open-source tools, AI platforms and a bit of Web3 for Costa Rican coffee.</p>
+      <span className="eyebrow">03 · collaborations &amp; selected work</span>
+      <h2>People and projects.</h2>
+      <p className="lede">Teams I&apos;ve collaborated with, followed by tools I&apos;ve built and shared.</p>
       <Projects />
     </Sheet>
   );

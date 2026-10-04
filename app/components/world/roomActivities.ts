@@ -1,4 +1,5 @@
 import type { PlaceId } from "./places";
+import collaborationsData from "../../content/collaborations.json";
 
 export interface RoomItem {
   id: string;
@@ -25,15 +26,10 @@ export const roomActivities: Record<PlaceId, RoomActivity> = {
     ],
   },
   projects: {
-    prompt: "Inspecciona las cuatro piezas del taller.",
-    completed: "Has recorrido las cuatro piezas del taller.",
-    verb: "Inspeccionar pieza",
-    items: [
-      { id: "indie-mind", label: "Indie Mind", detail: "Una plataforma educativa para aprender a crear productos con inteligencia artificial." },
-      { id: "neural-claude-code", label: "Neural Claude Code", detail: "Un framework abierto de agentes para desarrollar software con varios modelos de IA." },
-      { id: "cofiblocks", label: "Cofiblocks", detail: "Una exploración de Web3 aplicada a la industria cafetalera." },
-      { id: "second-brain-template", label: "Second Brain Template", detail: "Una plantilla abierta para organizar conocimiento y proyectos en Obsidian." },
-    ],
+    prompt: "Conoce las cuatro colaboraciones del taller.",
+    completed: "Ya conoces las cuatro colaboraciones del taller.",
+    verb: "Explorar colaboración",
+    items: collaborationsData.collaborations.map(({ id, name, description }) => ({ id, label: name, detail: description })),
   },
   agents: {
     prompt: "Conecta contexto, herramientas y revisión para encender el observatorio.",

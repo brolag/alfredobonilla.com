@@ -3,30 +3,29 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import projectsData from "../../content/projects.json";
+import collaborationsData from "../../content/collaborations.json";
 import skillsData from "../../content/skills.json";
 import contactData from "../../content/contact.json";
 import { PlaceIcon } from "./PlaceIcon";
+import { BrandMark } from "./BrandMark";
 import { placeById, places, type PlaceId } from "./places";
 import { roomActivities, roomIsComplete } from "./roomActivities";
 import type { WorldController } from "./WorldScene";
 
-const highlightedProjects = projectsData.projects.filter((project) => ["Indie Mind", "Neural Claude Code", "Cofiblocks", "Second Brain Template"].includes(project.name));
+const collaborations = collaborationsData.collaborations;
 const agentProjects = projectsData.projects.filter((project) => ["Neural Claude Code", "Mission Control", "Cortex"].includes(project.name));
 
 const projectDescriptions: Record<string, string> = {
-  "Indie Mind": "Una plataforma educativa para aprender a crear productos con inteligencia artificial.",
   "Neural Claude Code": "Un framework abierto de agentes para desarrollar software con varios modelos de IA.",
   "Mission Control": "Un panel para coordinar agentes de IA y sus tareas desde un solo lugar.",
   "Cortex": "Controles de calidad para flujos de trabajo impulsados por agentes.",
-  "Cofiblocks": "Una exploración de Web3 aplicada a la industria cafetalera.",
-  "Second Brain Template": "Una plantilla abierta para organizar conocimiento y proyectos en Obsidian.",
 };
 
 function ArrowIcon({ diagonal = false }: { diagonal?: boolean }) {
   return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{diagonal ? <><path d="M5 19 19 5M8 5h11v11"/></> : <><path d="M4 12h16m-7-7 7 7-7 7"/></>}</svg>;
 }
 
-function ProjectCard({ project }: { project: typeof projectsData.projects[number] }) {
+function ProjectCard({ project }: { project: { name: string; description: string; url: string; tags: string[] } }) {
   const hasProjectLink = project.url !== "https://github.com/brolag";
   const content = <>
     <span className="world-project__top"><span>{project.tags.slice(0, 2).join(" · ")}</span>{hasProjectLink && <ArrowIcon diagonal/>}</span>
@@ -46,8 +45,8 @@ function PlaceContent({ id, onNavigate }: { id: PlaceId; onNavigate: (id: PlaceI
       <button className="world-text-link" onClick={() => onNavigate("contact")}>Conversemos <ArrowIcon/></button>
     </>;
     case "projects": return <>
-      <p className="world-panel__lead">Ideas convertidas en herramientas, productos y comunidades.</p>
-      <div className="world-projects">{highlightedProjects.map((project) => <ProjectCard key={project.name} project={project}/>)}</div>
+      <p className="world-panel__lead">Cuatro colaboraciones en educación, producto, estrategia e IA aplicada.</p>
+      <div className="world-projects">{collaborations.map((project) => <ProjectCard key={project.id} project={project}/>)}</div>
       <a className="world-text-link" href="https://github.com/brolag" target="_blank" rel="noopener noreferrer">Más trabajo en GitHub <ArrowIcon diagonal/></a>
     </>;
     case "agents": return <>
@@ -249,7 +248,7 @@ export default function WorldExperience() {
 
   const active = activePlace ? placeById[activePlace] : null;
   const selected = selectedItem ? roomActivities[selectedItem.place].items.find((item) => item.id === selectedItem.id) : null;
-  const selectedProject = selectedItem?.place === "projects" ? highlightedProjects.find((project) => project.name === selected?.label) : null;
+  const selectedProject = selectedItem?.place === "projects" ? collaborations.find((project) => project.id === selectedItem.id) : null;
   const room = roomPlace ? placeById[roomPlace] : null;
   return <main id="world-main-content" tabIndex={-1} className={`world-root ${started ? "world-root--exploring" : ""}`} lang="es">
     <div className="world-sky" aria-hidden="true"/>
@@ -257,7 +256,7 @@ export default function WorldExperience() {
     <div ref={sceneMount} className="world-canvas"/>
     <noscript><div className="world-fallback"><p>Activa JavaScript para explorar el poblado o usa la versión simple.</p><Link href="/paper">Abrir vista simple <ArrowIcon/></Link></div></noscript>
     <header className="world-header">
-      <button className="world-brand" onClick={() => { leaveRoom(); setShowFinale(false); setStarted(false); }} aria-label="Volver al inicio"><span className="world-brand__mark">A<span>✳</span>B</span><span className="world-brand__name">ALFREDO<br/>BONILLA</span></button>
+      <button className="world-brand" onClick={() => { leaveRoom(); setShowFinale(false); setStarted(false); }} aria-label="Volver al inicio"><BrandMark/><span className="world-brand__name"><strong>ALFREDO</strong><strong>BONILLA</strong></span></button>
       <nav className="world-nav" aria-label="Secciones principales"><button onClick={() => openPlace("about")}>Sobre mí</button><button onClick={() => openPlace("projects")}>Proyectos</button><button onClick={() => openPlace("services")}>Servicios</button><button onClick={() => openPlace("contact")}>Contacto</button></nav>
       <div className="world-header__actions"><Link href="/paper" className="world-simple-link">Vista simple <ArrowIcon diagonal/></Link><button className="world-map-toggle" onClick={() => { setShowHelp(false); setMapOpen((value) => !value); }} aria-expanded={mapOpen} aria-controls="world-map"><span className="world-map-toggle__icon">⌗</span><span>Mapa</span></button></div>
     </header>
@@ -286,7 +285,7 @@ export default function WorldExperience() {
       <div className="world-map__top"><span>EL POBLADO · {visited.length}/6 DESCUBIERTOS</span><button onClick={() => setMapOpen(false)} aria-label="Cerrar mapa">×</button></div><h2>Elige un destino.</h2><p>{visited.length === places.length ? "¡Recorrido completo! Puedes volver a cualquier lugar." : "Camina o viaja directamente para descubrir cada lugar."}</p><div className="world-map__list">{places.map((place, index) => <button key={place.id} onClick={() => openPlace(place.id)} tabIndex={mapOpen ? 0 : -1}><span className="world-map__number">0{index + 1}</span><span className="world-map__glyph" style={{ color: place.color }}><PlaceIcon id={place.id}/></span><span><strong>{place.name}</strong><small>{place.shortName} · {visited.includes(place.id) ? "descubierto" : "sin descubrir"}</small></span><ArrowIcon/></button>)}</div>
     </aside>}
 
-    {active && selected && <><button className="world-panel-backdrop" aria-label="Volver a la sala" onClick={closePlace}/><aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title"><div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: active.color }}/>{active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Volver a la sala">×</button></div><div className="world-panel__icon" style={{ color: active.color }}><PlaceIcon id={active.id} size={31}/></div><h2 id="world-panel-title">{selected.label}</h2><p className="world-panel__summary">{selected.detail}</p><div className="world-panel__rule"/><div className="world-panel__body">{selectedProject ? <><p className="world-panel__lead">Una pieza del taller.</p><div className="world-projects"><ProjectCard project={selectedProject}/></div></> : <PlaceContent id={active.id} onNavigate={openPlace}/>}</div><div className="world-panel__footer"><span>{usedByPlace[active.id].length}/{roomActivities[active.id].items.length} OBJETOS EXPLORADOS</span><button onClick={closePlace}>Volver a la sala <ArrowIcon/></button></div></aside></>}
+    {active && selected && <><button className="world-panel-backdrop" aria-label="Volver a la sala" onClick={closePlace}/><aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title"><div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: active.color }}/>{active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Volver a la sala">×</button></div><div className="world-panel__icon" style={{ color: active.color }}><PlaceIcon id={active.id} size={31}/></div><h2 id="world-panel-title">{selected.label}</h2><p className="world-panel__summary">{selected.detail}</p><div className="world-panel__rule"/><div className="world-panel__body">{selectedProject ? <><p className="world-panel__lead">Una colaboración del taller.</p><div className="world-projects"><ProjectCard project={selectedProject}/></div></> : <PlaceContent id={active.id} onNavigate={openPlace}/>}</div><div className="world-panel__footer"><span>{usedByPlace[active.id].length}/{roomActivities[active.id].items.length} OBJETOS EXPLORADOS</span><button onClick={closePlace}>Volver a la sala <ArrowIcon/></button></div></aside></>}
 
     {showFinale && !active && <div className="world-finale" role="dialog" aria-modal="true" aria-labelledby="world-finale-title"><span>✳ RECORRIDO COMPLETO</span><h2 id="world-finale-title">El poblado ya es tuyo.</h2><p>Exploraste las seis ideas que lo mantienen vivo. Gracias por caminar conmigo.</p><div><button ref={finaleButton} className="world-enter" onClick={() => { setShowFinale(false); leaveRoom(); }}>Volver al poblado <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("contact")}>Conversemos</button></div></div>}
 

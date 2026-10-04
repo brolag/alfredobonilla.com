@@ -126,17 +126,22 @@ export function createInteriors(): WorldInteriors {
       activated[place.id][item.id] = beacon;
       reactions[place.id][item.id] = () => {};
       if (place.id === "projects") {
-        if (index === 0) { // learning garden
+        if (index === 0) { // Indie Mind: ideas growing together
           box(stand, accent, 0, 1.99, 0, 0.95, 0.62, 0.14);
           for (const dx of [-0.25, 0, 0.25]) ball(stand, leafLight, dx, 2.38 + Math.abs(dx), 0, 0.2);
-        } else if (index === 1) { // agent constellation
-          for (const [dx, dy] of [[0, 0], [-0.42, 0.4], [0.42, 0.4]] ) ball(stand, accent, dx, 2.12 + dy, 0, 0.25);
-          box(stand, dark, 0, 2.24, 0, 0.9, 0.06, 0.06);
-        } else if (index === 2) { // coffee block
-          box(stand, accent, 0, 2.04, 0, 0.9, 0.8, 0.8);
-          ball(stand, gold, 0, 2.62, 0, 0.22);
-        } else { // second brain shelves
-          for (let n = 0; n < 3; n++) box(stand, n === 1 ? accent : dark, -0.28 + n * 0.27, 2.03, 0, 0.2, 0.9, 0.52);
+        } else if (index === 1) { // Lyfter: rising steps
+          for (let n = 0; n < 3; n++) box(stand, n === 2 ? gold : accent, -0.36 + n * 0.36, 1.87 + n * 0.19, 0, 0.3, 0.4 + n * 0.38, 0.58);
+        } else if (index === 2) { // Imagine Paradise: island and sun
+          column(stand, glass, 0, 1.82, 0, 0.54, 0.13);
+          ball(stand, leaf, 0, 2.03, 0, 0.38);
+          column(stand, wood, -0.16, 2.31, 0, 0.07, 0.49);
+          ball(stand, leafLight, -0.16, 2.59, 0, 0.27);
+          ball(stand, gold, 0.36, 2.53, -0.08, 0.22);
+        } else { // Stone Sphere: a connected core
+          ball(stand, accent, 0, 2.24, 0, 0.48);
+          const orbit = shape(stand, ring, gold, 0, 2.24, 0, 0.9, 0.9, 0.9);
+          orbit.rotation.x = 0.42;
+          orbit.rotation.y = 0.25;
         }
       } else if (place.id === "about") {
         const cover = box(stand, accent, 0, 2.14, 0, 0.85, 1.04, 0.17);

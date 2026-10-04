@@ -182,6 +182,8 @@
 .skills .pct { text-align: right; color: var(--comment); font-variant-numeric: tabular-nums; }
 .skills .list { grid-column: 1 / -1; color: var(--comment); font-size: 0.9em; margin: -4px 0 4px; }
 
+.work-groups > h3 { margin: 19px 0 7px; color: var(--accent); font: 700 0.8em var(--font-mono), monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+.work-groups > h3:first-child { margin-top: 3px; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 8px 0 10px; }
 .card {
   border: 1px solid var(--border); border-left: 3px solid var(--accent);

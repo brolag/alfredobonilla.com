@@ -623,7 +623,7 @@ function PadButton({ label, onPress }: { label: string; onPress: (down: boolean)
 // Building content — sourced from app/content/*.json (single source of truth)
 // ---------------------------------------------------------------------------
 
-const AI_PROJECT_NAMES = ['Indie Mind', 'Neural Claude Code', 'Mission Control', 'Cortex', 'Second Brain Template'];
+const AI_PROJECT_NAMES = ['Neural Claude Code', 'Mission Control', 'Cortex', 'Second Brain Template'];
 
 function Line({ children }: { children: React.ReactNode }) {
   return <p className="text-lg leading-snug mb-2" style={{ color: '#cfd2ff' }}>{children}</p>;
@@ -721,16 +721,9 @@ function BuildingContent({ buildingKey }: { buildingKey: BuildingKey }) {
       );
 
     case 'web3': {
-      const web3 = projectsData.projects.filter((p) => p.name.includes('Cofiblocks'));
       return (
         <div>
           <Line>Contribuciones de Alfredo al ecosistema Web3:</Line>
-          {web3.map((p) => (
-            <Line key={p.name}>
-              <span style={{ color: NEON.purple }}>{p.name.replace('• ', '▸ ')}</span> — {p.description}{' '}
-              <NeonLink href={p.url} color={NEON.purple}>[ver]</NeonLink>
-            </Line>
-          ))}
           <Line>
             <span style={{ color: NEON.purple }}>▸ Lago Finance</span> y{' '}
             <span style={{ color: NEON.purple }}>▸ Apy-Vision</span> — contribuciones open-source en DeFi y analytics.
