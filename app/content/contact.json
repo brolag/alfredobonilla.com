@@ -2,19 +2,35 @@
   "title": "📞 Contact Information",
   "details": [
     {
-      "type": "🐙 GitHub",
-      "url": "https://github.com/brolag",
-      "emoji": "🐙"
+      "type": "email",
+      "emoji": "✉️",
+      "label": "info@alfredobonilla.com",
+      "url": "mailto:info@alfredobonilla.com"
     },
     {
-      "type": "💼 LinkedIn",
-      "url": "https://www.linkedin.com/in/brolag/",
-      "emoji": "💼"
+      "type": "calendar",
+      "emoji": "📅",
+      "label": "Elegir horario en Google Calendar",
+      "url": "https://calendar.app.google/HuYi74jb1S32YBNHA"
     },
     {
-      "type": "📸 Instagram",
-      "url": "https://www.instagram.com/brolag/",
-      "emoji": "📸"
+      "type": "github",
+      "emoji": "🐙",
+      "label": "@brolag",
+      "url": "https://github.com/brolag"
+    },
+    {
+      "type": "linkedin",
+      "emoji": "💼",
+      "label": "linkedin.com/in/brolag",
+      "url": "https://www.linkedin.com/in/brolag/"
+    },
+    {
+      "type": "instagram",
+      "emoji": "📸",
+      "label": "@brolag",
+      "url": "https://www.instagram.com/brolag/"
     }
-  ]
+  ],
+  "note": "Replies within a day, unless I'm somewhere with a volcano view and no signal."
 }

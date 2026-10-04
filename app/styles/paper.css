@@ -1,0 +1,167 @@
+/*
+  "pura vida" easter egg. When <html data-theme="paper"> the desktop becomes a
+  layered paper-cut valley (Costa Rica at dusk) and the terminal window turns
+  into a sheet of paper taped to the scene.
+*/
+
+/* ---------- scene (fixed, behind the window) ---------- */
+.paper-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-bot) 100%);
+  transition: background 0.6s ease;
+  animation: scene-in 1s ease both;
+
+  /* palette, interpolated by TimeOfDay (afternoon -> night) */
+  --sky-top: #e9f0e4;
+  --sky-mid: #dce9df;
+  --sky-bot: #f8edca;
+  --sun: #e8bd74;
+  --moon: #f2e8ca;
+  --l-far: #b7d1b0;
+  --l-mid: #9bbc83;
+  --l-hills: #85a98a;
+  --l-trees: #679779;
+  --l-near: #4f8067;
+  --l-front: #31634d;
+  --l-ground: #1c4d3e;
+  --cloud: #fbf5e8;
+  --window: rgba(240, 198, 124, 0.15);
+  --stars: 0;
+  --sun-y: 0;
+  --moon-y: 1;
+  --mx: 0px;
+  --my: 0px;
+}
+@keyframes scene-in { from { opacity: 0; } }
+
+.paper-scene svg {
+  position: absolute;
+  inset: -6% -6% -4% -6%;
+  width: 112%;
+  height: 110%;
+  display: block;
+}
+
+/* each layer is a cut sheet; --p is the parallax factor, --i the stagger index */
+.layer {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translate(calc(var(--mx) * var(--p)), calc(var(--my) * var(--p) * 0.6));
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  animation: layer-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+@keyframes layer-rise { from { opacity: 0; transform: translateY(60px); } }
+
+.sheet { filter: drop-shadow(0 10px 8px rgba(25, 62, 54, 0.22)); }
+.sheet-deep { filter: drop-shadow(0 18px 14px rgba(17, 52, 44, 0.3)); }
+
+.l-far { fill: var(--l-far); }
+.l-mid { fill: var(--l-mid); }
+.l-hills { fill: var(--l-hills); }
+.l-trees { fill: var(--l-trees); }
+.l-near { fill: var(--l-near); }
+.l-front { fill: var(--l-front); }
+.l-ground { fill: var(--l-ground); }
+.l-cloud { fill: var(--cloud); }
+.sun-disc { fill: var(--sun); }
+.moon-disc { fill: var(--moon); }
+.window-pane { fill: var(--window); }
+.l-far, .l-mid, .l-hills, .l-trees, .l-near, .l-front, .l-ground, .l-cloud, .sun-disc, .moon-disc, .window-pane {
+  transition: fill 0.6s ease;
+}
+
+.sun-group { transform: translateY(calc(var(--sun-y) * 620px)); transition: transform 0.6s ease; }
+.moon-group { transform: translateY(calc(var(--moon-y) * 700px)); transition: transform 0.6s ease; }
+
+.stars { opacity: var(--stars); transition: opacity 0.6s ease; }
+.stars circle { fill: #fff8e7; animation: twinkle 4s ease-in-out infinite; animation-delay: var(--d); }
+@keyframes twinkle { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+
+.cloud-drift { animation: cloud-drift linear infinite; animation-duration: var(--dur); animation-delay: var(--delay); }
+@keyframes cloud-drift { from { transform: translateX(-400px); } to { transform: translateX(2000px); } }
+
+.breeze { transform-box: fill-box; transform-origin: bottom center; animation: sway 6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@keyframes sway { 0%, 100% { transform: rotate(-0.8deg); } 50% { transform: rotate(0.8deg); } }
+
+.smoke { animation: puff 9s ease-in-out infinite; animation-delay: var(--d, 0s); transform-box: fill-box; transform-origin: bottom center; }
+@keyframes puff { 0% { opacity: 0; transform: translateY(0) scale(0.7); } 30% { opacity: 0.55; } 100% { opacity: 0; transform: translateY(-140px) scale(1.4); } }
+
+/* ---------- window becomes paper ---------- */
+[data-theme="paper"] .desktop { background: transparent; }
+[data-theme="paper"] .blob { opacity: 0; }
+
+/* shorter + narrower so the sky (sun/moon) and the foreground (toucan, casita) show around it */
+[data-theme="paper"] .win {
+  width: min(860px, 100%);
+  height: min(560px, 58vh);
+  min-height: 360px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-radius: 6px;
+  transform: rotate(-0.6deg);
+}
+[data-theme="paper"] .win:hover { transform: rotate(0deg); }
+
+/* a strip of tape holding the sheet */
+[data-theme="paper"] .win::before {
+  content: "";
+  position: absolute;
+  top: -10px; left: 50%;
+  width: 84px; height: 22px;
+  transform: translateX(-50%) rotate(2deg);
+  background: rgba(255, 240, 220, 0.6);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  border-left: 1px dashed rgba(0, 0, 0, 0.08);
+  border-right: 1px dashed rgba(0, 0, 0, 0.08);
+  z-index: 3;
+}
+
+[data-theme="paper"] .bar { background: none; }
+[data-theme="paper"] .tab { box-shadow: none; }
+[data-theme="paper"] .lights span { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15); opacity: 0.85; }
+[data-theme="paper"] .banner { text-shadow: none; }
+[data-theme="paper"] .card:hover { box-shadow: 0 12px 24px -10px rgba(30, 15, 40, 0.4); }
+[data-theme="paper"] .scroll { scrollbar-color: rgba(0, 0, 0, 0.2) transparent; }
+
+/* time-of-day slider in the window bar */
+.tod { display: none; align-items: center; gap: 8px; }
+[data-theme="paper"] .tod { display: flex; }
+.tod output { font-variant-numeric: tabular-nums; color: var(--fg); font-size: 11px; }
+.tod input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 110px; height: 20px; background: transparent; margin: 0; cursor: pointer;
+}
+.tod input[type="range"]::-webkit-slider-runnable-track {
+  height: 5px; border-radius: 3px;
+  background: linear-gradient(90deg, #f8edca, #9bbc83 45%, #31634d 75%, #193e36);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.tod input[type="range"]::-moz-range-track {
+  height: 5px; border-radius: 3px;
+  background: linear-gradient(90deg, #f8edca, #9bbc83 45%, #31634d 75%, #193e36);
+}
+.tod input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px; margin-top: -4.5px; border-radius: 50%;
+  background: var(--paper); border: 2px solid var(--paper-ink);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.tod input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--paper); border: 2px solid var(--paper-ink);
+}
+
+@media (max-width: 640px) {
+  .tod input[type="range"] { width: 70px; }
+  [data-theme="paper"] .win { transform: none; height: 68vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper-scene, .layer, .sun-group, .moon-group { animation: none; transition: none; }
+  .cloud-drift, .breeze, .smoke, .stars circle { animation: none; }
+}
