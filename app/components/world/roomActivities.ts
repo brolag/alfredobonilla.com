@@ -47,7 +47,7 @@ export const roomActivities: Record<PlaceId, RoomActivity> = {
     completed: "Has elegido una ruta. Abre sus recursos y construye algo propio.",
     verb: "Abrir libro",
     items: [
-      { id: "build", label: "Crear un producto", detail: "Define un problema pequeño, crea un prototipo y compártelo con personas reales. Usa la plantilla Second Brain para ordenar ideas y aprendizajes." },
+      { id: "build", label: "Crear un producto", detail: "Define un problema pequeño, crea un prototipo y compártelo con personas reales. Neural Open Code ofrece un flujo para planear, construir y verificar cada paso." },
       { id: "learn-ai", label: "Construir con IA", detail: "Aprende los fundamentos de los agentes, pruébalos en un flujo pequeño y revisa sus resultados. Neural Claude Code es un ejemplo abierto para explorar." },
     ],
   },

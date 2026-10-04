@@ -17,7 +17,7 @@ export const paperCopy = {
         "Soy Alfredo Bonilla, fundador de Indie Mind. Llevo más de 14 años creando software y hoy me especializo en soluciones con IA y desarrollo con agentes desde Costa Rica.",
         "En Indie Mind construyo productos y servicios que usan IA: sistemas con varios agentes, automatización de contenidos y plataformas educativas para desarrolladores.",
         "Trabajo con Next.js, TypeScript, TailwindCSS, Claude Code, OpenAI, orquestación de múltiples modelos y n8n.",
-        "He creado herramientas de código abierto como Neural Claude Code, Mission Control y Cortex. También participo en Indie Mind, Lyfter, Imagine Paradise y Stone Sphere, proyectos de educación, productos digitales e IA aplicada.",
+        "He creado herramientas de código abierto como Neural Claude Code, Neural Open Code y Neural Codex. También participo en Indie Mind, Lyfter, Imagine Paradise y Stone Sphere, proyectos de educación, productos digitales e IA aplicada.",
         "Creo en diseñar sistemas que nos ayuden a avanzar sin perder el criterio humano. Fuera del teclado, disfruto los juegos de mesa, la naturaleza y la música.",
       ],
       factLabels: { based: "Base", now: "Ahora", believes: "Creo en", "off-duty": "Fuera del teclado" },

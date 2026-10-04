@@ -178,7 +178,7 @@ export const commands: Record<string, Command> = {
     hidden: true,
     run: (_a, ctx) => {
       ctx.print(<span className="c-gr">ACCESS GRANTED. Opening calendar…</span>);
-      setTimeout(() => window.open("https://calendly.com/brolag/sesion-1-1", "_blank", "noopener"), 900);
+      setTimeout(() => window.open("https://calendar.app.google/HuYi74jb1S32YBNHA", "_blank", "noopener"), 900);
     },
   },
 };

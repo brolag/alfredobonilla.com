@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 const socialLinks = [
   {
     label: "Agendar una llamada",
-    handle: "calendly.com/brolag/sesion-1-1",
-    href: "https://calendly.com/brolag/sesion-1-1",
-    mark: "CAL",
+    handle: "calendar.app.google",
+    href: "https://calendar.app.google/HuYi74jb1S32YBNHA",
+    mark: "GC",
     accent: "border-cyber-green text-cyber-green hover:bg-cyber-green hover:text-black",
   },
   {

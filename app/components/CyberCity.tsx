@@ -623,7 +623,7 @@ function PadButton({ label, onPress }: { label: string; onPress: (down: boolean)
 // Building content — sourced from app/content/*.json (single source of truth)
 // ---------------------------------------------------------------------------
 
-const AI_PROJECT_NAMES = ['Neural Claude Code', 'Mission Control', 'Cortex', 'Second Brain Template'];
+const AI_PROJECT_NAMES = ['Neural Claude Code', 'Neural Open Code', 'Neural Codex'];
 
 function Line({ children }: { children: React.ReactNode }) {
   return <p className="text-lg leading-snug mb-2" style={{ color: '#cfd2ff' }}>{children}</p>;
@@ -736,7 +736,7 @@ function BuildingContent({ buildingKey }: { buildingKey: BuildingKey }) {
       return (
         <div>
           <Line>Conectá con Alfredo en la red:</Line>
-          {/* email + calendly now live in contact.json, so no hardcoded line here */}
+          {/* email + booking link live in contact.json, so no hardcoded line here */}
           {contactData.details.map((c) => (
             <Line key={c.type}>
               {c.emoji} <NeonLink href={c.url}>{c.url.replace('https://', '').replace('www.', '').replace('mailto:', '')}</NeonLink>

@@ -14,15 +14,14 @@ import type { WorldController } from "./WorldScene";
 const featured = featuredProjects.projects;
 const socialLinks = contactData.details.filter((detail) => ["github", "linkedin", "instagram"].includes(detail.type));
 const libraryResources = {
-  build: projectsData.projects.find((project) => project.name === "Second Brain Template"),
+  build: projectsData.projects.find((project) => project.name === "Neural Open Code"),
   "learn-ai": projectsData.projects.find((project) => project.name === "Neural Claude Code"),
 };
 
 const projectDescriptions: Record<string, string> = {
-  "Neural Claude Code": "Un framework abierto de agentes para desarrollar software con varios modelos de IA.",
-  "Mission Control": "Un panel para coordinar agentes de IA y sus tareas desde un solo lugar.",
-  "Cortex": "Controles de calidad para flujos de trabajo impulsados por agentes.",
-  "Second Brain Template": "Una plantilla abierta para ordenar ideas, proyectos y aprendizajes en Obsidian.",
+  "Neural Claude Code": "Un kit para Claude Code con controles de seguridad y un flujo práctico de desarrollo.",
+  "Neural Open Code": "Un flujo para OpenCode que guía el trabajo desde el descubrimiento hasta la verificación.",
+  "Neural Codex": "Un plugin para Codex con cinco etapas de trabajo y hooks de continuidad.",
 };
 
 function ArrowIcon({ diagonal = false }: { diagonal?: boolean }) {

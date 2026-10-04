@@ -5,8 +5,8 @@
       "name": "Agentic AI",
       "nameEs": "IA agéntica",
       "level": 94,
-      "skills": ["Claude Code Agents", "Multi-AI Orchestration (Opus + Codex)", "Autonomous Dev Loops", "Spec-Driven Development", "AI Fleet Management", "Quality Gates (Cortex)"],
-      "skillsEs": ["Agentes de Claude Code", "Orquestación multmodelo (Opus + Codex)", "Ciclos de desarrollo autónomos", "Desarrollo guiado por especificaciones", "Gestión de flotas de IA", "Puertas de calidad (Cortex)"]
+      "skills": ["Claude Code Agents", "Multi-AI Orchestration (Opus + Codex)", "Autonomous Dev Loops", "Spec-Driven Development", "AI Fleet Management", "Quality Gates"],
+      "skillsEs": ["Agentes de Claude Code", "Orquestación multmodelo (Opus + Codex)", "Ciclos de desarrollo autónomos", "Desarrollo guiado por especificaciones", "Gestión de flotas de IA", "Puertas de calidad"]
     },
     {
       "name": "AI & Automation",

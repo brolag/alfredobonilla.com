@@ -1,37 +1,29 @@
 {
-  "title": "💼 My Most Recent Projects",
+  "title": "🧩 Open Source",
   "projects": [
     {
       "name": "Neural Claude Code",
-      "description": "Open-source agentic coding framework with multi-AI orchestration and self-improving agents.",
-      "descriptionEs": "Marco de código abierto para programar con agentes y orquestar varios modelos de IA.",
-      "url": "https://github.com/brolag/neural-claude-code-plugin",
-      "tags": ["Claude Code", "Agents", "OSS"],
-      "tagsEs": ["Claude Code", "Agentes", "Código abierto"]
+      "description": "Lightweight Claude Code harness with security hooks, a development workflow, and smart defaults.",
+      "descriptionEs": "Kit ligero para Claude Code con controles de seguridad, un flujo de desarrollo y configuración inicial.",
+      "url": "https://github.com/brolag/neural-claude-code",
+      "tags": ["Claude Code", "Hooks", "OSS"],
+      "tagsEs": ["Claude Code", "Seguridad", "Código abierto"]
     },
     {
-      "name": "Mission Control",
-      "description": "AI fleet management dashboard for orchestrating multiple AI agents and devices.",
-      "descriptionEs": "Panel para coordinar varios agentes de IA y dispositivos.",
-      "url": "https://github.com/brolag",
-      "tags": ["Agents", "Dashboard"],
-      "tagsEs": ["Agentes", "Panel"]
+      "name": "Neural Open Code",
+      "description": "Evidence-gated workflow for OpenCode, from discovery and planning through review and hands-on verification.",
+      "descriptionEs": "Flujo para OpenCode que conecta descubrimiento, planificación, construcción, revisión y verificación práctica.",
+      "url": "https://github.com/brolag/neural-open-code",
+      "tags": ["OpenCode", "Workflow", "OSS"],
+      "tagsEs": ["OpenCode", "Flujo de trabajo", "Código abierto"]
     },
     {
-      "name": "Cortex",
-      "description": "Quality gates framework (DMAIC + ISO 42001) for AI agent workflows.",
-      "descriptionEs": "Puertas de calidad basadas en DMAIC e ISO 42001 para flujos con agentes de IA.",
-      "url": "https://github.com/brolag",
-      "tags": ["Quality", "AI Ops"],
-      "tagsEs": ["Calidad", "Operaciones de IA"]
-    },
-    {
-      "name": "Second Brain Template",
-      "description": "Open-source Obsidian template for personal knowledge management using the PARA method.",
-      "descriptionEs": "Plantilla abierta para organizar conocimiento personal en Obsidian con el método PARA.",
-      "url": "https://github.com/brolag/second-brain",
-      "tags": ["Obsidian", "PKM", "OSS"],
-      "tagsEs": ["Obsidian", "Conocimiento", "Código abierto"]
+      "name": "Neural Codex",
+      "description": "Native Codex plugin with five evidence-based workflow skills and lifecycle hooks.",
+      "descriptionEs": "Plugin nativo para Codex con cinco etapas de trabajo basadas en evidencias y hooks de continuidad.",
+      "url": "https://github.com/brolag/neural-codex",
+      "tags": ["Codex", "Plugin", "OSS"],
+      "tagsEs": ["Codex", "Plugin", "Código abierto"]
     }
   ]
 }
