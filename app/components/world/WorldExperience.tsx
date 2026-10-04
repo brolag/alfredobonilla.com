@@ -1,0 +1,210 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import projectsData from "../../content/projects.json";
+import skillsData from "../../content/skills.json";
+import contactData from "../../content/contact.json";
+import { PlaceIcon } from "./PlaceIcon";
+import { placeById, places, type AvatarId, type PlaceId } from "./places";
+import type { WorldController } from "./WorldScene";
+
+const highlightedProjects = projectsData.projects.filter((project) => ["Indie Mind", "Neural Claude Code", "Cofiblocks", "Second Brain Template"].includes(project.name));
+const agentProjects = projectsData.projects.filter((project) => ["Neural Claude Code", "Mission Control", "Cortex"].includes(project.name));
+
+const projectDescriptions: Record<string, string> = {
+  "Indie Mind": "Una plataforma educativa para aprender a crear productos con inteligencia artificial.",
+  "Neural Claude Code": "Un framework abierto de agentes para desarrollar software con varios modelos de IA.",
+  "Mission Control": "Un panel para coordinar agentes de IA y sus tareas desde un solo lugar.",
+  "Cortex": "Controles de calidad para flujos de trabajo impulsados por agentes.",
+  "Cofiblocks": "Una exploración de Web3 aplicada a la industria cafetalera.",
+  "Second Brain Template": "Una plantilla abierta para organizar conocimiento y proyectos en Obsidian.",
+};
+
+function ArrowIcon({ diagonal = false }: { diagonal?: boolean }) {
+  return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{diagonal ? <><path d="M5 19 19 5M8 5h11v11"/></> : <><path d="M4 12h16m-7-7 7 7-7 7"/></>}</svg>;
+}
+
+function AvatarPortrait({ avatar }: { avatar: AvatarId }) {
+  return <span className={`avatar-portrait avatar-portrait--${avatar}`} aria-hidden="true"><span className="avatar-portrait__hair"/><span className="avatar-portrait__face"/><span className="avatar-portrait__body"/></span>;
+}
+
+function ProjectCard({ project }: { project: typeof projectsData.projects[number] }) {
+  const hasProjectLink = project.url !== "https://github.com/brolag";
+  const content = <>
+    <span className="world-project__top"><span>{project.tags.slice(0, 2).join(" · ")}</span>{hasProjectLink && <ArrowIcon diagonal/>}</span>
+    <strong>{project.name}</strong>
+    <span>{projectDescriptions[project.name] ?? project.description}</span>
+  </>;
+  return hasProjectLink ? <a className="world-project" href={project.url} target="_blank" rel="noopener noreferrer">{content}</a> : <article className="world-project">{content}</article>;
+}
+
+function PlaceContent({ id, onNavigate }: { id: PlaceId; onNavigate: (id: PlaceId) => void }) {
+  switch (id) {
+    case "about": return <>
+      <p className="world-panel__lead">Soy Alfredo Bonilla: ingeniero de software, educador y fundador de Indie Mind.</p>
+      <p>Desde Costa Rica llevo más de 14 años construyendo productos digitales. Hoy concentro mi trabajo en sistemas de IA, automatización y herramientas que ayudan a otros desarrolladores a crear mejor.</p>
+      <blockquote>“Systems over willpower.” <span>Diseñar sistemas que amplían lo que podemos hacer sin perder el criterio humano.</span></blockquote>
+      <div className="world-facts"><div><span>Base</span><strong>Costa Rica</strong></div><div><span>Ahora</span><strong>Indie Mind + IA agéntica</strong></div><div><span>Fuera del teclado</span><strong>Naturaleza, juegos y música</strong></div></div>
+      <button className="world-text-link" onClick={() => onNavigate("contact")}>Conversemos <ArrowIcon/></button>
+    </>;
+    case "projects": return <>
+      <p className="world-panel__lead">Ideas convertidas en herramientas, productos y comunidades.</p>
+      <div className="world-projects">{highlightedProjects.map((project) => <ProjectCard key={project.name} project={project}/>)}</div>
+      <a className="world-text-link" href="https://github.com/brolag" target="_blank" rel="noopener noreferrer">Más trabajo en GitHub <ArrowIcon diagonal/></a>
+    </>;
+    case "agents": return <>
+      <p className="world-panel__lead">La IA funciona mejor cuando tiene contexto, herramientas y un buen sistema de trabajo.</p>
+      <p>Diseño flujos donde varios agentes colaboran en investigación, desarrollo y control de calidad. Estos son algunos proyectos que muestran esa dirección:</p>
+      <div className="world-projects">{agentProjects.map((project) => <ProjectCard key={project.name} project={project}/>)}</div>
+      <div className="world-skill-cloud">{skillsData.categories[0].skills.slice(0, 5).map((skill) => <span key={skill}>{skill}</span>)}</div>
+    </>;
+    case "academy": return <>
+      <p className="world-panel__lead">Aprender haciendo es la idea detrás de Indie Mind.</p>
+      <p>Un espacio de educación para desarrolladores que quieren usar IA con intención: desde fundamentos hasta sistemas de agentes y productos reales.</p>
+      <div className="world-feature"><span className="world-feature__number">01</span><div><strong>Educación aplicada</strong><span>Cursos, experiencias y herramientas para pasar de la teoría a proyectos que funcionan.</span></div></div>
+      <div className="world-feature"><span className="world-feature__number">02</span><div><strong>Comunidad de constructores</strong><span>Aprender junto a personas que experimentan, comparten y publican su trabajo.</span></div></div>
+      <a className="world-primary-link" href="https://indie-mind.com" target="_blank" rel="noopener noreferrer">Visitar Indie Mind <ArrowIcon diagonal/></a>
+    </>;
+    case "services": return <>
+      <p className="world-panel__lead">Colaboremos para convertir una idea compleja en un sistema útil.</p>
+      <div className="world-services">
+        <div><span>01</span><strong>Soluciones con IA</strong><p>Agentes, automatización y productos adaptados a problemas concretos.</p></div>
+        <div><span>02</span><strong>Liderazgo técnico</strong><p>Estrategia, arquitectura y dirección para equipos que necesitan avanzar con claridad.</p></div>
+        <div><span>03</span><strong>Mentoría y formación</strong><p>Acompañamiento práctico para desarrolladores y equipos.</p></div>
+      </div>
+      <button className="world-primary-link" onClick={() => onNavigate("contact")}>Hablemos de tu proyecto <ArrowIcon/></button>
+    </>;
+    case "contact": return <>
+      <p className="world-panel__lead">¿Construimos algo interesante?</p>
+      <p>Cuéntame qué estás intentando crear. Podemos empezar con un correo o agendar una conversación.</p>
+      <div className="world-contact-list">{contactData.details.filter((detail) => ["email", "calendar", "github", "linkedin"].includes(detail.type)).map((detail) => <a key={detail.type} href={detail.url} target={detail.type === "email" ? undefined : "_blank"} rel={detail.type === "email" ? undefined : "noopener noreferrer"}><span>{detail.type === "email" ? "Correo" : detail.type === "calendar" ? "Agendar" : detail.type === "github" ? "GitHub" : "LinkedIn"}</span><strong>{detail.label}</strong><ArrowIcon diagonal/></a>)}</div>
+    </>;
+  }
+}
+
+export default function WorldExperience() {
+  const sceneMount = useRef<HTMLDivElement>(null);
+  const world = useRef<WorldController | null>(null);
+  const onPick = useRef<(id: PlaceId) => void>(() => {});
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const returnFocus = useRef<HTMLElement | null>(null);
+  const [avatar, setAvatar] = useState<AvatarId>("sol");
+  const [started, setStarted] = useState(false);
+  const [activePlace, setActivePlace] = useState<PlaceId | null>(null);
+  const [nearPlace, setNearPlace] = useState<PlaceId | null>(null);
+  const [mapOpen, setMapOpen] = useState(false);
+  const [webglFailed, setWebglFailed] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
+
+  const openPlace = useCallback((id: PlaceId) => {
+    if (!activePlace) returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setStarted(true);
+    setMapOpen(false);
+    setActivePlace(id);
+    world.current?.travelTo(id);
+    world.current?.focus(id);
+  }, [activePlace]);
+  onPick.current = openPlace;
+
+  const closePlace = useCallback(() => {
+    setActivePlace(null);
+    world.current?.focus(null);
+    window.requestAnimationFrame(() => {
+      const fallback = document.querySelector<HTMLButtonElement>(".world-map-toggle");
+      (returnFocus.current?.isConnected ? returnFocus.current : fallback)?.focus();
+    });
+  }, []);
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("alfredo-world-avatar");
+    if (stored === "sol" || stored === "luna") setAvatar(stored);
+    let cancelled = false;
+    import("./WorldScene").then(({ createWorld }) => {
+      if (cancelled || !sceneMount.current) return;
+      try {
+        world.current = createWorld(sceneMount.current, {
+          onNear: setNearPlace,
+          onPick: (id) => onPick.current(id),
+        });
+        setSceneReady(true);
+      } catch (error) {
+        console.error("No se pudo iniciar el mundo 3D", error);
+        setWebglFailed(true);
+      }
+    }).catch((error) => { console.error("No se pudo cargar el mundo 3D", error); setWebglFailed(true); });
+    return () => { cancelled = true; world.current?.dispose(); world.current = null; };
+  }, []);
+
+  useEffect(() => { world.current?.setAvatar(avatar); }, [avatar, sceneReady]);
+  useEffect(() => { world.current?.setExploring(started); }, [started, sceneReady]);
+  useEffect(() => { if (activePlace) closeButton.current?.focus(); }, [activePlace]);
+
+  const chooseAvatar = (id: AvatarId) => { setAvatar(id); window.localStorage.setItem("alfredo-world-avatar", id); };
+  const enterWorld = () => { setStarted(true); setActivePlace(null); world.current?.focus(null); };
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase();
+      if (activePlace && key === "tab") {
+        const focusable = Array.from(document.querySelectorAll<HTMLElement>(".world-panel button, .world-panel a[href]"));
+        const first = focusable[0], last = focusable[focusable.length - 1];
+        if (first && last && (event.shiftKey && document.activeElement === first || !event.shiftKey && document.activeElement === last || !focusable.includes(document.activeElement as HTMLElement))) {
+          event.preventDefault();
+          (event.shiftKey ? last : first).focus();
+        }
+        return;
+      }
+      if (event.target instanceof HTMLElement && ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName)) return;
+      if (key === "escape") { if (activePlace) closePlace(); else if (mapOpen) setMapOpen(false); return; }
+      if (activePlace || mapOpen) return;
+      if (!started) { if (key === "enter" && event.target === document.body) enterWorld(); return; }
+      if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", "e"].includes(key)) event.preventDefault();
+      if (key === "e" && !event.repeat) { const id = world.current?.interact(); if (id) openPlace(id); return; }
+      world.current?.setInput(key, true);
+    };
+    const onKeyUp = (event: KeyboardEvent) => world.current?.setInput(event.key.toLowerCase(), false);
+    const onBlur = () => world.current?.clearInput();
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("blur", onBlur);
+    return () => { window.removeEventListener("keydown", onKeyDown); window.removeEventListener("keyup", onKeyUp); window.removeEventListener("blur", onBlur); };
+  }, [activePlace, mapOpen, started, closePlace, openPlace]);
+
+  const active = activePlace ? placeById[activePlace] : null;
+  return <main id="world-main-content" tabIndex={-1} className={`world-root ${started ? "world-root--exploring" : ""}`} lang="es">
+    <div className="world-sky" aria-hidden="true"/>
+    <a className="world-skip" href="#world-main-content">Saltar al contenido</a>
+    <div ref={sceneMount} className="world-canvas"/>
+    <noscript><div className="world-fallback"><p>Activa JavaScript para explorar el poblado o usa la versión simple.</p><Link href="/paper">Abrir vista simple <ArrowIcon/></Link></div></noscript>
+    <header className="world-header">
+      <button className="world-brand" onClick={() => { closePlace(); setStarted(false); }} aria-label="Volver al inicio"><span className="world-brand__mark">A<span>✳</span>B</span><span className="world-brand__name">ALFREDO<br/>BONILLA</span></button>
+      <nav className="world-nav" aria-label="Secciones principales"><button onClick={() => openPlace("about")}>Sobre mí</button><button onClick={() => openPlace("projects")}>Proyectos</button><button onClick={() => openPlace("services")}>Servicios</button><button onClick={() => openPlace("contact")}>Contacto</button></nav>
+      <div className="world-header__actions"><Link href="/paper" className="world-simple-link">Vista simple <ArrowIcon diagonal/></Link><button className="world-map-toggle" onClick={() => setMapOpen((value) => !value)} aria-expanded={mapOpen} aria-controls="world-map"><span className="world-map-toggle__icon">⌗</span><span>Mapa</span></button></div>
+    </header>
+
+    {!started && <section className="world-intro" aria-label="Bienvenida">
+      <p className="world-kicker"><span/> UN PORTAFOLIO PARA RECORRER</p>
+      <h1>Un mundo por <em>explorar.</em></h1>
+      <p className="world-intro__copy">Soy Alfredo. Construyo productos, sistemas de IA y espacios para aprender. Te invito a conocer mi trabajo caminando por este pequeño poblado.</p>
+      <div className="world-avatar-select" role="group" aria-label="Elige tu personaje"><span>ELIGE TU EXPLORADOR</span><div><button className={avatar === "sol" ? "is-selected" : ""} onClick={() => chooseAvatar("sol")} aria-pressed={avatar === "sol"}><AvatarPortrait avatar="sol"/><span><strong>Sol</strong><small>Masculino</small></span></button><button className={avatar === "luna" ? "is-selected" : ""} onClick={() => chooseAvatar("luna")} aria-pressed={avatar === "luna"}><AvatarPortrait avatar="luna"/><span><strong>Luna</strong><small>Femenino</small></span></button></div></div>
+      <div className="world-intro__actions"><button className="world-enter" onClick={enterWorld}>Entrar al mundo <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("projects")}>Ir a los proyectos</button></div>
+      <span className="world-intro__footnote">Explora a tu ritmo · Seis lugares por descubrir</span>
+    </section>}
+
+    {started && !active && <div className="world-hud" aria-live="polite"><div className="world-hud__location"><span className="world-hud__dot"/> ESTÁS EXPLORANDO <strong>{nearPlace ? `Cerca de ${placeById[nearPlace].name}` : "El poblado"}</strong></div><div className="world-hud__controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>mover</span><kbd>E</kbd><span>entrar</span></div></div>}
+    {started && nearPlace && !active && <button className="world-near" onClick={() => openPlace(nearPlace)}><span>ENTRAR</span><strong>{placeById[nearPlace].name}</strong><kbd>E</kbd></button>}
+
+    {mapOpen && <aside id="world-map" className="world-map world-map--open" aria-label="Mapa del poblado">
+      <div className="world-map__top"><span>EL POBLADO</span><button onClick={() => setMapOpen(false)} aria-label="Cerrar mapa">×</button></div><h2>Elige un destino.</h2><p>Puedes caminar o viajar directamente.</p><div className="world-map__list">{places.map((place, index) => <button key={place.id} onClick={() => openPlace(place.id)} tabIndex={mapOpen ? 0 : -1}><span className="world-map__number">0{index + 1}</span><span className="world-map__glyph" style={{ color: place.color }}><PlaceIcon id={place.id}/></span><span><strong>{place.name}</strong><small>{place.shortName}</small></span><ArrowIcon/></button>)}</div>
+    </aside>}
+
+    {active && <><button className="world-panel-backdrop" aria-label="Cerrar sección" onClick={closePlace}/><aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title"><div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: active.color }}/>{active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Cerrar sección">×</button></div><div className="world-panel__icon" style={{ color: active.color }}><PlaceIcon id={active.id} size={31}/></div><h2 id="world-panel-title">{active.name}</h2><p className="world-panel__summary">{active.description}</p><div className="world-panel__rule"/><div className="world-panel__body"><PlaceContent id={active.id} onNavigate={openPlace}/></div><div className="world-panel__footer"><span>ALFREDO BONILLA / UN MUNDO POR EXPLORAR</span><button onClick={closePlace}>Volver al mundo <ArrowIcon/></button></div></aside></>}
+
+    {started && !active && <div className="world-touch" aria-label="Controles táctiles"><div className="world-touch__pad"><button onPointerDown={(e) => {e.currentTarget.setPointerCapture(e.pointerId); world.current?.setInput("w", true);}} onPointerUp={() => world.current?.setInput("w", false)} onPointerCancel={() => world.current?.setInput("w", false)} aria-label="Avanzar">↑</button><span><button onPointerDown={(e) => {e.currentTarget.setPointerCapture(e.pointerId); world.current?.setInput("a", true);}} onPointerUp={() => world.current?.setInput("a", false)} onPointerCancel={() => world.current?.setInput("a", false)} aria-label="Izquierda">←</button><button onPointerDown={(e) => {e.currentTarget.setPointerCapture(e.pointerId); world.current?.setInput("s", true);}} onPointerUp={() => world.current?.setInput("s", false)} onPointerCancel={() => world.current?.setInput("s", false)} aria-label="Retroceder">↓</button><button onPointerDown={(e) => {e.currentTarget.setPointerCapture(e.pointerId); world.current?.setInput("d", true);}} onPointerUp={() => world.current?.setInput("d", false)} onPointerCancel={() => world.current?.setInput("d", false)} aria-label="Derecha">→</button></span></div><button className="world-touch__enter" onClick={() => {const id = world.current?.interact(); if (id) openPlace(id);}} aria-label="Entrar a la sección cercana">E</button></div>}
+
+    {webglFailed && <div className="world-fallback"><p>Tu navegador no pudo mostrar el poblado 3D. Puedes visitar cada lugar desde el mapa.</p><button onClick={() => setMapOpen(true)}>Abrir el mapa <ArrowIcon/></button></div>}
+    {!sceneReady && !webglFailed && <div className="world-loading" aria-live="polite"><span className="world-loading__leaf">✳</span> Preparando el poblado…</div>}
+    <div className="world-bottom-note">DISEÑADO PARA LA CURIOSIDAD <span>✳</span> CONSTRUIDO CON INTENCIÓN</div>
+  </main>;
+}

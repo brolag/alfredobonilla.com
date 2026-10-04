@@ -21,9 +21,9 @@ const ui = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Alfredo Bonilla — brolag@portfolio",
+  title: "Alfredo Bonilla — Un mundo por explorar",
   description:
-    "Personal website of Alfredo Bonilla, Founder of Indie Mind. Software engineer specializing in AI-driven solutions and agentic coding. Type `help` to start.",
+    "Conoce a Alfredo Bonilla: ingeniero de software, fundador de Indie Mind y creador de productos y sistemas de IA. Explora sus proyectos, servicios y formas de colaborar.",
 };
 
 export default function RootLayout({
@@ -33,7 +33,7 @@ export default function RootLayout({
 }>) {
   // suppressHydrationWarning: data-theme is applied client-side from localStorage
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body className={`${mono.variable} ${ui.variable}`}>{children}</body>
     </html>
   );
