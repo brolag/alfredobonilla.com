@@ -6,7 +6,7 @@ import projectsData from "../../content/projects.json";
 import skillsData from "../../content/skills.json";
 import contactData from "../../content/contact.json";
 import { PlaceIcon } from "./PlaceIcon";
-import { placeById, places, type AvatarId, type PlaceId } from "./places";
+import { placeById, places, type PlaceId } from "./places";
 import type { WorldController } from "./WorldScene";
 
 const highlightedProjects = projectsData.projects.filter((project) => ["Indie Mind", "Neural Claude Code", "Cofiblocks", "Second Brain Template"].includes(project.name));
@@ -23,10 +23,6 @@ const projectDescriptions: Record<string, string> = {
 
 function ArrowIcon({ diagonal = false }: { diagonal?: boolean }) {
   return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{diagonal ? <><path d="M5 19 19 5M8 5h11v11"/></> : <><path d="M4 12h16m-7-7 7 7-7 7"/></>}</svg>;
-}
-
-function AvatarPortrait({ avatar }: { avatar: AvatarId }) {
-  return <span className={`avatar-portrait avatar-portrait--${avatar}`} aria-hidden="true"><span className="avatar-portrait__hair"/><span className="avatar-portrait__face"/><span className="avatar-portrait__body"/></span>;
 }
 
 function ProjectCard({ project }: { project: typeof projectsData.projects[number] }) {
@@ -89,7 +85,6 @@ export default function WorldExperience() {
   const onPick = useRef<(id: PlaceId) => void>(() => {});
   const closeButton = useRef<HTMLButtonElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
-  const [avatar, setAvatar] = useState<AvatarId>("sol");
   const [started, setStarted] = useState(false);
   const [activePlace, setActivePlace] = useState<PlaceId | null>(null);
   const [nearPlace, setNearPlace] = useState<PlaceId | null>(null);
@@ -117,8 +112,6 @@ export default function WorldExperience() {
   }, []);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("alfredo-world-avatar");
-    if (stored === "sol" || stored === "luna") setAvatar(stored);
     let cancelled = false;
     import("./WorldScene").then(({ createWorld }) => {
       if (cancelled || !sceneMount.current) return;
@@ -136,11 +129,9 @@ export default function WorldExperience() {
     return () => { cancelled = true; world.current?.dispose(); world.current = null; };
   }, []);
 
-  useEffect(() => { world.current?.setAvatar(avatar); }, [avatar, sceneReady]);
   useEffect(() => { world.current?.setExploring(started); }, [started, sceneReady]);
   useEffect(() => { if (activePlace) closeButton.current?.focus(); }, [activePlace]);
 
-  const chooseAvatar = (id: AvatarId) => { setAvatar(id); window.localStorage.setItem("alfredo-world-avatar", id); };
   const enterWorld = () => { setStarted(true); setActivePlace(null); world.current?.focus(null); };
 
   useEffect(() => {
@@ -187,7 +178,6 @@ export default function WorldExperience() {
       <p className="world-kicker"><span/> UN PORTAFOLIO PARA RECORRER</p>
       <h1>Un mundo por <em>explorar.</em></h1>
       <p className="world-intro__copy">Soy Alfredo. Construyo productos, sistemas de IA y espacios para aprender. Te invito a conocer mi trabajo caminando por este pequeño poblado.</p>
-      <div className="world-avatar-select" role="group" aria-label="Elige tu personaje"><span>ELIGE TU EXPLORADOR</span><div><button className={avatar === "sol" ? "is-selected" : ""} onClick={() => chooseAvatar("sol")} aria-pressed={avatar === "sol"}><AvatarPortrait avatar="sol"/><span><strong>Sol</strong><small>Masculino</small></span></button><button className={avatar === "luna" ? "is-selected" : ""} onClick={() => chooseAvatar("luna")} aria-pressed={avatar === "luna"}><AvatarPortrait avatar="luna"/><span><strong>Luna</strong><small>Femenino</small></span></button></div></div>
       <div className="world-intro__actions"><button className="world-enter" onClick={enterWorld}>Entrar al mundo <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("projects")}>Ir a los proyectos</button></div>
       <span className="world-intro__footnote">Explora a tu ritmo · Seis lugares por descubrir</span>
     </section>}

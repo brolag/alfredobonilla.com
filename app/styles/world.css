@@ -42,21 +42,6 @@
 .world-intro h1 { max-width: 540px; margin: 0; color: #20483a; font-size: clamp(53px, 5.5vw, 88px); font-weight: 900; letter-spacing: -.075em; line-height: .98; text-wrap: balance; }
 .world-intro h1 em { color: #b97650; font-style: normal; }
 .world-intro__copy { max-width: 445px; margin: 24px 0 30px; color: #52695c; font-size: clamp(15px, 1.16vw, 18px); line-height: 1.65; font-weight: 600; }
-.world-avatar-select > span { display: block; margin-bottom: 12px; color: #718177; font: 800 10px var(--font-mono), monospace; letter-spacing: .14em; }
-.world-avatar-select > div { display: flex; align-items: center; gap: 10px; }
-.world-avatar-select button { display: inline-flex; align-items: center; gap: 11px; width: 139px; height: 56px; padding: 5px 11px 5px 7px; border: 1px solid rgba(32,72,58,.2); border-radius: 13px; color: #315748; background: rgba(255,255,249,.52); font-size: 13px; font-weight: 900; transition: border .2s, background .2s, transform .2s; }
-.world-avatar-select button span:last-child { display: grid; gap: 1px; text-align: left; }
-.world-avatar-select button strong { font-size: 12px; line-height: 1.1; }
-.world-avatar-select button small { color: #879486; font-size: 9px; line-height: 1.1; font-weight: 700; }
-.world-avatar-select button:hover { transform: translateY(-2px); }
-.world-avatar-select button.is-selected { border-color: #68977b; background: #f5f6e9; box-shadow: 0 0 0 3px rgba(104,151,123,.12); }
-.avatar-portrait { position: relative; display: inline-block; flex: none; width: 40px; height: 42px; overflow: hidden; border-radius: 9px; background: #d9e9ce; }
-.avatar-portrait--luna { background: #eedcca; }
-.avatar-portrait__body { position: absolute; width: 33px; height: 22px; left: 4px; top: 28px; border-radius: 11px 11px 0 0; background: #376f66; }
-.avatar-portrait--luna .avatar-portrait__body { background: #b77e69; }
-.avatar-portrait__face { position: absolute; z-index: 2; left: 13px; top: 12px; width: 15px; height: 20px; border-radius: 8px 8px 7px 7px; background: #bd8565; }
-.avatar-portrait__hair { position: absolute; z-index: 1; left: 10px; top: 7px; width: 21px; height: 21px; border-radius: 10px 10px 5px 5px; background: #40372f; }
-.avatar-portrait--luna .avatar-portrait__hair { left: 8px; width: 25px; height: 29px; background: #3b3034; }
 .world-intro__actions { display: flex; align-items: center; gap: 23px; margin-top: 27px; }
 .world-enter, .world-primary-link { display: inline-flex; align-items: center; justify-content: center; gap: 13px; min-height: 51px; padding: 0 19px; border: 1px solid #1f513c; border-radius: 11px; color: #fff; background: #20553f; text-decoration: none; font-size: 13px; font-weight: 900; box-shadow: 0 8px 17px rgba(18,73,50,.16); transition: background .2s, transform .2s, box-shadow .2s; }
 .world-enter:hover, .world-primary-link:hover { background: #31745a; transform: translateY(-2px); box-shadow: 0 11px 23px rgba(18,73,50,.2); }
@@ -183,13 +168,10 @@
   .world-kicker { font-size: 9px; margin-bottom: 14px; }
   .world-intro h1 { max-width: 440px; font-size: clamp(49px, 12.2vw, 76px); }
   .world-intro__copy { max-width: 430px; margin: 17px 0 19px; font-size: 14px; line-height: 1.5; }
-  .world-avatar-select > span { margin-bottom: 7px; }
-  .world-avatar-select button { height: 49px; }
-  .avatar-portrait { width: 36px; height: 36px; }
   .world-intro__actions { margin-top: 18px; }
   .world-enter { min-height: 46px; }
   .world-intro__footnote { margin-top: 15px; font-size: 11px; }
-  .world-canvas { top: 470px; }
+  .world-canvas { top: 300px; }
   .world-root:not(.world-root--exploring) .world-canvas canvas { transform: translateY(-40px); }
   .world-root--exploring .world-canvas { top: 0; }
   .world-scene-label { min-height: 30px; padding: 4px 7px; }

@@ -1,5 +1,4 @@
 export type PlaceId = "about" | "projects" | "agents" | "academy" | "services" | "contact";
-export type AvatarId = "sol" | "luna";
 
 export interface WorldPlace {
   id: PlaceId;

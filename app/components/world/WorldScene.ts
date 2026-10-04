@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { placeById, places, type AvatarId, type PlaceId, type WorldPlace } from "./places";
+import { placeById, places, type PlaceId, type WorldPlace } from "./places";
 
 interface WorldEvents {
   onNear: (id: PlaceId | null) => void;
@@ -7,7 +7,6 @@ interface WorldEvents {
 }
 
 export interface WorldController {
-  setAvatar: (id: AvatarId) => void;
   setExploring: (exploring: boolean) => void;
   setInput: (key: string, down: boolean) => void;
   clearInput: () => void;
@@ -322,41 +321,53 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   }
   animated.push((time) => { if (!reducedMotion) turbines.forEach((rotor, i) => { rotor.rotation.z = time * (i ? -0.26 : 0.22); }); });
 
-  const avatarRoot = new THREE.Group(); avatarRoot.position.set(0, 0.1, 5.2); scene.add(avatarRoot);
-  const avatarModels: Record<AvatarId, { group: THREE.Group; arms: THREE.Group[]; legs: THREE.Group[] }> = {
-    sol: makeAvatar("sol"), luna: makeAvatar("luna"),
-  };
-  let currentAvatar: AvatarId = "sol";
-  function makeAvatar(id: AvatarId) {
-    const g = new THREE.Group(); avatarRoot.add(g);
-    const skin = material(id === "sol" ? "#bb8568" : "#bb7964");
-    const hair = material(id === "sol" ? "#3f3c31" : "#392d31");
-    const jacket = material(id === "sol" ? "#346c61" : "#b97961");
-    const pants = material("#3f5b54"), boots = material("#50463a");
-    cylinder(g, 0.37, 0.43, 0.86, 0, 1.35, 0, jacket, 9);
-    box(g, 0.74, 0.64, 0.28, 0, 1.32, -0.36, m.wood);
-    box(g, 0.63, 0.09, 0.5, 0, 1.87, 0, m.gold);
-    sphere(g, 0.34, 0, 2.13, 0.03, skin, 1);
-    if (id === "sol") {
-      const cap = sphere(g, 0.35, 0, 2.37, -0.08, hair, 1); cap.scale.set(1.02, 0.48, 1.05);
-      sphere(g, 0.07, 0.1, 2.16, 0.34, skin, 1);
-    } else {
-      const cap = sphere(g, 0.36, 0, 2.41, -0.08, hair, 1); cap.scale.set(1.1, 0.62, 1.02);
-      sphere(g, 0.22, 0.12, 2.45, -0.37, hair, 1);
-      for (const side of [-1, 1]) { const lock = sphere(g, 0.11, side * 0.3, 2.05, -0.02, hair, 0); lock.scale.y = 2.1; }
-    }
-    const arms: THREE.Group[] = [], legs: THREE.Group[] = [];
-    for (const side of [-1, 1]) {
-      const arm = new THREE.Group(); arm.position.set(side * 0.44, 1.66, 0); g.add(arm); arms.push(arm);
-      cylinder(arm, 0.13, 0.11, 0.63, 0, -0.31, 0, jacket, 7); sphere(arm, 0.12, 0, -0.66, 0, skin, 1);
-      const leg = new THREE.Group(); leg.position.set(side * 0.2, 0.95, 0); g.add(leg); legs.push(leg);
-      cylinder(leg, 0.17, 0.15, 0.64, 0, -0.32, 0, pants, 7); box(leg, 0.27, 0.2, 0.45, 0, -0.69, 0.11, boots);
-    }
-    const scarf = box(g, 0.62, 0.1, 0.37, 0, 1.82, 0.12, id === "sol" ? m.orange : m.blue); scarf.rotation.z = id === "sol" ? -0.08 : 0.08;
-    return { group: g, arms, legs };
+  const avatarRoot = new THREE.Group(); avatarRoot.position.set(0, 0.1, 5.2); avatarRoot.scale.setScalar(1.12); scene.add(avatarRoot);
+  const avatarBody = new THREE.Group(); avatarRoot.add(avatarBody);
+  const skin = material("#c58d6c"), hair = material("#323b34"), jacket = material("#397463");
+  const jacketDark = material("#28594f"), jacketLight = material("#77a489"), pants = material("#465e5c");
+  const boots = material("#594b3d"), scarf = material("#d99969"), eyes = material("#243832");
+
+  // A single explorer with a readable face and silhouette from both camera distances.
+  cylinder(avatarBody, 0.45, 0.34, 0.94, 0, 1.42, 0, jacket, 10);
+  cylinder(avatarBody, 0.35, 0.38, 0.13, 0, 0.96, 0, jacketDark, 10);
+  box(avatarBody, 0.21, 0.67, 0.06, 0, 1.41, 0.39, jacketLight, false);
+  box(avatarBody, 0.035, 0.56, 0.065, 0, 1.42, 0.44, m.light, false);
+  box(avatarBody, 0.24, 0.1, 0.07, -0.23, 1.47, 0.36, m.gold, false);
+  box(avatarBody, 0.68, 0.8, 0.31, 0, 1.39, -0.46, m.wood);
+  box(avatarBody, 0.56, 0.54, 0.05, 0, 1.39, -0.64, m.solar);
+  for (const x of [-0.14, 0.14]) box(avatarBody, 0.025, 0.52, 0.06, x, 1.39, -0.68, m.glass, false);
+  box(avatarBody, 0.55, 0.025, 0.06, 0, 1.39, -0.68, m.glass, false);
+  for (const side of [-1, 1]) box(avatarBody, 0.1, 0.74, 0.13, side * 0.31, 1.47, -0.23, jacketDark);
+
+  const head = new THREE.Group(); head.position.set(0, 2.19, 0.04); avatarBody.add(head);
+  const face = sphere(head, 0.37, 0, 0, 0, skin, 1); face.scale.set(1, 1.06, 0.9);
+  for (const side of [-1, 1]) sphere(head, 0.09, side * 0.35, -0.02, 0, skin, 1);
+  const hairCap = sphere(head, 0.4, 0, 0.24, -0.07, hair, 1); hairCap.scale.set(1.07, 0.53, 1.05);
+  const forelock = sphere(head, 0.19, -0.14, 0.27, 0.17, hair, 1); forelock.scale.set(1.2, 0.65, 0.8);
+  for (const side of [-1, 1]) {
+    sphere(head, 0.035, side * 0.14, 0.02, 0.345, eyes, 1);
+    const lens = mesh(head, new THREE.TorusGeometry(0.115, 0.018, 5, 12), m.wood, side * 0.14, 0.02, 0.36, false);
+    lens.scale.y = 0.85;
   }
-  avatarModels.luna.group.visible = false;
-  const playerShadow = mesh(scene, new THREE.CircleGeometry(0.49, 20), material("#42674f", { transparent: true, opacity: 0.22, depthWrite: false }), avatarRoot.position.x, 0.11, avatarRoot.position.z, false);
+  box(head, 0.09, 0.02, 0.025, 0, 0.02, 0.39, m.wood, false);
+  sphere(head, 0.041, 0, -0.085, 0.36, skin, 1);
+  box(head, 0.11, 0.018, 0.018, 0, -0.19, 0.325, eyes, false);
+  box(avatarBody, 0.56, 0.14, 0.45, 0, 1.88, 0.08, scarf);
+  const scarfTail = box(avatarBody, 0.15, 0.36, 0.06, 0.22, 1.69, 0.37, scarf); scarfTail.rotation.z = -0.15;
+
+  const arms: THREE.Group[] = [], legs: THREE.Group[] = [];
+  for (const side of [-1, 1]) {
+    const arm = new THREE.Group(); arm.position.set(side * 0.48, 1.75, 0); avatarBody.add(arm); arms.push(arm);
+    cylinder(arm, 0.165, 0.13, 0.57, 0, -0.29, 0, jacket, 8);
+    cylinder(arm, 0.14, 0.14, 0.11, 0, -0.59, 0, jacketDark, 8);
+    sphere(arm, 0.125, 0, -0.7, 0, skin, 1);
+    const leg = new THREE.Group(); leg.position.set(side * 0.2, 1.01, 0); avatarBody.add(leg); legs.push(leg);
+    cylinder(leg, 0.18, 0.145, 0.63, 0, -0.31, 0, pants, 8);
+    cylinder(leg, 0.15, 0.15, 0.11, 0, -0.62, 0, m.light, 8);
+    box(leg, 0.29, 0.2, 0.46, 0, -0.71, 0.11, boots);
+    box(leg, 0.27, 0.035, 0.33, 0, -0.6, 0.16, m.woodLight, false);
+  }
+  const playerShadow = mesh(scene, new THREE.CircleGeometry(0.57, 20), material("#42674f", { transparent: true, opacity: 0.22, depthWrite: false }), avatarRoot.position.x, 0.11, avatarRoot.position.z, false);
   playerShadow.rotation.x = -Math.PI / 2;
 
   for (const [index, place] of places.entries()) {
@@ -420,14 +431,15 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       const nextZ = avatarRoot.position.z + dz / length * speed * delta;
       if (allowed(nextX, avatarRoot.position.z)) avatarRoot.position.x = nextX;
       if (allowed(avatarRoot.position.x, nextZ)) avatarRoot.position.z = nextZ;
-      const angle = Math.atan2(dx, -dz);
+      // The face points toward +Z in model space. Rotate toward travel, including when going back.
+      const angle = Math.atan2(dx, dz);
       avatarRoot.rotation.y += Math.atan2(Math.sin(angle - avatarRoot.rotation.y), Math.cos(angle - avatarRoot.rotation.y)) * Math.min(1, delta * 12);
     }
-    const rig = avatarModels[currentAvatar];
     const stride = moving && !reducedMotion ? Math.sin(time * 11) * 0.37 : 0;
-    rig.arms[0].rotation.x = -stride; rig.arms[1].rotation.x = stride;
-    rig.legs[0].rotation.x = stride; rig.legs[1].rotation.x = -stride;
-    rig.group.position.y = moving && !reducedMotion ? Math.abs(Math.sin(time * 11)) * 0.045 : (reducedMotion ? 0 : Math.sin(time * 1.8) * 0.018);
+    arms[0].rotation.x = -stride; arms[1].rotation.x = stride;
+    legs[0].rotation.x = stride; legs[1].rotation.x = -stride;
+    avatarBody.position.y = moving && !reducedMotion ? Math.abs(Math.sin(time * 11)) * 0.045 : (reducedMotion ? 0 : Math.sin(time * 1.8) * 0.018);
+    head.rotation.z = reducedMotion ? 0 : Math.sin(time * 1.5) * 0.025;
     playerShadow.position.set(avatarRoot.position.x, 0.11, avatarRoot.position.z);
     const nextNear = exploring && !focused ? nearest() : null;
     if (near !== nextNear) { near = nextNear; events.onNear(nextNear); }
@@ -454,12 +466,11 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   update();
 
   return {
-    setAvatar(id) { currentAvatar = id; avatarModels.sol.group.visible = id === "sol"; avatarModels.luna.group.visible = id === "luna"; },
-    setExploring(value) { exploring = value; if (!value) { pressed.clear(); focused = null; avatarRoot.position.set(0, 0.1, 5.2); near = null; events.onNear(null); } },
+    setExploring(value) { exploring = value; if (!value) { pressed.clear(); focused = null; avatarRoot.position.set(0, 0.1, 5.2); avatarRoot.rotation.y = 0; near = null; events.onNear(null); } },
     setInput(key, down) { if (down) pressed.add(key); else pressed.delete(key); },
     clearInput() { pressed.clear(); },
     interact() { return exploring && !focused ? nearest() : null; },
-    travelTo(id) { const p = placeById[id], front = p.z < 0 ? 1 : -1; avatarRoot.position.set(p.x, 0.1, p.z + front * 3.2); near = id; events.onNear(id); },
+    travelTo(id) { const p = placeById[id], front = p.z < 0 ? 1 : -1; avatarRoot.position.set(p.x, 0.1, p.z + front * 3.2); avatarRoot.rotation.y = front > 0 ? Math.PI : 0; near = id; events.onNear(id); },
     focus(id) { focused = id; pressed.clear(); if (id) { near = null; events.onNear(null); } },
     dispose() {
       disposed = true; window.cancelAnimationFrame(frame); observer.disconnect();
