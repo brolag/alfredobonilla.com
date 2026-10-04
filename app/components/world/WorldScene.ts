@@ -13,6 +13,7 @@ interface WorldEvents {
 export interface WorldController {
   setExploring: (exploring: boolean) => void;
   setInput: (key: string, down: boolean) => void;
+  turnBy: (radians: number) => void;
   setLookDelta: (dx: number, dy: number) => void;
   setPaused: (paused: boolean) => void;
   clearInput: () => void;
@@ -557,6 +558,11 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   return {
     setExploring(value) { exploring = value; if (!value) { pressed.clear(); focused = null; activeRoom = null; roomLabels.splice(0).forEach((label) => label.remove()); avatarRoot.position.set(3.3, 0.1, 4.5); yaw = 0; pitch = 0; near = null; events.onNear(null); } },
     setInput(key, down) { if (down) pressed.add(key); else pressed.delete(key); },
+    turnBy(radians) {
+      if (!exploring || focused || paused) return;
+      if (activeRoom) roomYaw = THREE.MathUtils.clamp(roomYaw + radians, -0.7, 0.7);
+      else yaw += radians;
+    },
     setLookDelta(dx, dy) { if (exploring && !focused && !paused) { if (activeRoom) { roomYaw = THREE.MathUtils.clamp(roomYaw - dx * 0.0025, -0.7, 0.7); roomPitch = THREE.MathUtils.clamp(roomPitch - dy * 0.0022, -0.22, 0.3); } else { yaw -= dx * 0.0025; pitch = THREE.MathUtils.clamp(pitch - dy * 0.0022, -0.62, 0.55); } } },
     setPaused(value) { paused = value; if (value) pressed.clear(); },
     clearInput() { pressed.clear(); },

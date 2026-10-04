@@ -2,8 +2,17 @@
 project: alfredobonilla.com
 created: 2026-10-03
 status: in-progress
-modified: []
-commits: []
+modified:
+  - app/components/world/WorldScene.ts
+  - app/components/world/WorldExperience.tsx
+  - app/components/world/WorldInteriors.ts
+  - app/components/world/roomActivities.ts
+  - app/styles/world.css
+  - package.json
+  - package-lock.json
+commits:
+  - 78469fb
+  - d04d6ef
 agents: []
 related:
   back: []
@@ -31,9 +40,10 @@ related:
 
 ## Signatures and ownership
 
-- `app/components/world/places.ts` [adapt]: stable `PlaceId`; add typed room/artifact descriptions without changing IDs.
-- `app/components/world/WorldScene.ts` [adapt]: `WorldController.enterRoom(id)`, `exitRoom()`, `interact()` and look/movement methods; `WorldEvents` gains artifact and room callbacks. Outdoor and interior camera positions remain encapsulated here.
-- `app/components/world/WorldInteriors.ts` [new]: creates and disposes six authored room groups plus interactive object anchors; accepts shared scene/material helpers through an explicit factory interface.
+- `app/components/world/places.ts` [keep]: stable `PlaceId` and place metadata without changing IDs.
+- `app/components/world/roomActivities.ts` [new]: typed room prompts, objects, actions, and completion rules for the six places.
+- `app/components/world/WorldScene.ts` [adapt]: `WorldController.enterRoom(id)`, `exitRoom()`, `interactRoom()`, `turnBy()` and look/movement methods; `WorldEvents.onRoomObject` reports object selection. Outdoor and interior camera positions remain encapsulated here.
+- `app/components/world/WorldInteriors.ts` [new]: creates and disposes six authored room groups plus interactive object anchors.
 - `app/components/world/WorldExperience.tsx` [adapt]: manages town / room / artifact / finale UI states and discovery progress. Drawer content remains available as the artifact detail view.
 - `app/styles/world.css` [adapt]: room controls, onboarding, wayfinding, mobile turn controls, and completion UI.
 
@@ -59,7 +69,7 @@ related:
 1. **S1 [done] Contract and baseline.** Production build passed at HEAD; the stable room data, controller events, and completion rules are in `roomActivities.ts`, `WorldScene.ts`, and this plan. The pre-optimization scene sample was collected after room implementation, so it is a valid local draw-call comparison, not an untouched-HEAD frame baseline.
 2. **S2 [done] Interior world.** Reusable room geometry, six visual treatments, four Projects exhibits, camera, object selection, and disposal are implemented in `WorldInteriors.ts` and `WorldScene.ts`.
 3. **S3 [done] Interaction content and progression.** All six actions, object details, discovery rules, and finale are implemented. Browser interaction checks covered all four Projects pieces and all five other locations.
-4. **S4 [done] Wayfinding and mobile controls.** Room signs, onboarding, tap alternatives, turn buttons, responsive layout, and reduced-motion handling are implemented. Keyboard `E` and `Escape` paths were verified in the browser.
+4. **S4 [done] Wayfinding and mobile controls.** Room signs, onboarding, tap alternatives, turn buttons, responsive layout, and reduced-motion handling are implemented. Keyboard `E` and `Escape` paths were verified in the browser. A follow-up adds a fixed camera nudge on each short tap, while holding continues to turn.
 5. **S5 [done locally] Performance and integration.** Static exterior geometry is batched, repeated room geometry is shared, and frame-time sampling can lower pixel ratio. Local browser checks found no horizontal overflow at 320, 375, or 768px, no console errors, and stable room object/label counts after three revisits.
 6. **S6 [in progress] Delivery.** Deliver the feature branch through draft PR #2, present a preview for the user's real-phone test, and record its result. The physical-device check remains open until the user supplies it.
 
@@ -107,3 +117,4 @@ The tasks form one serial critical path. S2–S5 share `WorldScene.ts`, `WorldEx
 ## Notes and amend log
 
 - 2026-10-03: Initial plan from the user's request to plan and execute the previously recommended improvements; expanded by their request for more interaction in different parts of the world.
+- 2026-10-04: Reconciled signatures with the shipped room architecture and added a short-tap camera nudge after mobile verification exposed a control gap.
