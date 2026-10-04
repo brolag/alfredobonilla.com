@@ -139,6 +139,8 @@
 .world-projects { display: grid; gap: 9px; margin: 20px 0 22px; }
 .world-project { display: grid; gap: 4px; padding: 13px 15px 15px; border: 1px solid #dce3d2; border-radius: 12px; background: #f5f5e9; color: #52705d; text-decoration: none; transition: background .2s, transform .2s, border .2s; }
 .world-project:hover { transform: translateY(-2px); border-color: #9dbd9c; background: #eff3e5; }
+.world-project__brand { display: flex; align-items: center; justify-content: center; height: 52px; margin-bottom: 4px; border-radius: 6px; background: #29413d; }
+.world-project__brand img { display: block; width: auto; height: auto; max-width: 75%; max-height: 40px; object-fit: contain; }
 .world-project__top { display: flex; justify-content: space-between; align-items: center; color: #8a9a83; font: 700 9px var(--font-mono), monospace; text-transform: uppercase; }
 .world-project__top svg { color: #659479; }
 .world-project > strong { color: #2e5c47; font-size: 15px; }

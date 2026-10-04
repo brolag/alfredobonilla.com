@@ -1,0 +1,45 @@
+{
+  "title": "Proyectos",
+  "projects": [
+    {
+      "id": "indie-mind",
+      "name": "Indie Mind",
+      "logo": "/brands/indie-mind.png",
+      "description": "Herramientas abiertas y sistemas de IA para que creadores independientes construyan y operen con apoyo de agentes.",
+      "descriptionEn": "Open tools and AI systems that help independent builders create and operate with agents alongside them.",
+      "url": "https://www.indiemind.ai/",
+      "tags": ["IA aplicada", "Código abierto"],
+      "tagsEn": ["Applied AI", "Open source"]
+    },
+    {
+      "id": "lyfter",
+      "name": "Lyfter",
+      "logo": "/brands/lyfter.svg",
+      "description": "Programa de formación en desarrollo de software con ruta estructurada, proyectos reales y revisión personalizada de código.",
+      "descriptionEn": "Software development education with a structured path, real projects, and personal code review.",
+      "url": "https://www.lyfter.academy/",
+      "tags": ["Software", "Educación"],
+      "tagsEn": ["Software", "Education"]
+    },
+    {
+      "id": "imagine-paradise",
+      "name": "Imagine Paradise",
+      "logo": "/brands/imagine-paradise.svg",
+      "description": "Mercadeo e inteligencia de negocios en Costa Rica, con productos que conectan marcas, audiencias y datos.",
+      "descriptionEn": "Marketing and business intelligence in Costa Rica, connecting brands, audiences, and data through its products.",
+      "url": "https://imagineparadise.xyz/",
+      "tags": ["Mercadeo", "Datos"],
+      "tagsEn": ["Marketing", "Data"]
+    },
+    {
+      "id": "stone-sphere",
+      "name": "Stone Sphere",
+      "logo": "/brands/stone-sphere.png",
+      "description": "IA aplicada a operaciones: identifica tareas repetitivas, prepara equipos e implementa automatizaciones medibles.",
+      "descriptionEn": "Applied AI for operations: finding repetitive work, training teams, and implementing measurable automation.",
+      "url": "https://www.stonesphere.tech/",
+      "tags": ["IA", "Operaciones"],
+      "tagsEn": ["AI", "Operations"]
+    }
+  ]
+}

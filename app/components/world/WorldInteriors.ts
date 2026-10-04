@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { places, type PlaceId } from "./places";
 import { roomActivities } from "./roomActivities";
+import featuredProjects from "../../content/featuredProjects.json";
 
 export interface InteriorObject {
   id: string;
@@ -29,6 +30,10 @@ export function createInteriors(): WorldInteriors {
   const tube = new THREE.CylinderGeometry(1, 1, 1, 10);
   const ring = new THREE.TorusGeometry(0.65, 0.065, 6, 28);
   const materials = new Set<THREE.Material>();
+  const textures = new Set<THREE.Texture>();
+  const imageLoader = new THREE.TextureLoader();
+  const brandSquare = new THREE.PlaneGeometry(0.36, 0.36);
+  const brandWide = new THREE.PlaneGeometry(1.05, 0.34);
   const mat = (color: string, extra: Partial<THREE.MeshStandardMaterialParameters> = {}) => {
     const result = new THREE.MeshStandardMaterial({ color, roughness: 0.73, ...extra });
     materials.add(result);
@@ -90,13 +95,24 @@ export function createInteriors(): WorldInteriors {
         box(group, gold, x, 3.84, -4.27, 0.24, 0.24, 0.23);
       }
     } else if (place.id === "agents") {
-      shape(group, ring, accent, 0, 3.72, -4.25, 2.1, 2.1, 1);
-      shape(group, ring, gold, 0, 3.72, -4.21, 1.35, 1.35, 1);
-      ball(group, glass, 0, 3.72, -4.17, 0.39);
+      // A shared signal above three distinct social stations.
+      ball(group, accent, 0, 3.72, -4.19, 0.28);
+      for (const x of [-1.5, 1.5]) {
+        ball(group, gold, x, 3.72, -4.19, 0.22);
+        box(group, wood, x / 2, 3.72, -4.2, 1.25, 0.07, 0.07);
+      }
     } else if (place.id === "academy") {
-      box(group, wood, 0, 3.62, -4.25, 3.8, 1.82, 0.18);
-      box(group, accent, 0, 3.62, -4.14, 3.53, 1.58, 0.06);
-      for (const x of [-1.1, 0, 1.1]) ball(group, pale, x, 3.62, -4.05, 0.27);
+      for (const x of [-2.6, 2.6]) {
+        box(group, wood, x, 2.97, -4.27, 1.8, 3.2, 0.25);
+        for (let shelf = 0; shelf < 3; shelf++) {
+          box(group, gold, x, 2.1 + shelf * 0.88, -4.05, 1.62, 0.1, 0.34);
+          for (let book = 0; book < 5; book++) box(group, book % 2 ? accent : pale, x - 0.57 + book * 0.28, 2.42 + shelf * 0.88, -4.03, 0.2, 0.52, 0.21);
+        }
+      }
+      box(group, accent, 0, 3.72, -4.22, 2.05, 1.12, 0.14);
+      box(group, pale, -0.42, 3.72, -4.12, 0.78, 0.7, 0.05);
+      box(group, pale, 0.42, 3.72, -4.12, 0.78, 0.7, 0.05);
+      box(group, gold, 0, 3.72, -4.08, 0.06, 0.8, 0.05);
     } else if (place.id === "services") {
       for (const x of [-3.1, -1.55, 0, 1.55, 3.1]) {
         column(group, wood, x, 0.25, -4.13, 0.32, 0.54);
@@ -149,6 +165,13 @@ export function createInteriors(): WorldInteriors {
       activated[place.id][item.id] = beacon;
       reactions[place.id][item.id] = () => {};
       if (place.id === "projects") {
+        const featured = featuredProjects.projects[index];
+        const texture = imageLoader.load(featured.logo);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        textures.add(texture);
+        const logoMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false });
+        materials.add(logoMaterial);
+        shape(stand, index === 1 ? brandWide : brandSquare, logoMaterial, 0, 0.85, 0.625);
         if (index === 0) { // Indie Mind: ideas growing together
           box(stand, accent, 0, 1.99, 0, 0.95, 0.62, 0.14);
           for (const dx of [-0.25, 0, 0.25]) ball(stand, leafLight, dx, 2.38 + Math.abs(dx), 0, 0.2);
@@ -172,11 +195,25 @@ export function createInteriors(): WorldInteriors {
         const seal = ball(stand, gold, 0, 2.15, 0.19, 0.17 + index * 0.03);
         reactions[place.id][item.id] = () => { cover.rotation.y = -0.42; seal.scale.setScalar(0.29); };
       } else if (place.id === "agents") {
-        column(stand, accent, 0, 1.95, 0, 0.33, 0.74);
-        ball(stand, glass, 0, 2.52, 0, 0.52);
-        const core = ball(stand, gold, 0, 2.52, 0, 0.18);
+        box(stand, accent, 0, 2.23, 0, 1.12, 1.12, 0.17);
+        if (index === 0) { // GitHub: source branches
+          box(stand, pale, -0.1, 2.25, 0.13, 0.08, 0.51, 0.05);
+          box(stand, pale, 0.15, 2.42, 0.13, 0.42, 0.08, 0.05);
+          for (const [x, y] of [[-0.1, 1.98], [-0.1, 2.49], [0.34, 2.42]]) ball(stand, gold, x, y, 0.17, 0.11);
+        } else if (index === 1) { // LinkedIn: people and work
+          ball(stand, gold, -0.28, 2.49, 0.17, 0.11);
+          box(stand, pale, -0.28, 2.18, 0.13, 0.12, 0.43, 0.05);
+          box(stand, pale, 0.04, 2.18, 0.13, 0.12, 0.43, 0.05);
+          box(stand, pale, 0.34, 2.18, 0.13, 0.12, 0.43, 0.05);
+          box(stand, pale, 0.19, 2.39, 0.13, 0.3, 0.08, 0.05);
+        } else { // Instagram: camera and lens
+          box(stand, pale, 0, 2.23, 0.13, 0.73, 0.73, 0.06);
+          shape(stand, ring, accent, 0, 2.23, 0.19, 0.36, 0.36, 1);
+          ball(stand, gold, 0.25, 2.47, 0.21, 0.07);
+        }
         const lit = mat("#ffe4a7", { emissive: "#dca350", emissiveIntensity: 0.85 });
-        reactions[place.id][item.id] = () => { core.material = lit; core.scale.setScalar(0.28); };
+        const light = ball(stand, glass, 0, 1.51, 0.15, 0.13);
+        reactions[place.id][item.id] = () => { light.material = lit; light.scale.setScalar(0.21); };
       } else if (place.id === "academy") {
         const cover = box(stand, accent, 0, 2.04, 0, 0.82, 0.86, 0.16);
         box(stand, pale, 0, 2.06, 0.1, 0.6, 0.6, 0.05);
@@ -228,7 +265,8 @@ export function createInteriors(): WorldInteriors {
     },
     objects(id) { return objects[id]; },
     dispose() {
-      cube.dispose(); globe.dispose(); tube.dispose(); ring.dispose();
+      cube.dispose(); globe.dispose(); tube.dispose(); ring.dispose(); brandSquare.dispose(); brandWide.dispose();
+      textures.forEach((texture) => texture.dispose());
       materials.forEach((material) => material.dispose());
     },
   };

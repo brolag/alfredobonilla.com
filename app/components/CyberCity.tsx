@@ -664,7 +664,7 @@ function BuildingContent({ buildingKey }: { buildingKey: BuildingKey }) {
           </Line>
           {edu && (
             <Line>
-              {edu.description} — <span style={{ color: NEON.yellow }}>{edu.price}</span>
+              {edu.description}
             </Line>
           )}
           <Line>
@@ -712,7 +712,7 @@ function BuildingContent({ buildingKey }: { buildingKey: BuildingKey }) {
             <div key={s.name} className="mb-3">
               <p className="text-xl" style={{ color: NEON.green, textShadow: `0 0 6px ${NEON.green}` }}>{s.name}</p>
               <Line>
-                {s.description} — <span style={{ color: NEON.yellow }}>{s.price}</span>{' '}
+                {s.description}{' '}
                 <NeonLink href={s.url} color={NEON.green}>[{s.cta}]</NeonLink>
               </Line>
             </div>

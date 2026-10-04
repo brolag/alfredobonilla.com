@@ -1,5 +1,6 @@
 import type { PlaceId } from "./places";
-import collaborationsData from "../../content/collaborations.json";
+import featuredProjects from "../../content/featuredProjects.json";
+import contactData from "../../content/contact.json";
 
 export interface RoomItem {
   id: string;
@@ -26,28 +27,28 @@ export const roomActivities: Record<PlaceId, RoomActivity> = {
     ],
   },
   projects: {
-    prompt: "Conoce las cuatro colaboraciones del taller.",
-    completed: "Ya conoces las cuatro colaboraciones del taller.",
-    verb: "Explorar colaboración",
-    items: collaborationsData.collaborations.map(({ id, name, description }) => ({ id, label: name, detail: description })),
+    prompt: "Conoce los cuatro proyectos del taller.",
+    completed: "Ya conoces los cuatro proyectos del taller.",
+    verb: "Explorar proyecto",
+    items: featuredProjects.projects.map(({ id, name, description }) => ({ id, label: name, detail: description })),
   },
   agents: {
-    prompt: "Conecta contexto, herramientas y revisión para encender el observatorio.",
-    completed: "El sistema está conectado: contexto, herramientas y revisión trabajan juntos.",
-    verb: "Conectar nodo",
-    items: [
-      { id: "context", label: "Contexto", detail: "Un agente necesita entender el problema y tener información confiable antes de actuar." },
-      { id: "tools", label: "Herramientas", detail: "Las herramientas le permiten investigar, construir y comprobar resultados." },
-      { id: "review", label: "Revisión", detail: "Las personas y las puertas de calidad mantienen el sistema útil y responsable." },
-    ],
+    prompt: "Explora GitHub, LinkedIn e Instagram para encontrarme en la red.",
+    completed: "Ya conoces mis tres espacios para compartir y conectar.",
+    verb: "Explorar red",
+    items: contactData.details.filter((detail) => ["github", "linkedin", "instagram"].includes(detail.type)).map((detail) => ({
+      id: detail.type,
+      label: detail.type === "github" ? "GitHub" : detail.type === "linkedin" ? "LinkedIn" : "Instagram",
+      detail: detail.type === "github" ? "Código abierto, experimentos y herramientas que comparto con la comunidad." : detail.type === "linkedin" ? "Ideas sobre productos, tecnología, equipos y proyectos en marcha." : "Momentos del trabajo creativo y de la vida fuera de la pantalla.",
+    })),
   },
   academy: {
-    prompt: "Elige una ruta de aprendizaje y abre una lección.",
-    completed: "Has elegido una ruta para aprender construyendo.",
-    verb: "Abrir lección",
+    prompt: "Elige un libro para comenzar una ruta de aprendizaje.",
+    completed: "Has elegido una ruta. Abre sus recursos y construye algo propio.",
+    verb: "Abrir libro",
     items: [
-      { id: "build", label: "Crear un producto", detail: "Parte de una idea pequeña, prototípala y compártela con personas reales." },
-      { id: "learn-ai", label: "Explorar IA", detail: "Aprende fundamentos, prueba herramientas y conviértelas en un flujo útil." },
+      { id: "build", label: "Crear un producto", detail: "Define un problema pequeño, crea un prototipo y compártelo con personas reales. Usa la plantilla Second Brain para ordenar ideas y aprendizajes." },
+      { id: "learn-ai", label: "Construir con IA", detail: "Aprende los fundamentos de los agentes, pruébalos en un flujo pequeño y revisa sus resultados. Neural Claude Code es un ejemplo abierto para explorar." },
     ],
   },
   services: {

@@ -17,7 +17,7 @@ export const paperCopy = {
         "Soy Alfredo Bonilla, fundador de Indie Mind. Llevo más de 14 años creando software y hoy me especializo en soluciones con IA y desarrollo con agentes desde Costa Rica.",
         "En Indie Mind construyo productos y servicios que usan IA: sistemas con varios agentes, automatización de contenidos y plataformas educativas para desarrolladores.",
         "Trabajo con Next.js, TypeScript, TailwindCSS, Claude Code, OpenAI, orquestación de múltiples modelos y n8n.",
-        "He creado herramientas de código abierto como Neural Claude Code, Mission Control y Cortex. También he colaborado con Indie Mind, Lyfter, Imagine Paradise y Stone Sphere en educación, productos e IA aplicada.",
+        "He creado herramientas de código abierto como Neural Claude Code, Mission Control y Cortex. También participo en Indie Mind, Lyfter, Imagine Paradise y Stone Sphere, proyectos de educación, productos digitales e IA aplicada.",
         "Creo en diseñar sistemas que nos ayuden a avanzar sin perder el criterio humano. Fuera del teclado, disfruto los juegos de mesa, la naturaleza y la música.",
       ],
       factLabels: { based: "Base", now: "Ahora", believes: "Creo en", "off-duty": "Fuera del teclado" },
@@ -34,9 +34,9 @@ export const paperCopy = {
       lede: "Sistemas de IA que llegan a producción, educación para desarrolladores y liderazgo técnico para equipos que necesitan avanzar con claridad.",
     },
     work: {
-      eyebrow: "03 · colaboraciones y proyectos",
-      title: "Personas y proyectos.",
-      lede: "Equipos con los que he colaborado, seguidos de herramientas que he creado y compartido.",
+      eyebrow: "03 · proyectos y herramientas",
+      title: "Proyectos y herramientas.",
+      lede: "Cuatro proyectos en los que trabajo y herramientas abiertas que he creado y compartido.",
     },
     skills: { eyebrow: "04 · herramientas", title: "Lo que uso a diario" },
     contact: {
@@ -67,9 +67,9 @@ export const paperCopy = {
       lede: "AI systems that ship, education for developers, and technical leadership for teams that need a steady hand.",
     },
     work: {
-      eyebrow: "03 · collaborations & selected work",
-      title: "People and projects.",
-      lede: "Teams I've collaborated with, followed by tools I've built and shared.",
+      eyebrow: "03 · projects & open tools",
+      title: "Projects and tools.",
+      lede: "Four projects I work on, followed by open tools I've built and shared.",
     },
     skills: { eyebrow: "04 · toolbox", title: "What I use daily" },
     contact: {

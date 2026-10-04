@@ -197,11 +197,13 @@
 .card:nth-child(5) { animation-delay: 0.32s; border-left-color: var(--green); }
 .card:nth-child(6) { animation-delay: 0.4s; border-left-color: var(--accent); }
 .card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35); }
+.card-brand { display: flex; align-items: center; justify-content: center; width: 100%; height: 64px; margin-bottom: 10px; border-radius: 6px; background: #29413d; }
+.card-brand img { display: block; max-width: 78%; max-height: 48px; width: auto; height: auto; object-fit: contain; }
+.card-brand--indie-mind img, .card-brand--stone-sphere img, .card-brand--imagine-paradise img { max-height: 46px; }
 .card h3 { margin: 0 0 4px; font-size: 1em; color: var(--fg); display: flex; justify-content: space-between; gap: 8px; }
 .card h3 a { font-size: 0.85em; color: var(--comment); text-decoration: none; }
 .card h3 a:hover { color: var(--cyan); }
 .card p { margin: 0 0 8px; color: var(--comment); font-size: 0.92em; line-height: 1.45; }
-.card .price { color: var(--yellow); font-size: 0.9em; margin-bottom: 6px; font-family: var(--font-mono), monospace; }
 .card .tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .card .tags span { font-size: 0.78em; padding: 1px 7px; border-radius: 999px; background: var(--sel); color: var(--accent); }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } }

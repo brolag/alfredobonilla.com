@@ -231,8 +231,12 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       cylinder(g, 1.42, 1.55, 1.5, 0, 4.02, -0.1, m.glass, 12);
       for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; cylinder(g, 0.055, 0.055, 1.65, Math.sin(a) * 1.5, 4.04, Math.cos(a) * 1.5 - 0.1, m.wood, 6); }
       cylinder(g, 1.8, 1.58, 0.28, 0, 4.83, -0.1, m.roof, 12);
-      cylinder(g, 0.08, 0.1, 1.1, 0, 5.43, -0.1, m.wood, 8);
-      sphere(g, 0.3, 0, 5.98, -0.1, m.gold, 1);
+      for (const [x, y] of [[-0.95, 5.5], [0, 5.95], [0.95, 5.5]]) {
+        cylinder(g, 0.07, 0.07, y - 4.95, x, (y + 4.95) / 2, -0.1, m.wood, 6);
+        sphere(g, 0.22, x, y, -0.1, m.gold, 1);
+      }
+      const leftSignal = box(g, 1.12, 0.055, 0.06, -0.49, 5.67, -0.1, m.gold); leftSignal.rotation.z = 0.44;
+      const rightSignal = box(g, 1.12, 0.055, 0.06, 0.49, 5.67, -0.1, m.gold); rightSignal.rotation.z = -0.44;
       frontDoor(g, 1.73); buildingWindow(g, -1.14, 1.9, 1.68, 0.5); buildingWindow(g, 1.14, 1.9, 1.68, 0.5);
       const ring = mesh(g, new THREE.TorusGeometry(2.08, 0.055, 6, 32), m.gold, 0, 3.23, -0.1); ring.rotation.x = Math.PI / 2;
       solarPanel(g, -1.55, 0.55, -2.32, -0.16); solarPanel(g, 1.55, 0.55, -2.32, -0.16);
@@ -243,7 +247,13 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       cylinder(g, 0.28, 0.34, 0.38, 0, 3.91, -0.1, m.gold, 8);
       for (const side of [-1, 1]) { box(g, 0.92, 0.78, 1.1, side * 1.25, 0.8, -0.2, m.plaster); box(g, 0.95, 0.07, 1.14, side * 1.25, 1.22, -0.2, m.wood); }
       const banner = box(g, 0.9, 1.35, 0.05, 0, 1.68, 1.78, m.pink, false); banner.rotation.x = -0.1;
-      box(g, 0.11, 0.68, 0.07, 0, 1.72, 1.83, m.gold, false);
+      box(g, 0.31, 0.63, 0.07, -0.18, 1.72, 1.84, m.plaster, false);
+      box(g, 0.31, 0.63, 0.07, 0.18, 1.72, 1.84, m.plaster, false);
+      box(g, 0.055, 0.7, 0.08, 0, 1.72, 1.89, m.gold, false);
+      for (const side of [-1, 1]) {
+        box(g, 0.86, 1.16, 0.35, side * 1.25, 0.8, 0.6, m.wood);
+        for (let n = 0; n < 4; n++) box(g, 0.12, 0.52, 0.23, side * 1.25 - 0.31 + n * 0.21, 0.79, 0.81, n % 2 ? m.pink : m.gold);
+      }
       solarPanel(g, -2.5, 0.85, -1.9); solarPanel(g, 2.5, 0.85, -1.9);
     } else if (place.id === "services") {
       box(g, 4.3, 0.45, 3.5, 0, 0.55, -0.1, m.earth);

@@ -2,31 +2,37 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import featuredProjects from "../../content/featuredProjects.json";
 import projectsData from "../../content/projects.json";
-import collaborationsData from "../../content/collaborations.json";
-import skillsData from "../../content/skills.json";
 import contactData from "../../content/contact.json";
 import { PlaceIcon } from "./PlaceIcon";
 import { placeById, places, type PlaceId } from "./places";
 import { roomActivities, roomIsComplete } from "./roomActivities";
 import type { WorldController } from "./WorldScene";
 
-const collaborations = collaborationsData.collaborations;
-const agentProjects = projectsData.projects.filter((project) => ["Neural Claude Code", "Mission Control", "Cortex"].includes(project.name));
+const featured = featuredProjects.projects;
+const socialLinks = contactData.details.filter((detail) => ["github", "linkedin", "instagram"].includes(detail.type));
+const libraryResources = {
+  build: projectsData.projects.find((project) => project.name === "Second Brain Template"),
+  "learn-ai": projectsData.projects.find((project) => project.name === "Neural Claude Code"),
+};
 
 const projectDescriptions: Record<string, string> = {
   "Neural Claude Code": "Un framework abierto de agentes para desarrollar software con varios modelos de IA.",
   "Mission Control": "Un panel para coordinar agentes de IA y sus tareas desde un solo lugar.",
   "Cortex": "Controles de calidad para flujos de trabajo impulsados por agentes.",
+  "Second Brain Template": "Una plantilla abierta para ordenar ideas, proyectos y aprendizajes en Obsidian.",
 };
 
 function ArrowIcon({ diagonal = false }: { diagonal?: boolean }) {
   return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{diagonal ? <><path d="M5 19 19 5M8 5h11v11"/></> : <><path d="M4 12h16m-7-7 7 7-7 7"/></>}</svg>;
 }
 
-function ProjectCard({ project }: { project: { name: string; description: string; url: string; tags: string[] } }) {
+function ProjectCard({ project }: { project: { name: string; description: string; url: string; tags: string[]; logo?: string; id?: string } }) {
   const hasProjectLink = project.url !== "https://github.com/brolag";
   const content = <>
+    {project.logo && <span className={`world-project__brand world-project__brand--${project.id}`}><Image src={project.logo} alt={`Logo de ${project.name}`} width={project.id === "lyfter" ? 108 : 40} height={40}/></span>}
     <span className="world-project__top"><span>{project.tags.slice(0, 2).join(" · ")}</span>{hasProjectLink && <ArrowIcon diagonal/>}</span>
     <strong>{project.name}</strong>
     <span>{projectDescriptions[project.name] ?? project.description}</span>
@@ -34,7 +40,8 @@ function ProjectCard({ project }: { project: { name: string; description: string
   return hasProjectLink ? <a className="world-project" href={project.url} target="_blank" rel="noopener noreferrer">{content}</a> : <article className="world-project">{content}</article>;
 }
 
-function PlaceContent({ id, onNavigate }: { id: PlaceId; onNavigate: (id: PlaceId) => void }) {
+function PlaceContent({ id, onNavigate, selection }: { id: PlaceId; onNavigate: (id: PlaceId) => void; selection?: string }) {
+  const libraryResource = selection === "build" ? libraryResources.build : libraryResources["learn-ai"];
   switch (id) {
     case "about": return <>
       <p className="world-panel__lead">Soy Alfredo Bonilla: ingeniero de software, educador y fundador de Indie Mind.</p>
@@ -44,22 +51,19 @@ function PlaceContent({ id, onNavigate }: { id: PlaceId; onNavigate: (id: PlaceI
       <button className="world-text-link" onClick={() => onNavigate("contact")}>Conversemos <ArrowIcon/></button>
     </>;
     case "projects": return <>
-      <p className="world-panel__lead">Cuatro colaboraciones en educación, producto, estrategia e IA aplicada.</p>
-      <div className="world-projects">{collaborations.map((project) => <ProjectCard key={project.id} project={project}/>)}</div>
+      <p className="world-panel__lead">Cuatro proyectos que reúnen educación, producto, mercadeo e IA aplicada.</p>
+      <div className="world-projects">{featured.map((project) => <ProjectCard key={project.id} project={project}/>)}</div>
       <a className="world-text-link" href="https://github.com/brolag" target="_blank" rel="noopener noreferrer">Más trabajo en GitHub <ArrowIcon diagonal/></a>
     </>;
     case "agents": return <>
-      <p className="world-panel__lead">La IA funciona mejor cuando tiene contexto, herramientas y un buen sistema de trabajo.</p>
-      <p>Diseño flujos donde varios agentes colaboran en investigación, desarrollo y control de calidad. Estos son algunos proyectos que muestran esa dirección:</p>
-      <div className="world-projects">{agentProjects.map((project) => <ProjectCard key={project.name} project={project}/>)}</div>
-      <div className="world-skill-cloud">{skillsData.categories[0].skills.slice(0, 5).map((skill) => <span key={skill}>{skill}</span>)}</div>
+      <p className="world-panel__lead">Cada red muestra una parte distinta de lo que hago.</p>
+      <p>En GitHub comparto código, en LinkedIn converso sobre tecnología y trabajo, y en Instagram aparecen ideas y momentos fuera del teclado.</p>
+      <div className="world-contact-list">{socialLinks.map((detail) => <a key={detail.type} href={detail.url} target="_blank" rel="noopener noreferrer"><span>{detail.type === "github" ? "Código" : detail.type === "linkedin" ? "Trayectoria" : "Detrás de escena"}</span><strong>{detail.type === "github" ? "GitHub" : detail.type === "linkedin" ? "LinkedIn" : "Instagram"}</strong><ArrowIcon diagonal/></a>)}</div>
     </>;
     case "academy": return <>
-      <p className="world-panel__lead">Aprender haciendo es la idea detrás de Indie Mind.</p>
-      <p>Un espacio de educación para desarrolladores que quieren usar IA con intención: desde fundamentos hasta sistemas de agentes y productos reales.</p>
-      <div className="world-feature"><span className="world-feature__number">01</span><div><strong>Educación aplicada</strong><span>Cursos, experiencias y herramientas para pasar de la teoría a proyectos que funcionan.</span></div></div>
-      <div className="world-feature"><span className="world-feature__number">02</span><div><strong>Comunidad de constructores</strong><span>Aprender junto a personas que experimentan, comparten y publican su trabajo.</span></div></div>
-      <a className="world-primary-link" href="https://indie-mind.com" target="_blank" rel="noopener noreferrer">Visitar Indie Mind <ArrowIcon diagonal/></a>
+      <p className="world-panel__lead">Una biblioteca para aprender mientras construyes.</p>
+      <p>Abre una ruta, elige un recurso y llévalo a un proyecto propio. Estas herramientas abiertas son un buen punto de partida.</p>
+      {libraryResource && <div className="world-projects"><ProjectCard project={libraryResource}/></div>}
     </>;
     case "services": return <>
       <p className="world-panel__lead">Colaboremos para convertir una idea compleja en un sistema útil.</p>
@@ -247,7 +251,8 @@ export default function WorldExperience() {
 
   const active = activePlace ? placeById[activePlace] : null;
   const selected = selectedItem ? roomActivities[selectedItem.place].items.find((item) => item.id === selectedItem.id) : null;
-  const selectedProject = selectedItem?.place === "projects" ? collaborations.find((project) => project.id === selectedItem.id) : null;
+  const selectedProject = selectedItem?.place === "projects" ? featured.find((project) => project.id === selectedItem.id) : null;
+  const selectedSocial = selectedItem?.place === "agents" ? socialLinks.find((detail) => detail.type === selectedItem.id) : null;
   const room = roomPlace ? placeById[roomPlace] : null;
   return <main id="world-main-content" tabIndex={-1} className={`world-root ${started ? "world-root--exploring" : ""}`} lang="es">
     <div className="world-sky" aria-hidden="true"/>
@@ -282,7 +287,7 @@ export default function WorldExperience() {
       <div className="world-map__top"><span>EL POBLADO · {visited.length}/6 DESCUBIERTOS</span><button onClick={() => setMapOpen(false)} aria-label="Cerrar mapa">×</button></div><h2>Elige un destino.</h2><p>{visited.length === places.length ? "¡Recorrido completo! Puedes volver a cualquier lugar." : "Camina o viaja directamente para descubrir cada lugar."}</p><div className="world-map__list">{places.map((place, index) => <button key={place.id} onClick={() => openPlace(place.id)} tabIndex={mapOpen ? 0 : -1}><span className="world-map__number">0{index + 1}</span><span className="world-map__glyph" style={{ color: place.color }}><PlaceIcon id={place.id}/></span><span><strong>{place.name}</strong><small>{place.shortName} · {visited.includes(place.id) ? "descubierto" : "sin descubrir"}</small></span><ArrowIcon/></button>)}</div>
     </aside>}
 
-    {active && selected && <><button className="world-panel-backdrop" aria-label="Volver a la sala" onClick={closePlace}/><aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title"><div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: active.color }}/>{active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Volver a la sala">×</button></div><div className="world-panel__icon" style={{ color: active.color }}><PlaceIcon id={active.id} size={31}/></div><h2 id="world-panel-title">{selected.label}</h2><p className="world-panel__summary">{selected.detail}</p><div className="world-panel__rule"/><div className="world-panel__body">{selectedProject ? <><p className="world-panel__lead">Una colaboración del taller.</p><div className="world-projects"><ProjectCard project={selectedProject}/></div></> : <PlaceContent id={active.id} onNavigate={openPlace}/>}</div><div className="world-panel__footer"><span>{usedByPlace[active.id].length}/{roomActivities[active.id].items.length} OBJETOS EXPLORADOS</span><button onClick={closePlace}>Volver a la sala <ArrowIcon/></button></div></aside></>}
+    {active && selected && <><button className="world-panel-backdrop" aria-label="Volver a la sala" onClick={closePlace}/><aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title"><div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: active.color }}/>{active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Volver a la sala">×</button></div><div className="world-panel__icon" style={{ color: active.color }}><PlaceIcon id={active.id} size={31}/></div><h2 id="world-panel-title">{selected.label}</h2><p className="world-panel__summary">{selected.detail}</p><div className="world-panel__rule"/><div className="world-panel__body">{selectedProject ? <><p className="world-panel__lead">Un proyecto del taller.</p><div className="world-projects"><ProjectCard project={selectedProject}/></div></> : selectedSocial ? <><a className="world-primary-link" href={selectedSocial.url} target="_blank" rel="noopener noreferrer">Abrir {selected.label} <ArrowIcon diagonal/></a><PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/></> : <PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/>}</div><div className="world-panel__footer"><span>{usedByPlace[active.id].length}/{roomActivities[active.id].items.length} OBJETOS EXPLORADOS</span><button onClick={closePlace}>Volver a la sala <ArrowIcon/></button></div></aside></>}
 
     {showFinale && !active && <div className="world-finale" role="dialog" aria-modal="true" aria-labelledby="world-finale-title"><span>✳ RECORRIDO COMPLETO</span><h2 id="world-finale-title">El poblado ya es tuyo.</h2><p>Exploraste las seis ideas que lo mantienen vivo. Gracias por caminar conmigo.</p><div><button ref={finaleButton} className="world-enter" onClick={() => { setShowFinale(false); leaveRoom(); }}>Volver al poblado <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("contact")}>Conversemos</button></div></div>}
 
