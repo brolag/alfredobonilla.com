@@ -3,11 +3,13 @@ import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { placeById, places, type PlaceId, type WorldPlace } from "./places";
 import { createInteriors } from "./WorldInteriors";
 import { roomActivities } from "./roomActivities";
+import { projectShowrooms, type ProjectId } from "./projectShowrooms";
 
 interface WorldEvents {
   onNear: (id: PlaceId | null) => void;
   onPick: (id: PlaceId) => void;
   onRoomObject: (id: PlaceId, itemId: string) => void;
+  onProjectObject: (id: ProjectId, itemId: string) => void;
 }
 
 export interface WorldController {
@@ -20,6 +22,7 @@ export interface WorldController {
   interact: () => PlaceId | null;
   interactRoom: () => string | null;
   enterRoom: (id: PlaceId) => void;
+  enterProjectRoom: (id: ProjectId) => void;
   exitRoom: () => void;
   activateRoomObject: (id: PlaceId, itemId: string) => void;
   travelTo: (id: PlaceId) => void;
@@ -441,7 +444,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   }
 
   let exploring = false, focused: PlaceId | null = null, near: PlaceId | null = null, disposed = false, paused = false;
-  let activeRoom: PlaceId | null = null, roomYaw = 0, roomPitch = 0;
+  let activeRoom: PlaceId | null = null, activeProject: ProjectId | null = null, roomYaw = 0, roomPitch = 0;
   let yaw = 0, pitch = 0;
   let currentView = mount.clientWidth < 700 ? 28 : mount.clientWidth <= 1100 ? 20 : mount.clientWidth <= 1500 ? 19 : 16.5;
   const pressed = new Set<string>();
@@ -545,7 +548,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       const distance = Math.hypot(avatarRoot.position.x - p.x, avatarRoot.position.z - p.z);
       label.hidden = activeRoom !== null || projector.z > 1 || Math.abs(projector.x) > 0.84 || Math.abs(projector.y) > 0.77 || (exploring && (distance > 18 || near === p.id || focused !== null)) || (!exploring && width <= 1100) || (!exploring && width <= 1500 && labelX < Math.min(width * 0.55, 720));
     });
-    if (activeRoom) interiors.objects(activeRoom).forEach((object, index) => {
+    if (activeRoom) (activeProject ? interiors.projectObjects(activeProject) : interiors.objects(activeRoom)).forEach((object, index) => {
       projector.copy(object.position).project(roomCamera);
       const label = roomLabels[index];
       label.style.left = `${(projector.x * 0.5 + 0.5) * width}px`;
@@ -565,14 +568,14 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       }
       let sceneObjects = 0;
       currentScene.traverse(() => { sceneObjects += 1; });
-      mount.dataset.worldMetrics = JSON.stringify({ fps: Math.round(1 / average), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, sceneObjects, pixelRatio: Number(renderRatio.toFixed(2)), quality, room: activeRoom ?? "town" });
+      mount.dataset.worldMetrics = JSON.stringify({ fps: Math.round(1 / average), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, sceneObjects, pixelRatio: Number(renderRatio.toFixed(2)), quality, room: activeProject ?? activeRoom ?? "town" });
     }
     frame = window.requestAnimationFrame(update);
   }
   update();
 
   return {
-    setExploring(value) { exploring = value; if (!value) { pressed.clear(); focused = null; activeRoom = null; roomLabels.splice(0).forEach((label) => label.remove()); avatarRoot.position.set(3.3, 0.1, 4.5); yaw = 0; pitch = 0; near = null; events.onNear(null); } },
+    setExploring(value) { exploring = value; if (!value) { pressed.clear(); focused = null; activeRoom = null; activeProject = null; roomLabels.splice(0).forEach((label) => label.remove()); avatarRoot.position.set(3.3, 0.1, 4.5); yaw = 0; pitch = 0; near = null; events.onNear(null); } },
     setInput(key, down) { if (down) pressed.add(key); else pressed.delete(key); },
     turnBy(radians) {
       if (!exploring || focused || paused) return;
@@ -587,7 +590,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       if (!activeRoom || paused || focused) return null;
       const forward = new THREE.Vector3(0, 0, -1).applyEuler(roomCamera.rotation);
       let best: string | null = null, bestDot = 0.86;
-      for (const object of interiors.objects(activeRoom)) {
+      for (const object of activeProject ? interiors.projectObjects(activeProject) : interiors.objects(activeRoom)) {
         const direction = object.position.clone().sub(roomCamera.position).normalize();
         const dot = forward.dot(direction);
         if (dot > bestDot) { bestDot = dot; best = object.id; }
@@ -595,7 +598,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       return best;
     },
     enterRoom(id) {
-      activeRoom = id; focused = null; paused = false; pressed.clear(); roomYaw = 0; roomPitch = 0;
+      activeRoom = id; activeProject = null; focused = null; paused = false; pressed.clear(); roomYaw = 0; roomPitch = 0;
       interiors.enter(id);
       roomLabels.splice(0).forEach((label) => label.remove());
       for (const item of roomActivities[id].items) {
@@ -608,7 +611,20 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       }
       near = null; events.onNear(null);
     },
-    exitRoom() { activeRoom = null; focused = null; pressed.clear(); roomLabels.splice(0).forEach((label) => label.remove()); },
+    enterProjectRoom(id) {
+      activeRoom = "projects"; activeProject = id; focused = null; paused = false; pressed.clear(); roomYaw = 0; roomPitch = 0;
+      interiors.enterProject(id);
+      roomLabels.splice(0).forEach((label) => label.remove());
+      for (const item of projectShowrooms[id].stations) {
+        const label = document.createElement("button");
+        label.type = "button"; label.className = "world-room-label";
+        label.textContent = item.label;
+        label.setAttribute("aria-label", `Explorar ${item.label}`);
+        label.addEventListener("click", () => events.onProjectObject(id, item.id));
+        mount.appendChild(label); roomLabels.push(label);
+      }
+    },
+    exitRoom() { activeRoom = null; activeProject = null; focused = null; pressed.clear(); roomLabels.splice(0).forEach((label) => label.remove()); },
     activateRoomObject(id, itemId) { interiors.activate(id, itemId); },
     travelTo(id) { const p = placeById[id], front = p.z < 0 ? 1 : -1; avatarRoot.position.set(p.x, 0.1, p.z + front * 6.2); yaw = front > 0 ? 0 : Math.PI; pitch = 0.08; near = id; events.onNear(id); },
     focus(id) { focused = id; pressed.clear(); if (id) { near = null; events.onNear(null); } },

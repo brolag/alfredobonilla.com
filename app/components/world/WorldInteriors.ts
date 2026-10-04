@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { places, type PlaceId } from "./places";
 import { roomActivities } from "./roomActivities";
 import featuredProjects from "../../content/featuredProjects.json";
+import { projectShowrooms, type ProjectId } from "./projectShowrooms";
 
 export interface InteriorObject {
   id: string;
@@ -11,8 +12,10 @@ export interface InteriorObject {
 export interface WorldInteriors {
   scene: THREE.Scene;
   enter: (id: PlaceId) => void;
+  enterProject: (id: ProjectId) => void;
   activate: (id: PlaceId, itemId: string) => void;
   objects: (id: PlaceId) => readonly InteriorObject[];
+  projectObjects: (id: ProjectId) => readonly InteriorObject[];
   dispose: () => void;
 }
 
@@ -31,6 +34,7 @@ export function createInteriors(): WorldInteriors {
   const ring = new THREE.TorusGeometry(0.65, 0.065, 6, 28);
   const materials = new Set<THREE.Material>();
   const textures = new Set<THREE.Texture>();
+  const galleryGeometries = new Set<THREE.BufferGeometry>();
   const imageLoader = new THREE.TextureLoader();
   const brandSquare = new THREE.PlaneGeometry(0.36, 0.36);
   const brandWide = new THREE.PlaneGeometry(1.05, 0.34);
@@ -47,6 +51,9 @@ export function createInteriors(): WorldInteriors {
   const activated = {} as Record<PlaceId, Record<string, THREE.Mesh>>;
   const reactions = {} as Record<PlaceId, Record<string, () => void>>;
   let current: PlaceId | null = null;
+  let currentProject: ProjectId | null = null;
+  const projectRooms: Record<string, THREE.Group> = {};
+  const projectObjects: Record<string, InteriorObject[]> = {};
 
   function shape(parent: THREE.Object3D, geometry: THREE.BufferGeometry, material: THREE.Material, x: number, y: number, z: number, sx = 1, sy = 1, sz = 1) {
     const mesh = new THREE.Mesh(geometry, material);
@@ -58,6 +65,63 @@ export function createInteriors(): WorldInteriors {
   const box = (p: THREE.Object3D, m: THREE.Material, x: number, y: number, z: number, w: number, h: number, d: number) => shape(p, cube, m, x, y, z, w, h, d);
   const ball = (p: THREE.Object3D, m: THREE.Material, x: number, y: number, z: number, r: number) => shape(p, globe, m, x, y, z, r, r, r);
   const column = (p: THREE.Object3D, m: THREE.Material, x: number, y: number, z: number, r: number, h: number) => shape(p, tube, m, x, y, z, r, h, r);
+
+  function buildProjectRoom(id: ProjectId) {
+    const config = projectShowrooms[id];
+    const group = new THREE.Group();
+    const accent = mat(config.color), wall = mat(config.wall);
+    const trim = mat("#f9f2df"), frame = mat("#49635e");
+    const xs = [-3.1, 0, 3.1];
+    projectObjects[id] = [];
+    box(group, trim, 0, -0.18, 0, 11, 0.36, 11);
+    box(group, wall, 0, 3.1, -4.7, 11, 6.2, 0.35);
+    box(group, wall, -5.42, 3.1, 0, 0.3, 6.2, 9.7);
+    box(group, wall, 5.42, 3.1, 0, 0.3, 6.2, 9.7);
+    box(group, accent, 0, 5.34, -4.44, 8.5, 0.13, 0.12);
+    box(group, frame, 0, 0.015, -1.3, 8.9, 0.04, 4.6);
+    box(group, wall, 0, 0.05, -1.3, 8.55, 0.04, 4.3);
+    for (const x of [-4.7, 4.7]) {
+      column(group, frame, x, 0.62, 1.7, 0.45, 1.25);
+      ball(group, accent, x, 1.42, 1.7, 0.64);
+    }
+    config.stations.forEach((station, index) => {
+      const x = xs[index];
+      projectObjects[id].push({ id: station.id, position: new THREE.Vector3(x, 2.6, -3.2) });
+      box(group, frame, x, 2.87, -4.32, 2.64, 2.14, 0.2);
+      box(group, trim, x, 2.87, -4.18, 2.43, 1.93, 0.07);
+      const geometry = new THREE.PlaneGeometry(2.26, 1.64);
+      galleryGeometries.add(geometry);
+      const texture = imageLoader.load(station.image, (loaded) => {
+        const image = loaded.image as { width?: number; height?: number };
+        const aspect = (image.width ?? 1) / (image.height ?? 1);
+        const width = Math.min(2.26, 1.64 * aspect);
+        const height = Math.min(1.64, 2.26 / aspect);
+        imagePlane.scale.set(width / 2.26, height / 1.64, 1);
+      });
+      texture.colorSpace = THREE.SRGBColorSpace;
+      textures.add(texture);
+      const photo = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, toneMapped: false });
+      materials.add(photo);
+      const imagePlane = shape(group, geometry, photo, x, 2.87, -4.12);
+      box(group, accent, x, 1.68, -4.11, 2.35, 0.12, 0.08);
+      box(group, frame, x, 0.74, -2.52, 1.9, 1.43, 1.2);
+      box(group, accent, x, 1.5, -2.52, 2.1, 0.1, 1.37);
+      box(group, trim, x, 0.82, -1.9, 1.55, 0.27, 0.05);
+      ball(group, accent, x, 1.83, -2.52, 0.16);
+    });
+    if (id === "indie-mind") {
+      for (const x of [-0.8, 0, 0.8]) shape(group, ring, accent, x, 4.4 + Math.abs(x) * 0.2, -4.28, 0.5, 0.5, 0.5);
+    } else if (id === "lyfter") {
+      for (let i = 0; i < 4; i++) box(group, accent, -1.2 + i * 0.8, 4.04 + i * 0.16, -4.28, 0.58, 0.28 + i * 0.32, 0.14);
+    } else if (id === "imagine-paradise") {
+      ball(group, gold, 0, 4.4, -4.2, 0.53);
+      for (const x of [-2.2, 2.2]) ball(group, leaf, x, 4.1, -4.2, 0.43);
+    } else {
+      ball(group, accent, 0, 4.4, -4.2, 0.52);
+      shape(group, ring, gold, 0, 4.4, -4.2, 1.1, 1.1, 1.1).rotation.x = 0.5;
+    }
+    projectRooms[id] = group;
+  }
 
   for (const place of places) {
     const group = new THREE.Group();
@@ -256,16 +320,28 @@ export function createInteriors(): WorldInteriors {
     scene,
     enter(id) {
       if (current) scene.remove(rooms[current]);
+      if (currentProject) scene.remove(projectRooms[currentProject]);
+      currentProject = null;
       current = id;
       scene.add(rooms[id]);
+    },
+    enterProject(id) {
+      if (current) scene.remove(rooms[current]);
+      if (currentProject) scene.remove(projectRooms[currentProject]);
+      if (!projectRooms[id]) buildProjectRoom(id);
+      current = null;
+      currentProject = id;
+      scene.add(projectRooms[id]);
     },
     activate(id, itemId) {
       const beacon = activated[id]?.[itemId];
       if (beacon) { beacon.visible = true; reactions[id][itemId](); }
     },
     objects(id) { return objects[id]; },
+    projectObjects(id) { return projectObjects[id] ?? []; },
     dispose() {
       cube.dispose(); globe.dispose(); tube.dispose(); ring.dispose(); brandSquare.dispose(); brandWide.dispose();
+      galleryGeometries.forEach((geometry) => geometry.dispose());
       textures.forEach((texture) => texture.dispose());
       materials.forEach((material) => material.dispose());
     },
