@@ -1,28 +1,27 @@
-// Time-of-day model for the paper scene: t = 0 is golden dusk (18:40),
-// t = 1 is blue night (23:59). Palettes are interpolated per CSS variable.
+// Time-of-day model for the paper scene: warm afternoon to forest-green night.
 
-const START_MIN = 18 * 60 + 40; // 18:40
-const SPAN_MIN = 5 * 60 + 19; // → 23:59
+const START_MIN = 16 * 60; // 16:00
+const SPAN_MIN = 4 * 60; // → 20:00
 
 const DUSK: Record<string, string> = {
-  "--sky-top": "#3b2a5c", "--sky-mid": "#c9698a", "--sky-bot": "#f7b26a",
-  "--sun": "#ffd28a", "--moon": "#f4f1e6",
-  "--l-far": "#8b6a9c", "--l-mid": "#6a4f83", "--l-hills": "#4f3a6b", "--l-trees": "#3a2a54",
-  "--l-near": "#2b1f44", "--l-front": "#1c1533", "--l-ground": "#130f26",
-  "--cloud": "#f7d5c4",
+  "--sky-top": "#e9f0e4", "--sky-mid": "#dce9df", "--sky-bot": "#f8edca",
+  "--sun": "#e8bd74", "--moon": "#f2e8ca",
+  "--l-far": "#b7d1b0", "--l-mid": "#9bbc83", "--l-hills": "#85a98a", "--l-trees": "#679779",
+  "--l-near": "#4f8067", "--l-front": "#31634d", "--l-ground": "#1c4d3e",
+  "--cloud": "#fbf5e8",
 };
 
 const NIGHT: Record<string, string> = {
-  "--sky-top": "#050a1e", "--sky-mid": "#0f1c44", "--sky-bot": "#24356a",
-  "--sun": "#ff9a5a", "--moon": "#f4f1e6",
-  "--l-far": "#2b3a6b", "--l-mid": "#1f2c55", "--l-hills": "#182243", "--l-trees": "#111935",
-  "--l-near": "#0c122a", "--l-front": "#080c1f", "--l-ground": "#050815",
-  "--cloud": "#3a4a7a",
+  "--sky-top": "#193e36", "--sky-mid": "#2b6055", "--sky-bot": "#6e9c7f",
+  "--sun": "#d99d6d", "--moon": "#f2e8ca",
+  "--l-far": "#557967", "--l-mid": "#3d6d5f", "--l-hills": "#2f5b53", "--l-trees": "#245044",
+  "--l-near": "#1b413a", "--l-front": "#12362f", "--l-ground": "#0d2b27",
+  "--cloud": "#b5d2bd",
 };
 
 // The paper sheet (terminal window) dims slightly as night falls.
-const PAPER_DUSK = { paper: "#f6ead6", ink: "#3b2a2a" };
-const PAPER_NIGHT = { paper: "#e9e2d2", ink: "#1f1d2e" };
+const PAPER_DUSK = { paper: "#f7f2e6", ink: "#193e36" };
+const PAPER_NIGHT = { paper: "#e9ead9", ink: "#193e36" };
 
 function hexToRgb(h: string): [number, number, number] {
   const n = parseInt(h.slice(1), 16);
@@ -51,7 +50,7 @@ export function applyTimeOfDay(t: number, scene: HTMLElement, root: HTMLElement)
 
   // cabin window warms up as it gets dark
   const glow = 0.15 + k * 0.85;
-  scene.style.setProperty("--window", `rgba(255,${Math.round(200 - k * 40)},${Math.round(110 - k * 40)},${glow.toFixed(2)})`);
+  scene.style.setProperty("--window", `rgba(240,${Math.round(198 - k * 25)},${Math.round(124 - k * 20)},${glow.toFixed(2)})`);
 
   root.style.setProperty("--paper", mix(PAPER_DUSK.paper, PAPER_NIGHT.paper, k));
   root.style.setProperty("--paper-ink", mix(PAPER_DUSK.ink, PAPER_NIGHT.ink, k));

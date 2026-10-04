@@ -5,13 +5,13 @@ export function PaperDefs() {
   return (
     <defs>
       <radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="0" stopColor="#ffe6b0" stopOpacity="0.75" />
-        <stop offset="0.45" stopColor="#ffb870" stopOpacity="0.25" />
-        <stop offset="1" stopColor="#ffb870" stopOpacity="0" />
+        <stop offset="0" stopColor="#f8edca" stopOpacity="0.75" />
+        <stop offset="0.45" stopColor="#e8bd74" stopOpacity="0.25" />
+        <stop offset="1" stopColor="#e8bd74" stopOpacity="0" />
       </radialGradient>
       <radialGradient id="moonGlow" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="0" stopColor="#e8f0ff" stopOpacity="0.5" />
-        <stop offset="1" stopColor="#e8f0ff" stopOpacity="0" />
+        <stop offset="0" stopColor="#dce9df" stopOpacity="0.5" />
+        <stop offset="1" stopColor="#dce9df" stopOpacity="0" />
       </radialGradient>
       <mask id="crescent">
         <rect x="0" y="0" width="1600" height="900" fill="#fff" />

@@ -1,7 +1,7 @@
 /*
   /paper — the visual (non-terminal) version. Reuses the paper-cut scene as a
   fixed background; content is a stack of paper sheets. Scrolling advances the
-  time of day (dusk -> night), so the page is a small evening in Costa Rica.
+  time of day (afternoon -> night), so the page is a small evening in Costa Rica.
 */
 
 .paper-site {
@@ -31,7 +31,7 @@
   color: var(--paper-ink);
   padding: 14px 22px 16px;
   border-radius: 6px;
-  box-shadow: 0 12px 20px -8px rgba(30, 15, 40, 0.5), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  box-shadow: 0 12px 20px -8px rgba(25, 62, 54, 0.28), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
   transform: rotate(-1.2deg);
   transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.6s ease, color 0.6s ease;
   animation: settle 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -47,7 +47,7 @@
   background: var(--paper); color: var(--paper-ink);
   font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.06em;
   padding: 6px 12px; border-radius: 6px;
-  box-shadow: 0 8px 16px -8px rgba(30, 15, 40, 0.5);
+  box-shadow: 0 8px 16px -8px rgba(25, 62, 54, 0.28);
   transform: translateY(12px) rotate(-1deg); opacity: 0; pointer-events: none;
   transition: opacity 0.4s ease, transform 0.4s ease, background-color 0.6s ease, color 0.6s ease;
 }
@@ -56,18 +56,29 @@
 .ps-label p { margin: 6px 0 0; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.65; font-weight: 700; }
 .ps-label .clock { font-family: var(--font-mono), monospace; letter-spacing: 0.04em; opacity: 0.8; margin-left: 8px; }
 
+.ps-top__actions { display: flex; align-items: flex-start; gap: 10px; }
+.ps-language {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  min-height: 36px; padding: 7px 10px; border: 1px solid rgba(32, 85, 63, 0.2); border-radius: 8px;
+  color: #5d7469; background: var(--paper); font: 800 11px var(--font-mono), monospace;
+  cursor: pointer; box-shadow: 0 8px 16px -8px rgba(25, 62, 54, 0.28);
+}
+.ps-language .active { color: #20553f; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.ps-language:hover { background: #fffaf0; }
+.ps-language:focus-visible, .ps-term:focus-visible, .paper-site a:focus-visible { outline: 3px solid #b97650; outline-offset: 3px; }
 .ps-term {
   display: inline-flex; align-items: center; gap: 8px;
-  background: #1c1533; color: #f6ead6;
+  background: #20553f; color: #f7f2e6;
   font-family: var(--font-mono), monospace; font-size: 12px;
   padding: 9px 14px; border-radius: 8px; text-decoration: none;
-  box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 20px -8px rgba(25, 62, 54, 0.35);
   transform: rotate(1deg);
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   animation: settle 1.2s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .ps-term:hover { transform: rotate(0) translateY(-2px); }
-.ps-term .p-sym { color: #ff79c6; }
+.ps-term .p-sym { color: #e8bd74; }
+.ps-term__short { display: none; }
 
 /* tape strip shared by label + sheets */
 .tape::before {
@@ -92,7 +103,8 @@
 }
 .ps-hint {
   font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700;
-  color: #f6ead6; opacity: 0.75; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  color: #20483a; background: rgba(247, 242, 230, 0.9); border: 1px solid rgba(32, 85, 63, 0.15);
+  border-radius: 9px; padding: 8px 14px; box-shadow: 0 8px 22px rgba(25, 62, 54, 0.14);
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   animation: hint-bob 2.4s ease-in-out infinite;
 }
@@ -115,7 +127,7 @@
   color: var(--paper-ink);
   border-radius: 6px;
   padding: clamp(22px, 4vw, 40px);
-  box-shadow: 0 30px 40px -18px rgba(30, 15, 40, 0.6), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  box-shadow: 0 30px 40px -18px rgba(25, 62, 54, 0.38), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
   transform: rotate(var(--rot, -0.6deg)) translateY(24px);
   opacity: 0;
   transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.6s ease, color 0.6s ease;
@@ -155,7 +167,7 @@
 
 .ps-foot {
   text-align: center; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
-  color: #f6ead6; opacity: 0.7; padding-bottom: 6vh; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  color: #f7f2e6; opacity: 0.9; padding-bottom: 6vh; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 .ps-foot a { color: inherit; }
 
@@ -176,10 +188,15 @@
 }
 
 @media (max-width: 640px) {
-  .ps-top { padding: 12px; }
-  .ps-label { padding: 10px 14px 12px; }
+  .ps-top { padding: 12px; gap: 8px; }
+  .ps-label { padding: 10px 12px 12px; max-width: calc(100vw - 128px); }
+  .ps-label h1 { font-size: clamp(1.05rem, 5vw, 1.3rem); }
+  .ps-label p { font-size: 0.56rem; letter-spacing: 0.07em; }
   .ps-label .clock { display: block; margin: 4px 0 0; }
-  .ps-term span.long { display: none; }
+  .ps-top__actions { flex-direction: column; align-items: flex-end; gap: 6px; }
+  .ps-term { padding: 7px 9px; font-size: 11px; }
+  .ps-term__long { display: none; }
+  .ps-term__short { display: inline; }
   .gui-btn span.long { display: none; }
 }
 

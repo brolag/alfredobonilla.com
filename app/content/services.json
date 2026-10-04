@@ -3,30 +3,46 @@
   "services": [
     {
       "name": "🤖 AI Solutions & Consulting",
+      "nameEs": "🤖 Soluciones y consultoría en IA",
       "description": "Custom AI agents, RAG systems, and automation solutions for businesses",
+      "descriptionEs": "Agentes de IA, sistemas RAG y automatizaciones adaptadas a cada negocio",
       "price": "Starting at $5,000/project",
+      "priceEs": "Desde $5,000 por proyecto",
       "cta": "Get AI Consultation",
+      "ctaEs": "Consultar sobre IA",
       "url": "mailto:info@alfredobonilla.com?subject=AI Solutions Consultation"
     },
     {
       "name": "🎓 Indie Mind Education",
-      "description": "AI-first educational products, bootcamps, and focus groups sintéticos",
+      "nameEs": "🎓 Educación en Indie Mind",
+      "description": "AI-first educational products, bootcamps, and synthetic focus groups",
+      "descriptionEs": "Productos educativos centrados en IA, bootcamps y grupos focales sintéticos",
       "price": "From $497/course",
+      "priceEs": "Desde $497 por curso",
       "cta": "Explore Courses",
+      "ctaEs": "Explorar cursos",
       "url": "https://indie-mind.com"
     },
     {
       "name": "🏗️ Technical Leadership",
+      "nameEs": "🏗️ Liderazgo técnico",
       "description": "CTO as a Service, technical strategy, and system architecture design",
+      "descriptionEs": "Dirección técnica, estrategia y diseño de arquitectura de sistemas",
       "price": "$8,000-15,000/month",
+      "priceEs": "$8,000–15,000 por mes",
       "cta": "Book Strategy Call",
+      "ctaEs": "Agendar conversación",
       "url": "https://calendly.com/brolag/sesion-1-1"
     },
     {
       "name": "🧑‍🏫 Mentoring & Training",
+      "nameEs": "🧑‍🏫 Mentoría y formación",
       "description": "Technical guidance for developers in AI and modern web development",
+      "descriptionEs": "Acompañamiento técnico en IA y desarrollo web moderno",
       "price": "$200/hour or $1,500/month",
+      "priceEs": "$200 por hora o $1,500 por mes",
       "cta": "Start Mentoring",
+      "ctaEs": "Empezar mentoría",
       "url": "mailto:info@alfredobonilla.com?subject=Mentoring Request"
     }
   ]

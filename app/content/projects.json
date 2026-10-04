@@ -4,26 +4,34 @@
     {
       "name": "Neural Claude Code",
       "description": "Open-source agentic coding framework with multi-AI orchestration and self-improving agents.",
+      "descriptionEs": "Marco de código abierto para programar con agentes y orquestar varios modelos de IA.",
       "url": "https://github.com/brolag/neural-claude-code-plugin",
-      "tags": ["Claude Code", "Agents", "OSS"]
+      "tags": ["Claude Code", "Agents", "OSS"],
+      "tagsEs": ["Claude Code", "Agentes", "Código abierto"]
     },
     {
       "name": "Mission Control",
       "description": "AI fleet management dashboard for orchestrating multiple AI agents and devices.",
+      "descriptionEs": "Panel para coordinar varios agentes de IA y dispositivos.",
       "url": "https://github.com/brolag",
-      "tags": ["Agents", "Dashboard"]
+      "tags": ["Agents", "Dashboard"],
+      "tagsEs": ["Agentes", "Panel"]
     },
     {
       "name": "Cortex",
       "description": "Quality gates framework (DMAIC + ISO 42001) for AI agent workflows.",
+      "descriptionEs": "Puertas de calidad basadas en DMAIC e ISO 42001 para flujos con agentes de IA.",
       "url": "https://github.com/brolag",
-      "tags": ["Quality", "AI Ops"]
+      "tags": ["Quality", "AI Ops"],
+      "tagsEs": ["Calidad", "Operaciones de IA"]
     },
     {
       "name": "Second Brain Template",
       "description": "Open-source Obsidian template for personal knowledge management using the PARA method.",
+      "descriptionEs": "Plantilla abierta para organizar conocimiento personal en Obsidian con el método PARA.",
       "url": "https://github.com/brolag/second-brain",
-      "tags": ["Obsidian", "PKM", "OSS"]
+      "tags": ["Obsidian", "PKM", "OSS"],
+      "tagsEs": ["Obsidian", "Conocimiento", "Código abierto"]
     }
   ]
 }

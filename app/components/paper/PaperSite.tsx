@@ -1,9 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { applyTheme, loadTheme } from "../../lib/theme";
-import { formatClock } from "../../lib/timeOfDay";
+import { clearTimeOfDay, formatClock } from "../../lib/timeOfDay";
 import { PaperScene } from "./PaperScene";
 import { AboutSheet, ServicesSheet, WorkSheet, SkillsSheet, ContactSheet } from "./PaperSections";
+import { paperCopy, type PaperLocale } from "./paperCopy";
+
+const LOCALE_KEY = "alfredo.paper.locale";
 
 /**
  * /paper — the visual version for people who don't want a terminal.
@@ -12,11 +15,36 @@ import { AboutSheet, ServicesSheet, WorkSheet, SkillsSheet, ContactSheet } from 
  */
 export default function PaperSite() {
   const [time, setTime] = useState(0);
+  const [locale, setLocale] = useState<PaperLocale>("es");
+  const copy = paperCopy[locale];
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(LOCALE_KEY);
+      if (saved === "es" || saved === "en") setLocale(saved);
+    } catch { /* storage may be unavailable */ }
+  }, []);
+
+  useEffect(() => {
+    const previousLang = document.documentElement.lang;
+    document.documentElement.lang = locale;
+    document.title = locale === "es" ? "Alfredo Bonilla — Sobre mí y mi trabajo" : "Alfredo Bonilla — About me and my work";
+    return () => { document.documentElement.lang = previousLang; };
+  }, [locale]);
+
+  const toggleLocale = () => {
+    const next = locale === "es" ? "en" : "es";
+    setLocale(next);
+    try { window.localStorage.setItem(LOCALE_KEY, next); } catch { /* storage may be unavailable */ }
+  };
 
   // Wear the paper theme while mounted; restore the visitor's theme on leave.
   useEffect(() => {
     applyTheme("paper");
-    return () => applyTheme(loadTheme());
+    return () => {
+      clearTimeOfDay(document.documentElement);
+      applyTheme(loadTheme());
+    };
   }, []);
 
   // Scroll progress (0..1) → time of day. rAF-throttled.
@@ -47,7 +75,7 @@ export default function PaperSite() {
   return (
     <>
       <PaperScene time={time} />
-      <div className="paper-site">
+      <div className="paper-site" lang={locale}>
         <div className={`ps-hud${scrolled ? " show" : ""}`} aria-hidden="true">
           {formatClock(time)} · Alfredo Bonilla
         </div>
@@ -55,32 +83,37 @@ export default function PaperSite() {
           <div className={`ps-label tape${scrolled ? " hide" : ""}`}>
             <h1>Alfredo Bonilla</h1>
             <p>
-              founder @ indie mind · costa rica
-              <span className="clock" aria-label="time of day">
+              {copy.subtitle}
+              <span className="clock" aria-label={locale === "es" ? "hora del día" : "time of day"}>
                 {formatClock(time)}
               </span>
             </p>
           </div>
-          <a className="ps-term" href="/">
-            <span className="p-sym">❯</span> <span className="long">open the</span> terminal
-          </a>
+          <div className="ps-top__actions">
+            <button type="button" className="ps-language" onClick={toggleLocale} aria-label={locale === "es" ? "Switch to English" : "Cambiar a español"}>
+              <span className={locale === "es" ? "active" : ""}>ES</span><span aria-hidden="true">/</span><span className={locale === "en" ? "active" : ""}>EN</span>
+            </button>
+            <a className="ps-term" href="/">
+              <span className="p-sym">←</span><span className="ps-term__long">{copy.back}</span><span className="ps-term__short">{copy.backShort}</span>
+            </a>
+          </div>
         </header>
 
-        <div className="ps-hero" aria-hidden="true">
-          <div className="ps-hint">scroll to watch the sun set</div>
+        <div className="ps-hero">
+          <div className="ps-hint">{copy.hint}</div>
         </div>
 
         <main className="ps-flow">
-          <AboutSheet />
-          <ServicesSheet />
-          <WorkSheet />
-          <SkillsSheet />
-          <ContactSheet />
+          <AboutSheet locale={locale} />
+          <ServicesSheet locale={locale} />
+          <WorkSheet locale={locale} />
+          <SkillsSheet locale={locale} />
+          <ContactSheet locale={locale} />
         </main>
 
         <footer className="ps-foot">
-          © {new Date().getFullYear()} Alfredo Bonilla · cut from paper, glued with code ·{" "}
-          <a href="/">terminal version</a>
+          © {new Date().getFullYear()} Alfredo Bonilla · {copy.footer} ·{" "}
+          <a href="/">{copy.back}</a>
         </footer>
       </div>
     </>

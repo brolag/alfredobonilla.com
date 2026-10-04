@@ -5,7 +5,7 @@ import { useParallax } from "./useParallax";
 import { PaperDefs } from "./PaperDefs";
 
 /**
- * Layered paper-cut valley: Costa Rica at dusk. Each <g class="layer"> is a
+ * Layered paper-cut valley: Costa Rica from afternoon into night. Each <g class="layer"> is a
  * sheet with its own parallax factor (--p) and entrance stagger (--i).
  * Back to front: stars, sun, moon, clouds, volcano range, mid range, hills,
  * near hills, ridge with a casita, foreground with a toucan.
@@ -37,7 +37,7 @@ export function PaperScene({ time }: { time: number }) {
   return (
     <div className="paper-scene" ref={ref} aria-hidden="true">
       <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" role="img">
-        <title>Paper-cut valley in Costa Rica at dusk</title>
+        <title>Paper-cut valley in Costa Rica</title>
         <PaperDefs />
 
         <g className="layer stars" style={vars(0.1, 0)}>

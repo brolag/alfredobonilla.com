@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import skillsData from "../../../content/skills.json";
 
 // `skills` output: animated bar per category, with the tool list underneath.
-export function Skills() {
+export function Skills({ locale = "en" }: { locale?: "es" | "en" }) {
   // Bars start at 0 and grow after mount so the CSS transition plays.
   const [grown, setGrown] = useState(false);
   useEffect(() => {
@@ -15,10 +15,10 @@ export function Skills() {
     <>
       <div className="skills">
         {skillsData.categories.map((c) => (
-          <Row key={c.name} name={c.name} level={c.level} skills={c.skills} width={grown ? c.level : 0} />
+          <Row key={c.name} name={locale === "es" ? c.nameEs : c.name} level={c.level} skills={locale === "es" ? c.skillsEs : c.skills} width={grown ? c.level : 0} />
         ))}
       </div>
-      <span className="c-cm">## proficiency is self-reported, like all proficiency</span>
+      <span className="c-cm">{locale === "es" ? "## niveles orientativos, según mi experiencia" : "## proficiency is self-reported, like all proficiency"}</span>
     </>
   );
 }

@@ -73,23 +73,23 @@
   time-of-day slider (dusk -> night) so the sheet dims with the scene.
 */
 [data-theme="paper"] {
-  --paper: #f6ead6;
-  --paper-ink: #3b2a2a;
+  --paper: #f7f2e6;
+  --paper-ink: #193e36;
 
   --bg: var(--paper);
   --bg2: rgba(0, 0, 0, 0.05);
   --fg: var(--paper-ink);
-  --accent: #b3541e;
-  --green: #3b7d3a;
-  --pink: #a8325e;
-  --cyan: #1d6f8a;
-  --yellow: #a67c00;
-  --comment: #8a857a;
+  --accent: #a65d3d;
+  --green: #3f8060;
+  --pink: #b97650;
+  --cyan: #2c766c;
+  --yellow: #9d6e2c;
+  --comment: #5d7469;
   --err: #b0362f;
-  --sel: rgba(179, 84, 30, 0.12);
+  --sel: rgba(32, 85, 63, 0.1);
   --chrome: var(--paper);
-  --border: rgba(0, 0, 0, 0.08);
-  --shadow: 0 30px 40px -16px rgba(30, 15, 40, 0.55), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  --border: rgba(32, 85, 63, 0.16);
+  --shadow: 0 30px 40px -16px rgba(25, 62, 54, 0.35), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
 
   --font-body: var(--font-ui);
 }
