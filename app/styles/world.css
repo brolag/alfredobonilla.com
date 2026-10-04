@@ -25,9 +25,8 @@
 .world-skip:focus { top: 0; }
 .world-header { position: relative; z-index: 12; width: 100%; height: 92px; display: flex; align-items: center; gap: 32px; padding: 0 clamp(24px, 4.2vw, 74px); border-bottom: 1px solid rgba(38,86,67,.11); }
 .world-root--exploring .world-header { background: rgba(247,245,227,.82); backdrop-filter: blur(12px); }
-.world-brand { display: flex; align-items: center; gap: 11px; padding: 0; border: 0; color: var(--world-ink); background: transparent; text-align: left; }
-.world-brand__mark { display: block; flex: none; width: 46px; height: 46px; filter: drop-shadow(0 3px 0 rgba(37, 84, 63, .1)); }
-.world-brand__name { display: grid; gap: 1px; font-size: 11px; font-weight: 800; letter-spacing: .15em; line-height: 1.08; }
+.world-brand { display: flex; align-items: center; padding: 0; border: 0; color: var(--world-ink); background: transparent; text-align: left; }
+.world-brand__name { display: grid; gap: 1px; font-size: 14px; font-weight: 800; letter-spacing: .15em; line-height: 1.08; }
 .world-brand__name strong { font-weight: 800; }
 .world-nav { display: flex; align-items: center; justify-content: center; gap: clamp(14px, 2.3vw, 34px); flex: 1; }
 .world-nav button { padding: 10px 2px; border: 0; background: transparent; color: #37584a; font-size: 13px; font-weight: 800; transition: color .2s; }
@@ -40,8 +39,6 @@
 .world-map-toggle:hover { background: #fff9ed; transform: translateY(-2px); }
 .world-map-toggle__icon { font-size: 25px; line-height: 0; font-weight: 400; transform: translateY(-1px); }
 .world-intro { position: relative; z-index: 3; width: min(530px, 42vw); margin: clamp(50px, 11vh, 138px) 0 100px clamp(25px, 7.5vw, 140px); animation: world-rise .7s ease both; }
-.world-kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 22px; color: #53836a; font: 800 10px/1.4 var(--font-mono), monospace; letter-spacing: .18em; }
-.world-kicker span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #a3b56a; box-shadow: 0 0 0 5px rgba(163,181,106,.18); }
 .world-intro h1 { max-width: 540px; margin: 0; color: #20483a; font-size: clamp(53px, 5.5vw, 88px); font-weight: 900; letter-spacing: -.075em; line-height: .98; text-wrap: balance; }
 .world-intro h1 em { color: #b97650; font-style: normal; }
 .world-intro__copy { max-width: 445px; margin: 24px 0 30px; color: #52695c; font-size: clamp(15px, 1.16vw, 18px); line-height: 1.65; font-weight: 600; }
@@ -222,13 +219,11 @@
   .world-sky { background: radial-gradient(circle at 67% 30%, #f5ebcb, #dce9da 60%, #c8dfd7); }
   .world-sky::after { background: linear-gradient(180deg, rgba(250,246,233,.8), rgba(250,246,233,.26) 52%, transparent 80%); }
   .world-header { height: 70px; padding: 0 19px; }
-  .world-brand__mark { width: 39px; height: 39px; }
-  .world-brand__name { font-size: 9px; }
+  .world-brand__name { font-size: 11px; }
   .world-nav, .world-simple-link { display: none; }
   .world-header__actions { margin-left: auto; }
   .world-map-toggle { min-height: 36px; padding: 0 11px; }
   .world-intro { width: auto; max-width: 530px; margin: 37px 24px 440px; }
-  .world-kicker { font-size: 9px; margin-bottom: 14px; }
   .world-intro h1 { max-width: 440px; font-size: clamp(49px, 12.2vw, 76px); }
   .world-intro__copy { max-width: 430px; margin: 17px 0 19px; font-size: 14px; line-height: 1.5; }
   .world-intro__actions { margin-top: 18px; }

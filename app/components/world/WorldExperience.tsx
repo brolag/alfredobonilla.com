@@ -7,7 +7,6 @@ import collaborationsData from "../../content/collaborations.json";
 import skillsData from "../../content/skills.json";
 import contactData from "../../content/contact.json";
 import { PlaceIcon } from "./PlaceIcon";
-import { BrandMark } from "./BrandMark";
 import { placeById, places, type PlaceId } from "./places";
 import { roomActivities, roomIsComplete } from "./roomActivities";
 import type { WorldController } from "./WorldScene";
@@ -72,8 +71,8 @@ function PlaceContent({ id, onNavigate }: { id: PlaceId; onNavigate: (id: PlaceI
       <button className="world-primary-link" onClick={() => onNavigate("contact")}>Hablemos de tu proyecto <ArrowIcon/></button>
     </>;
     case "contact": return <>
-      <p className="world-panel__lead">¿Construimos algo interesante?</p>
-      <p>Cuéntame qué estás intentando crear. Podemos empezar con un correo o agendar una conversación.</p>
+      <p className="world-panel__lead">Bienvenido a la cafetería. ¿Construimos algo interesante?</p>
+      <p>Tomemos un café y hablemos de lo que quieres crear. Puedes escribirme o reservar un momento para conversar.</p>
       <div className="world-contact-list">{contactData.details.filter((detail) => ["email", "calendar", "github", "linkedin"].includes(detail.type)).map((detail) => <a key={detail.type} href={detail.url} target={detail.type === "email" ? undefined : "_blank"} rel={detail.type === "email" ? undefined : "noopener noreferrer"}><span>{detail.type === "email" ? "Correo" : detail.type === "calendar" ? "Agendar" : detail.type === "github" ? "GitHub" : "LinkedIn"}</span><strong>{detail.label}</strong><ArrowIcon diagonal/></a>)}</div>
     </>;
   }
@@ -256,13 +255,12 @@ export default function WorldExperience() {
     <div ref={sceneMount} className="world-canvas"/>
     <noscript><div className="world-fallback"><p>Activa JavaScript para explorar el poblado o usa la versión simple.</p><Link href="/paper">Abrir vista simple <ArrowIcon/></Link></div></noscript>
     <header className="world-header">
-      <button className="world-brand" onClick={() => { leaveRoom(); setShowFinale(false); setStarted(false); }} aria-label="Volver al inicio"><BrandMark/><span className="world-brand__name"><strong>ALFREDO</strong><strong>BONILLA</strong></span></button>
+      <button className="world-brand" onClick={() => { leaveRoom(); setShowFinale(false); setStarted(false); }} aria-label="Alfredo Bonilla: volver al inicio"><span className="world-brand__name"><strong>ALFREDO</strong><strong>BONILLA</strong></span></button>
       <nav className="world-nav" aria-label="Secciones principales"><button onClick={() => openPlace("about")}>Sobre mí</button><button onClick={() => openPlace("projects")}>Proyectos</button><button onClick={() => openPlace("services")}>Servicios</button><button onClick={() => openPlace("contact")}>Contacto</button></nav>
       <div className="world-header__actions"><Link href="/paper" className="world-simple-link">Vista simple <ArrowIcon diagonal/></Link><button className="world-map-toggle" onClick={() => { setShowHelp(false); setMapOpen((value) => !value); }} aria-expanded={mapOpen} aria-controls="world-map"><span className="world-map-toggle__icon">⌗</span><span>Mapa</span></button></div>
     </header>
 
     {!started && <section className="world-intro" aria-label="Bienvenida">
-      <p className="world-kicker"><span/> UN PORTAFOLIO PARA RECORRER</p>
       <h1>Un mundo por <em>explorar.</em></h1>
       <p className="world-intro__copy">Soy Alfredo. Construyo productos, sistemas de IA y espacios para aprender. Recorre este poblado desde tus propios ojos y descubre cada lugar.</p>
       <div className="world-intro__actions"><button className="world-enter" onClick={enterWorld}>Entrar al mundo <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("projects")}>Ver proyectos</button></div>

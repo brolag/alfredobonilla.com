@@ -61,10 +61,10 @@ export const roomActivities: Record<PlaceId, RoomActivity> = {
     ],
   },
   contact: {
-    prompt: "Sirve una taza para abrir la conversación.",
-    completed: "El café está listo. La conversación puede comenzar.",
-    verb: "Servir café",
-    items: [{ id: "coffee", label: "Una taza de café", detail: "Cuéntame qué estás intentando crear. Podemos empezar con un correo o agendar una conversación." }],
+    prompt: "Pide un café en la barra para abrir la conversación.",
+    completed: "Tu café está listo. Siéntate y conversemos.",
+    verb: "Pedir café",
+    items: [{ id: "coffee", label: "Café para conversar", detail: "Cuéntame qué estás intentando crear. Podemos empezar con un correo o agendar una conversación." }],
   },
 };
 

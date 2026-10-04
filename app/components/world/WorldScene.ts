@@ -263,9 +263,15 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       roof(g, 2.76, 4.45, 3.45, m.roofLight, 0.28);
       frontDoor(g, 1.35); buildingWindow(g, -1.3, 1.42, 1.36); buildingWindow(g, 1.3, 1.42, 1.36);
       box(g, 4.9, 0.14, 1.55, 0, 2.14, 2.15, m.wood);
+      for (let stripe = 0; stripe < 5; stripe++) box(g, 0.94, 0.025, 1.48, -1.96 + stripe * 0.98, 2.225, 2.15, stripe % 2 ? m.gold : m.light, false);
       for (const x of [-2.23, 2.23]) cylinder(g, 0.08, 0.08, 2, x, 1.16, 2.45, m.wood, 7);
       for (let i = 0; i < 5; i++) sphere(g, 0.09, -2 + i, 2.2, 2.78, m.gold, 1);
       for (const x of [-2.6, 2.6]) { cylinder(g, 0.45, 0.45, 0.12, x, 0.85, 3.25, m.wood, 10); cylinder(g, 0.08, 0.08, 0.7, x, 0.47, 3.25, m.wood, 7); }
+      box(g, 1.08, 0.78, 0.1, 0, 2.75, 2.96, m.dark, false);
+      cylinder(g, 0.22, 0.18, 0.27, 0, 2.72, 3.04, m.light, 12);
+      const cupHandle = mesh(g, new THREE.TorusGeometry(0.13, 0.035, 6, 12, Math.PI * 1.5), m.light, 0.26, 2.72, 3.06, false);
+      cupHandle.rotation.z = -Math.PI / 2;
+      for (const x of [-0.12, 0.1]) sphere(g, 0.035, x, 3.03, 3.04, m.light, 0);
       solarPanel(g, -0.9, 3.11, -0.55); solarPanel(g, 0.9, 3.11, -0.55);
     }
     // Small painted wayfinding stone next to every entrance.

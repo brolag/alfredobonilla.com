@@ -104,10 +104,31 @@ export function createInteriors(): WorldInteriors {
       }
       shape(group, ring, glass, 0, 4.27, -4.23, 3, 1.25, 1);
     } else {
-      for (const x of [-2.8, 2.8]) {
-        box(group, wood, x, 2.03, -4.08, 1.25, 0.12, 0.42);
-        column(group, dark, x, 1.31, -4.08, 0.08, 1.36);
-        ball(group, gold, x, 4.17, -4.18, 0.28);
+      // The contact room is a café: a shared counter, menu, machine and seats.
+      box(group, dark, 0, 3.65, -4.22, 3.2, 1.45, 0.16);
+      for (let row = 0; row < 4; row++) {
+        box(group, pale, -0.45, 4.05 - row * 0.3, -4.12, 1.55 - row * 0.12, 0.055, 0.02);
+        box(group, gold, 0.96, 4.05 - row * 0.3, -4.12, 0.3, 0.055, 0.02);
+      }
+      for (const x of [-2.9, 2.9]) {
+        box(group, wood, x, 3.25, -4.16, 1.4, 0.13, 0.3);
+        column(group, gold, x, 3.53, -4.09, 0.19, 0.42);
+        box(group, wood, x, 2.25, -4.1, 1.4, 0.12, 0.34);
+        for (const dx of [-0.38, 0, 0.38]) column(group, pale, x + dx, 2.48, -4.02, 0.11, 0.25);
+      }
+      box(group, wood, 0, 0.76, -1.8, 5.25, 1.52, 1.5);
+      box(group, gold, 0, 1.56, -1.8, 5.45, 0.14, 1.7);
+      box(group, dark, 0, 0.82, -1.03, 4.75, 0.44, 0.07);
+      box(group, dark, -1.65, 2.05, -3.12, 1.15, 0.82, 0.65);
+      box(group, glass, -1.65, 2.18, -2.78, 0.82, 0.36, 0.06);
+      for (const x of [-1.93, -1.37]) column(group, pale, x, 1.68, -2.76, 0.12, 0.16);
+      for (const x of [-3.35, 3.35]) {
+        column(group, wood, x, 0.48, 1.25, 0.08, 0.96);
+        column(group, gold, x, 0.98, 1.25, 0.7, 0.1);
+        for (const side of [-1, 1]) {
+          column(group, dark, x + side * 0.93, 0.42, 1.25, 0.08, 0.84);
+          column(group, wood, x + side * 0.93, 0.88, 1.25, 0.32, 0.1);
+        }
       }
     }
 
@@ -117,9 +138,11 @@ export function createInteriors(): WorldInteriors {
       const x = xs[index];
       const stand = new THREE.Group(); stand.position.set(x, 0, -1.8); group.add(stand);
       objects[place.id].push({ id: item.id, position: new THREE.Vector3(x, 2.2, -1.8) });
-      box(stand, wood, 0, 0.75, 0, 1.54, 1.4, 1.15);
-      box(stand, gold, 0, 1.49, 0, 1.7, 0.09, 1.28);
-      box(stand, dark, 0, 0.85, 0.58, 1.18, 0.39, 0.06);
+      if (place.id !== "contact") {
+        box(stand, wood, 0, 0.75, 0, 1.54, 1.4, 1.15);
+        box(stand, gold, 0, 1.49, 0, 1.7, 0.09, 1.28);
+        box(stand, dark, 0, 0.85, 0.58, 1.18, 0.39, 0.06);
+      }
       const beacon = shape(stand, ring, gold, 0, 1.59, 0, 1, 1, 1);
       beacon.rotation.x = -Math.PI / 2;
       beacon.visible = false;
