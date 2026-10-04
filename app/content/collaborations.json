@@ -7,7 +7,8 @@
       "description": "Mentoría y capacitación para aplicar IA con criterio en el trabajo real.",
       "descriptionEn": "Applied AI mentoring and training grounded in real work.",
       "url": "https://indie-mind.com",
-      "tags": ["IA aplicada", "Educación"]
+      "tags": ["IA aplicada", "Educación"],
+      "tagsEn": ["Applied AI", "Education"]
     },
     {
       "id": "lyfter",
@@ -15,7 +16,8 @@
       "description": "Formación práctica y comunidad para quienes construyen una carrera en software.",
       "descriptionEn": "Hands-on software education and a community for new developers.",
       "url": "https://www.lyfter.academy/",
-      "tags": ["Software", "Educación"]
+      "tags": ["Software", "Educación"],
+      "tagsEn": ["Software", "Education"]
     },
     {
       "id": "imagine-paradise",
@@ -23,7 +25,8 @@
       "description": "Mercadeo e inteligencia de negocios conectados con el ecosistema de Costa Rica.",
       "descriptionEn": "Marketing and business intelligence connected to Costa Rica's digital ecosystem.",
       "url": "https://imagineparadise.xyz/",
-      "tags": ["Estrategia", "Costa Rica"]
+      "tags": ["Estrategia", "Costa Rica"],
+      "tagsEn": ["Strategy", "Costa Rica"]
     },
     {
       "id": "stone-sphere",
@@ -31,7 +34,8 @@
       "description": "IA aplicada a procesos reales, capacitación y automatización medible.",
       "descriptionEn": "Applied AI for real operations, team training, and measurable automation.",
       "url": "https://www.stonesphere.tech/",
-      "tags": ["IA", "Operaciones"]
+      "tags": ["IA", "Operaciones"],
+      "tagsEn": ["AI", "Operations"]
     }
   ]
 }

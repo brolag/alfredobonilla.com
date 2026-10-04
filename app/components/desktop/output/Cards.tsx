@@ -2,12 +2,12 @@ import projectsData from "../../../content/projects.json";
 import collaborationsData from "../../../content/collaborations.json";
 import servicesData from "../../../content/services.json";
 
-function WorkCards({ entries }: { entries: { name: string; description: string; descriptionEn?: string; url: string; tags: string[] }[] }) {
+function WorkCards({ entries }: { entries: { name: string; description: string; descriptionEn?: string; url: string; tags: string[]; tagsEn?: string[] }[] }) {
   return <div className="cards">
     {entries.map((p) => <article key={p.name} className="card">
       <h3>{p.name}<a href={p.url} target="_blank" rel="noopener noreferrer">open ↗</a></h3>
       <p>{p.descriptionEn ?? p.description}</p>
-      <div className="tags">{p.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+      <div className="tags">{(p.tagsEn ?? p.tags).map((tag) => <span key={tag}>{tag}</span>)}</div>
     </article>)}
   </div>;
 }
@@ -16,9 +16,9 @@ function WorkCards({ entries }: { entries: { name: string; description: string; 
 export function Projects() {
   return (
     <div className="work-groups">
-      <h3>Colaboraciones</h3>
+      <h3>Collaborations</h3>
       <WorkCards entries={collaborationsData.collaborations}/>
-      <h3>Herramientas y código abierto</h3>
+      <h3>Open source tools</h3>
       <WorkCards entries={projectsData.projects}/>
     </div>
   );
