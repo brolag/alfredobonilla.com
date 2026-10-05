@@ -84,8 +84,8 @@ function PlaceContent({ id, onNavigate, selection }: { id: PlaceId; onNavigate: 
       <button className="world-primary-link" onClick={() => onNavigate("contact")}>Hablemos de tu proyecto <ArrowIcon/></button>
     </>;
     case "contact": return <>
-      <p className="world-panel__lead">Bienvenido a la cafetería. ¿Construimos algo interesante?</p>
-      <p>Tomemos un café y hablemos de lo que quieres crear. Puedes escribirme o reservar un momento para conversar.</p>
+      <p className="world-panel__lead">Bienvenido a la barra de café de especialidad. ¿Construimos algo interesante?</p>
+      <p>Entre un espresso y un filtrado siempre cabe una buena idea. Puedes escribirme o reservar un momento para conversar.</p>
       <div className="world-contact-list">{contactData.details.filter((detail) => ["email", "calendar", "github", "linkedin"].includes(detail.type)).map((detail) => <a key={detail.type} href={detail.url} target={detail.type === "email" ? undefined : "_blank"} rel={detail.type === "email" ? undefined : "noopener noreferrer"}><span>{detail.type === "email" ? "Correo" : detail.type === "calendar" ? "Agendar" : detail.type === "github" ? "GitHub" : "LinkedIn"}</span><strong>{detail.label}</strong><ArrowIcon diagonal/></a>)}</div>
     </>;
   }

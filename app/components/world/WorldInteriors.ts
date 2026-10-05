@@ -184,30 +184,108 @@ export function createInteriors(): WorldInteriors {
       }
       shape(group, ring, glass, 0, 4.27, -4.23, 3, 1.25, 1);
     } else {
-      // The contact room is a café: a shared counter, menu, machine and seats.
-      box(group, dark, 0, 3.65, -4.22, 3.2, 1.45, 0.16);
-      for (let row = 0; row < 4; row++) {
-        box(group, pale, -0.45, 4.05 - row * 0.3, -4.12, 1.55 - row * 0.12, 0.055, 0.02);
-        box(group, gold, 0.96, 4.05 - row * 0.3, -4.12, 0.3, 0.055, 0.02);
+      // A warm specialty coffee bar; the order is a metaphor for starting a conversation.
+      const walnut = mat("#765039"), walnutDark = mat("#513b31"), terracotta = mat("#b98268");
+      const tile = mat("#f3e6ce"), tileLine = mat("#d6bea1"), brass = mat("#d5a75d", { metalness: 0.45 });
+      const ceramic = mat("#f8f0db"), steel = mat("#7e8c86", { metalness: 0.65, roughness: 0.3 });
+      const coffeeBean = mat("#563426"), coffeeSurface = mat("#70432c");
+      const lamp = mat("#ffe7ae", { emissive: "#f0bd68", emissiveIntensity: 1.4 });
+      box(group, tile, 0, 0.035, 0, 10.6, 0.06, 10.6);
+      for (const x of [-3.6, -1.8, 0, 1.8, 3.6]) box(group, tileLine, x, 0.07, 0, 0.025, 0.014, 10.3);
+      for (const z of [-3.6, -1.8, 0, 1.8, 3.6]) box(group, tileLine, 0, 0.07, z, 10.3, 0.014, 0.025);
+      box(group, terracotta, 0, 3.16, -4.31, 9.8, 4.7, 0.21);
+      box(group, tile, 0, 1.3, -4.13, 9.8, 1.55, 0.08);
+      for (const x of [-4.2, -3.15, -2.1, -1.05, 0, 1.05, 2.1, 3.15, 4.2]) box(group, tileLine, x, 1.3, -4.08, 0.026, 1.48, 0.02);
+      for (const y of [0.8, 1.8]) box(group, tileLine, 0, y, -4.08, 9.7, 0.028, 0.02);
+      box(group, walnutDark, 0, 5.4, -4.16, 9.6, 0.22, 0.12);
+
+      const menu = document.createElement("canvas");
+      menu.width = 1024; menu.height = 512;
+      const paint = menu.getContext("2d");
+      if (paint) {
+        paint.fillStyle = "#274438"; paint.fillRect(0, 0, menu.width, menu.height);
+        paint.strokeStyle = "#cda968"; paint.lineWidth = 8; paint.strokeRect(20, 20, 984, 472);
+        paint.textAlign = "center"; paint.fillStyle = "#f6e8ca";
+        paint.font = "bold 54px Georgia, serif"; paint.fillText("CAFÉ DE ESPECIALIDAD", 512, 113);
+        paint.fillStyle = "#d8b678"; paint.font = "bold 27px Arial, sans-serif";
+        paint.fillText("ESPRESSO   ·   V60   ·   CORTADO", 512, 222);
+        paint.fillStyle = "#efe3ca"; paint.font = "28px Georgia, serif";
+        paint.fillText("Una buena conversación empieza aquí", 512, 310);
+        paint.strokeStyle = "#b9955f"; paint.lineWidth = 3;
+        paint.beginPath(); paint.moveTo(320, 363); paint.lineTo(704, 363); paint.stroke();
+        paint.font = "bold 22px Arial, sans-serif"; paint.fillText("ORIGEN  ·  MÉTODO  ·  TIEMPO", 512, 421);
       }
-      for (const x of [-2.9, 2.9]) {
-        box(group, wood, x, 3.25, -4.16, 1.4, 0.13, 0.3);
-        column(group, gold, x, 3.53, -4.09, 0.19, 0.42);
-        box(group, wood, x, 2.25, -4.1, 1.4, 0.12, 0.34);
-        for (const dx of [-0.38, 0, 0.38]) column(group, pale, x + dx, 2.48, -4.02, 0.11, 0.25);
+      const menuTexture = new THREE.CanvasTexture(menu);
+      menuTexture.colorSpace = THREE.SRGBColorSpace; textures.add(menuTexture);
+      const menuMaterial = new THREE.MeshBasicMaterial({ map: menuTexture, toneMapped: false });
+      materials.add(menuMaterial);
+      const menuGeometry = new THREE.PlaneGeometry(4.1, 2.05); galleryGeometries.add(menuGeometry);
+      box(group, walnutDark, 0, 3.77, -4.11, 4.35, 2.25, 0.17);
+      shape(group, menuGeometry, menuMaterial, 0, 3.77, -3.99);
+
+      // Shelves with jars of beans, cups and bags frame the menu.
+      for (const side of [-1, 1]) {
+        const x = side * 3.55;
+        for (const y of [2.6, 3.65]) {
+          box(group, walnut, x, y, -3.95, 2.2, 0.12, 0.48);
+          for (const offset of [-0.62, 0, 0.62]) {
+            const jar = column(group, glass, x + offset, y + 0.26, -3.9, 0.18, 0.4);
+            jar.material = side < 0 ? coffeeBean : glass;
+            column(group, brass, x + offset, y + 0.48, -3.9, 0.2, 0.06);
+          }
+        }
       }
-      box(group, wood, 0, 0.76, -1.8, 5.25, 1.52, 1.5);
-      box(group, gold, 0, 1.56, -1.8, 5.45, 0.14, 1.7);
-      box(group, dark, 0, 0.82, -1.03, 4.75, 0.44, 0.07);
-      box(group, dark, -1.65, 2.05, -3.12, 1.15, 0.82, 0.65);
-      box(group, glass, -1.65, 2.18, -2.78, 0.82, 0.36, 0.06);
-      for (const x of [-1.93, -1.37]) column(group, pale, x, 1.68, -2.76, 0.12, 0.16);
-      for (const x of [-3.35, 3.35]) {
-        column(group, wood, x, 0.48, 1.25, 0.08, 0.96);
-        column(group, gold, x, 0.98, 1.25, 0.7, 0.1);
+
+      // Wood-front counter with a pale stone top and brass foot rail.
+      box(group, walnutDark, 0, 0.83, -1.8, 5.9, 1.5, 1.5);
+      for (const x of [-2.55, -2.05, -1.55, -1.05, -0.55, 0, 0.55, 1.05, 1.55, 2.05, 2.55]) box(group, walnut, x, 0.84, -1.025, 0.32, 1.31, 0.07);
+      box(group, brass, 0, 0.29, -0.96, 5.55, 0.06, 0.09);
+      box(group, ceramic, 0, 1.61, -1.8, 6.12, 0.16, 1.7);
+      box(group, walnut, 0, 1.72, -1.8, 6.2, 0.045, 1.75);
+
+      // Two-group espresso machine and portafilters.
+      box(group, steel, -1.73, 2.16, -3.05, 1.64, 0.83, 0.7);
+      box(group, walnutDark, -1.73, 2.48, -2.68, 1.4, 0.12, 0.07);
+      box(group, dark, -1.73, 2.31, -2.67, 1.42, 0.18, 0.065);
+      for (const x of [-2.13, -1.33]) {
+        column(group, brass, x, 1.89, -2.68, 0.16, 0.13);
+        box(group, walnutDark, x, 1.82, -2.4, 0.09, 0.09, 0.46);
+        column(group, ceramic, x, 1.68, -2.44, 0.15, 0.22);
+      }
+      box(group, steel, -0.6, 1.94, -2.86, 0.07, 0.6, 0.08);
+      column(group, brass, -0.6, 1.66, -2.86, 0.06, 0.09);
+
+      // Grinder, gooseneck kettle, dripper and carafe distinguish the brew bar.
+      column(group, walnutDark, 2.19, 1.97, -3.05, 0.26, 0.53);
+      column(group, glass, 2.19, 2.36, -3.05, 0.31, 0.31);
+      ball(group, coffeeBean, 2.19, 2.4, -3.05, 0.2);
+      column(group, brass, 2.19, 2.55, -3.05, 0.32, 0.06);
+      column(group, steel, 0.62, 1.85, -2.95, 0.36, 0.37);
+      shape(group, ring, walnutDark, 1.04, 1.89, -2.95, 0.39, 0.39, 0.39).rotation.y = Math.PI / 2;
+      box(group, steel, 0.33, 2.08, -2.82, 0.09, 0.06, 0.45);
+      column(group, glass, 1.41, 1.87, -2.9, 0.25, 0.34);
+      const dripperGeometry = new THREE.CylinderGeometry(0.32, 0.11, 0.32, 12);
+      galleryGeometries.add(dripperGeometry);
+      shape(group, dripperGeometry, ceramic, 1.41, 2.24, -2.9);
+      ball(group, coffeeSurface, 1.41, 2.39, -2.9, 0.12);
+
+      // Pendant lights, plants and intimate tables finish the room.
+      for (const x of [-2.45, 0, 2.45]) {
+        box(group, walnutDark, x, 5.2, -1.8, 0.04, 0.9, 0.04);
+        const shadeGeometry = new THREE.CylinderGeometry(0.12, 0.49, 0.36, 12);
+        galleryGeometries.add(shadeGeometry);
+        shape(group, shadeGeometry, walnut, x, 4.57, -1.8);
+        ball(group, lamp, x, 4.31, -1.8, 0.17);
+      }
+      for (const x of [-3.52, 3.52]) {
+        column(group, walnutDark, x, 0.63, 1.34, 0.1, 1.13);
+        column(group, walnut, x, 1.22, 1.34, 0.77, 0.1);
+        column(group, ceramic, x - 0.14, 1.35, 1.32, 0.16, 0.19);
+        shape(group, ring, brass, x + 0.07, 1.36, 1.32, 0.2, 0.2, 0.2).rotation.y = Math.PI / 2;
         for (const side of [-1, 1]) {
-          column(group, dark, x + side * 0.93, 0.42, 1.25, 0.08, 0.84);
-          column(group, wood, x + side * 0.93, 0.88, 1.25, 0.32, 0.1);
+          const seatX = x + side * 0.92;
+          column(group, walnutDark, seatX, 0.48, 1.34, 0.09, 0.88);
+          column(group, walnut, seatX, 0.95, 1.34, 0.32, 0.11);
         }
       }
     }
