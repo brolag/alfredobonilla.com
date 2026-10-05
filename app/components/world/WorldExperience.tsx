@@ -330,7 +330,13 @@ export default function WorldExperience() {
         <div className="world-room-guide__head"><span>{room.eyebrow}</span><button onClick={leaveRoom}>← Volver al poblado</button></div>
         <h1>{room.id === "projects" ? "Elige una puerta" : room.shortName}</h1>{room.id !== "projects" && <p>{visited.includes(room.id) ? roomActivities[room.id].completed : roomActivities[room.id].prompt}</p>}
         <div className="world-room-guide__progress" aria-live="polite">{usedByPlace[room.id].length}/{roomActivities[room.id].items.length} {room.id === "projects" ? "salones visitados" : "explorados"} {visited.includes(room.id) && <strong>✓ Lugar descubierto</strong>}</div>
-        <div className="world-room-guide__items">{roomActivities[room.id].items.map((item) => <button key={item.id} onClick={() => inspectItem(room.id, item.id)} aria-label={`${roomActivities[room.id].verb}: ${item.label}`}><span>{usedByPlace[room.id].includes(item.id) ? "✓" : room.id === "projects" ? "↗" : "✳"}</span>{item.label}</button>)}</div>
+        <div className="world-room-guide__items">{roomActivities[room.id].items.map((item) => {
+          const project = room.id === "projects" ? featured.find((entry) => entry.id === item.id) : null;
+          return <button key={item.id} onClick={() => inspectItem(room.id, item.id)} aria-label={`${roomActivities[room.id].verb}: ${item.label}`}>
+            {project ? <Image className={`world-room-guide__project-logo world-room-guide__project-logo--${project.id}`} src={project.logo} alt="" width={25} height={25}/> : <span>{usedByPlace[room.id].includes(item.id) ? "✓" : "✳"}</span>}{item.label}
+            {project && usedByPlace.projects.includes(item.id) && <span className="world-room-guide__visited" aria-hidden="true">✓</span>}
+          </button>;
+        })}</div>
         {room.id !== "projects" && <p className="world-room-guide__hint">Toca un objeto o su nombre · gira con ← → · <kbd>E</kbd> inspecciona el objeto frente a ti.</p>}
       </>}
     </section>}

@@ -68,6 +68,10 @@
 .world-room-guide__items button { display: flex; align-items: center; gap: 8px; min-height: 42px; padding: 7px 9px; border: 1px solid #d9e2d0; border-radius: 9px; color: #315744; background: #f4f3e6; text-align: left; font-size: 11px; font-weight: 900; }
 .world-room-guide__items button:hover { background: #e6efdf; border-color: #90b691; }
 .world-room-guide__items button span { color: #52906c; font-size: 15px; }
+.world-room-guide__project-logo { flex: none; width: 25px; height: 25px; object-fit: contain; }
+.world-room-guide__project-logo--lyfter { object-fit: cover; object-position: left; filter: brightness(0); }
+.world-room-guide__project-logo--stone-sphere { filter: invert(1); }
+.world-room-guide__items button .world-room-guide__visited { margin-left: auto; font-size: 13px; }
 .world-room-guide__brand { display: flex; align-items: center; gap: 11px; margin: 12px 0 4px; }
 .world-room-guide__brand img { width: 38px; height: 38px; object-fit: contain; }
 .world-room-guide__brand--dark-logo img { filter: brightness(0); }

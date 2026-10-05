@@ -36,8 +36,8 @@ export function createInteriors(): WorldInteriors {
   const textures = new Set<THREE.Texture>();
   const galleryGeometries = new Set<THREE.BufferGeometry>();
   const imageLoader = new THREE.TextureLoader();
-  const brandSquare = new THREE.PlaneGeometry(0.36, 0.36);
-  const brandWide = new THREE.PlaneGeometry(1.05, 0.34);
+  const doorArtGeometry = new THREE.PlaneGeometry(1.79, 3.25);
+  const doorSignGeometry = new THREE.PlaneGeometry(1.62, 0.73);
   const mat = (color: string, extra: Partial<THREE.MeshStandardMaterialParameters> = {}) => {
     const result = new THREE.MeshStandardMaterial({ color, roughness: 0.73, ...extra });
     materials.add(result);
@@ -65,6 +65,54 @@ export function createInteriors(): WorldInteriors {
   const box = (p: THREE.Object3D, m: THREE.Material, x: number, y: number, z: number, w: number, h: number, d: number) => shape(p, cube, m, x, y, z, w, h, d);
   const ball = (p: THREE.Object3D, m: THREE.Material, x: number, y: number, z: number, r: number) => shape(p, globe, m, x, y, z, r, r, r);
   const column = (p: THREE.Object3D, m: THREE.Material, x: number, y: number, z: number, r: number, h: number) => shape(p, tube, m, x, y, z, r, h, r);
+
+  function makeDoorSign(name: string, logo: string, index: number) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 600; canvas.height = 270;
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    textures.add(texture);
+    const context = canvas.getContext("2d");
+    if (context) {
+      const paint = () => {
+        context.fillStyle = "#142b29";
+        context.fillRect(0, 0, 600, 270);
+        context.strokeStyle = "#d8bd81";
+        context.lineWidth = 5;
+        context.strokeRect(10, 10, 580, 250);
+        context.fillStyle = "#fff7e7";
+        context.textBaseline = "middle";
+        if (index === 1) {
+          context.font = "bold 72px Arial, sans-serif";
+          context.textAlign = "center";
+          context.fillText(name, 300, 135);
+        } else {
+          context.textAlign = "left";
+          context.font = index === 2 ? "bold 55px Georgia, serif" : "bold 62px Arial, sans-serif";
+          const lines = index === 0 ? ["INDIE", "MIND"] : index === 2 ? ["Imagine", "Paradise"] : ["STONE", "SPHERE"];
+          context.fillText(lines[0], 190, 100);
+          if (index === 2) context.font = "italic bold 55px Georgia, serif";
+          context.fillText(lines[1], 190, 174);
+        }
+        texture.needsUpdate = true;
+      };
+      paint();
+      const image = new Image();
+      image.onload = () => {
+        paint();
+        if (index === 1) {
+          context.fillStyle = "#142b29";
+          context.fillRect(55, 52, 490, 166);
+          context.drawImage(image, 67, 63, 466, 138);
+        } else context.drawImage(image, 43, 64, 118, 140);
+        texture.needsUpdate = true;
+      };
+      image.src = logo;
+    }
+    const sign = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false, side: THREE.DoubleSide });
+    materials.add(sign);
+    return sign;
+  }
 
   function buildProjectRoom(id: ProjectId) {
     const config = projectShowrooms[id];
@@ -306,19 +354,19 @@ export function createInteriors(): WorldInteriors {
         box(group, frame, x, 1.93, -4.13, 2.25, 3.75, 0.24);
         box(group, recess, x, 1.91, -3.96, 1.99, 3.49, 0.08);
         box(group, door, x, 1.88, -3.84, 1.81, 3.31, 0.14);
-        box(group, glass, x, 2.83, -3.75, 1.49, 0.78, 0.06);
-        box(group, wood, x, 2.83, -3.7, 0.055, 0.79, 0.08);
+        const art = imageLoader.load(`/door-panels/${item.id}.jpg`);
+        art.colorSpace = THREE.SRGBColorSpace;
+        art.repeat.set(0.83, 1);
+        art.offset.x = 0.085;
+        textures.add(art);
+        const artMaterial = new THREE.MeshBasicMaterial({ map: art, toneMapped: false, side: THREE.DoubleSide });
+        materials.add(artMaterial);
+        shape(group, doorArtGeometry, artMaterial, x, 1.88, -3.755);
         box(group, gold, x, 3.85, -3.8, 2.12, 0.1, 0.22);
         box(group, gold, x, 0.19, -3.42, 2.34, 0.08, 0.87);
-        ball(group, gold, x + 0.62, 1.37, -3.68, 0.085);
         const featured = featuredProjects.projects[index];
-        const texture = imageLoader.load(featured.logo);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        textures.add(texture);
-        const logoMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, color: "#171c17" });
-        materials.add(logoMaterial);
-        box(group, pale, x, 1.93, -3.7, 1.54, 0.69, 0.08);
-        shape(group, index === 1 ? brandWide : brandSquare, logoMaterial, x, 1.93, -3.64, index === 1 ? 1.2 : 1.7, index === 1 ? 1.2 : 1.7);
+        shape(group, doorSignGeometry, makeDoorSign(featured.name, featured.logo, index), x, 1.7, -3.65);
+        ball(group, gold, x + 0.76, 1.08, -3.57, 0.07);
         for (let mark = 0; mark <= index; mark++) box(group, gold, x - index * 0.13 + mark * 0.26, 4.12, -4.05, 0.17, 0.17, 0.12);
         const beacon = shape(group, ring, gold, x, 0.28, -3.5, 1.1, 1.1, 1.1);
         beacon.rotation.x = -Math.PI / 2;
@@ -426,7 +474,7 @@ export function createInteriors(): WorldInteriors {
     objects(id) { return objects[id]; },
     projectObjects(id) { return projectObjects[id] ?? []; },
     dispose() {
-      cube.dispose(); globe.dispose(); tube.dispose(); ring.dispose(); brandSquare.dispose(); brandWide.dispose();
+      cube.dispose(); globe.dispose(); tube.dispose(); ring.dispose(); doorArtGeometry.dispose(); doorSignGeometry.dispose();
       galleryGeometries.forEach((geometry) => geometry.dispose());
       textures.forEach((texture) => texture.dispose());
       materials.forEach((material) => material.dispose());
