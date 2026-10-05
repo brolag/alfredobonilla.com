@@ -5,8 +5,8 @@
       "id": "indie-mind",
       "name": "Indie Mind",
       "logo": "/brands/indie-mind.png",
-      "description": "Herramientas abiertas y sistemas de IA para que creadores independientes construyan y operen con apoyo de agentes.",
-      "descriptionEn": "Open tools and AI systems that help independent builders create and operate with agents alongside them.",
+      "description": "Producto, ingeniería y formación unidos en herramientas abiertas y sistemas de IA para builders independientes.",
+      "descriptionEn": "Product, engineering, and education come together in open tools and AI systems for independent builders.",
       "url": "https://www.indiemind.ai/",
       "tags": ["IA aplicada", "Código abierto"],
       "tagsEn": ["Applied AI", "Open source"]
@@ -15,8 +15,8 @@
       "id": "lyfter",
       "name": "Lyfter",
       "logo": "/brands/lyfter.svg",
-      "description": "Programa de formación en desarrollo de software con ruta estructurada, proyectos reales y revisión personalizada de código.",
-      "descriptionEn": "Software development education with a structured path, real projects, and personal code review.",
+      "description": "Un equipo de ingeniería y educación guía proyectos reales, revisa código y acompaña a quienes aprenden software.",
+      "descriptionEn": "An engineering and education team guides real projects, reviews code, and supports people learning software development.",
       "url": "https://www.lyfter.academy/",
       "tags": ["Software", "Educación"],
       "tagsEn": ["Software", "Education"]
@@ -25,8 +25,8 @@
       "id": "imagine-paradise",
       "name": "Imagine Paradise",
       "logo": "/brands/imagine-paradise.svg",
-      "description": "Mercadeo e inteligencia de negocios en Costa Rica, con productos que conectan marcas, audiencias y datos.",
-      "descriptionEn": "Marketing and business intelligence in Costa Rica, connecting brands, audiences, and data through its products.",
+      "description": "Un equipo editorial y especialistas por región conectan mercadeo, datos y audiencias con historias de Costa Rica.",
+      "descriptionEn": "An editorial team and regional specialists connect marketing, data, and audiences through stories from Costa Rica.",
       "url": "https://imagineparadise.xyz/",
       "tags": ["Mercadeo", "Datos"],
       "tagsEn": ["Marketing", "Data"]
@@ -35,8 +35,8 @@
       "id": "stone-sphere",
       "name": "Stone Sphere",
       "logo": "/brands/stone-sphere.png",
-      "description": "IA aplicada a operaciones: identifica tareas repetitivas, prepara equipos e implementa automatizaciones medibles.",
-      "descriptionEn": "Applied AI for operations: finding repetitive work, training teams, and implementing measurable automation.",
+      "description": "Trabaja con equipos de operación para detectar tareas repetitivas, preparar personas e implementar IA medible.",
+      "descriptionEn": "Works with operations teams to find repetitive work, prepare people, and implement measurable AI solutions.",
       "url": "https://www.stonesphere.tech/",
       "tags": ["IA", "Operaciones"],
       "tagsEn": ["AI", "Operations"]
