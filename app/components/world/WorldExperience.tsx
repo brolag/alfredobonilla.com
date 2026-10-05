@@ -108,6 +108,7 @@ export default function WorldExperience() {
   const [selectedItem, setSelectedItem] = useState<{ place: PlaceId; id: string } | null>(null);
   const [selectedStation, setSelectedStation] = useState<{ project: ProjectId; id: string } | null>(null);
   const [usedByPlace, setUsedByPlace] = useState<Record<PlaceId, string[]>>({ about: [], projects: [], agents: [], academy: [], services: [], contact: [] });
+  const [seenStations, setSeenStations] = useState<Record<ProjectId, string[]>>({ "indie-mind": [], lyfter: [], "imagine-paradise": [], "stone-sphere": [] });
   const [showFinale, setShowFinale] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [nearPlace, setNearPlace] = useState<PlaceId | null>(null);
@@ -146,8 +147,10 @@ export default function WorldExperience() {
     if (!projectShowrooms[id]?.stations.some((station) => station.id === itemId)) return;
     if (document.pointerLockElement) document.exitPointerLock();
     returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setSeenStations((previous) => previous[id].includes(itemId) ? previous : { ...previous, [id]: [...previous[id], itemId] });
     setSelectedStation({ project: id, id: itemId });
     setActivePlace("projects");
+    world.current?.activateProjectObject(id, itemId);
     world.current?.focus("projects");
   }, []);
   onProjectInspect.current = inspectProjectStation;
@@ -296,6 +299,7 @@ export default function WorldExperience() {
   const selected = selectedItem ? roomActivities[selectedItem.place].items.find((item) => item.id === selectedItem.id) : null;
   const showroom = projectRoom ? featured.find((project) => project.id === projectRoom) : null;
   const station = selectedStation ? projectShowrooms[selectedStation.project].stations.find((item) => item.id === selectedStation.id) : null;
+  const nextStation = selectedStation ? projectShowrooms[selectedStation.project].stations[projectShowrooms[selectedStation.project].stations.findIndex((item) => item.id === selectedStation.id) + 1] : null;
   const selectedSocial = selectedItem?.place === "agents" ? socialLinks.find((detail) => detail.type === selectedItem.id) : null;
   const room = roomPlace ? placeById[roomPlace] : null;
   return <main id="world-main-content" tabIndex={-1} className={`world-root ${started ? "world-root--exploring" : ""}`} lang="es">
@@ -324,7 +328,8 @@ export default function WorldExperience() {
         <div className="world-room-guide__head"><span>PROYECTOS · SALA 0{featured.findIndex((project) => project.id === projectRoom) + 1}</span><button onClick={leaveProject}>← Volver al taller</button></div>
         <div className={`world-room-guide__brand ${projectRoom === "lyfter" ? "world-room-guide__brand--dark-logo" : ""}`}>{showroom.logo && <Image src={showroom.logo} alt="" width={38} height={38}/>}<h1>{showroom.name}</h1></div>
         <p>{projectShowrooms[projectRoom].intro}</p>
-        <div className="world-room-guide__items world-room-guide__items--stations">{projectShowrooms[projectRoom].stations.map((item) => <button key={item.id} onClick={() => inspectProjectStation(projectRoom, item.id)} aria-label={`Explorar ${item.label}`}><span>✳</span>{item.label}</button>)}</div>
+        <div className="world-room-guide__progress" aria-live="polite">{seenStations[projectRoom].length}/{projectShowrooms[projectRoom].stations.length} escenas exploradas {seenStations[projectRoom].length === projectShowrooms[projectRoom].stations.length && <strong>✓ Sala completa</strong>}</div>
+        <div className="world-room-guide__items world-room-guide__items--stations">{projectShowrooms[projectRoom].stations.map((item) => <button key={item.id} onClick={() => inspectProjectStation(projectRoom, item.id)} aria-label={`Explorar ${item.label}`}><span>{seenStations[projectRoom].includes(item.id) ? "✓" : "✳"}</span>{item.label}</button>)}</div>
         <p className="world-room-guide__hint">Abre una estación para ver imágenes, historias y fuentes · <kbd>Esc</kbd> vuelve al taller.</p>
       </> : <>
         <div className="world-room-guide__head"><span>{room.eyebrow}</span><button onClick={leaveRoom}>← Volver al poblado</button></div>
@@ -345,7 +350,21 @@ export default function WorldExperience() {
       <div className="world-map__top"><span>EL POBLADO · {visited.length}/6 DESCUBIERTOS</span><button onClick={() => setMapOpen(false)} aria-label="Cerrar mapa">×</button></div><h2>Elige un destino.</h2><p>{visited.length === places.length ? "¡Recorrido completo! Puedes volver a cualquier lugar." : "Camina o viaja directamente para descubrir cada lugar."}</p><div className="world-map__list">{places.map((place, index) => <button key={place.id} onClick={() => openPlace(place.id)} tabIndex={mapOpen ? 0 : -1}><span className="world-map__number">0{index + 1}</span><span className="world-map__glyph" style={{ color: place.color }}><PlaceIcon id={place.id}/></span><span><strong>{place.name}</strong><small>{place.shortName} · {visited.includes(place.id) ? "descubierto" : "sin descubrir"}</small></span><ArrowIcon/></button>)}</div>
     </aside>}
 
-    {active && (selected || station) && <><button className="world-panel-backdrop" aria-label="Volver a la sala" onClick={closePlace}/><aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title"><div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: active.color }}/>{station && showroom ? showroom.name : active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Volver a la sala">×</button></div>{!station && <div className="world-panel__icon" style={{ color: active.color }}><PlaceIcon id={active.id} size={31}/></div>}<h2 id="world-panel-title">{station?.title ?? selected?.label}</h2>{!station && <p className="world-panel__summary">{selected?.detail}</p>}<div className="world-panel__rule"/><div className="world-panel__body">{station && showroom ? <ShowroomContent station={station} projectUrl={showroom.url}/> : selectedSocial ? <><a className="world-primary-link" href={selectedSocial.url} target="_blank" rel="noopener noreferrer">Abrir {selected?.label} <ArrowIcon diagonal/></a><PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/></> : <PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/>}</div><div className="world-panel__footer"><span>{station && showroom ? showroom.name.toUpperCase() : `${usedByPlace[active.id].length}/${roomActivities[active.id].items.length} OBJETOS EXPLORADOS`}</span><button onClick={closePlace}>Volver a la sala <ArrowIcon/></button></div></aside></>}
+    {active && (selected || station) && <>
+      <button className="world-panel-backdrop" aria-label="Volver a la sala" onClick={closePlace}/>
+      <aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title">
+        <div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: active.color }}/>{station && showroom ? showroom.name : active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Volver a la sala">×</button></div>
+        {!station && <div className="world-panel__icon" style={{ color: active.color }}><PlaceIcon id={active.id} size={31}/></div>}
+        <h2 id="world-panel-title">{station?.title ?? selected?.label}</h2>
+        {!station && <p className="world-panel__summary">{selected?.detail}</p>}
+        <div className="world-panel__rule"/>
+        <div className="world-panel__body">{station && showroom ? <ShowroomContent station={station} projectUrl={showroom.url}/> : selectedSocial ? <><a className="world-primary-link" href={selectedSocial.url} target="_blank" rel="noopener noreferrer">Abrir {selected?.label} <ArrowIcon diagonal/></a><PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/></> : <PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/>}</div>
+        <div className="world-panel__footer">
+          <span>{station && selectedStation ? `${seenStations[selectedStation.project].length}/${projectShowrooms[selectedStation.project].stations.length} ESCENAS EXPLORADAS` : `${usedByPlace[active.id].length}/${roomActivities[active.id].items.length} OBJETOS EXPLORADOS`}</span>
+          <button onClick={nextStation && selectedStation ? () => inspectProjectStation(selectedStation.project, nextStation.id) : closePlace}>{nextStation ? `Siguiente: ${nextStation.label}` : "Volver a la sala"} <ArrowIcon/></button>
+        </div>
+      </aside>
+    </>}
 
     {showFinale && !active && <div className="world-finale" role="dialog" aria-modal="true" aria-labelledby="world-finale-title"><span>✳ RECORRIDO COMPLETO</span><h2 id="world-finale-title">El poblado ya es tuyo.</h2><p>Exploraste las seis ideas que lo mantienen vivo. Gracias por caminar conmigo.</p><div><button ref={finaleButton} className="world-enter" onClick={() => { setShowFinale(false); leaveRoom(); }}>Volver al poblado <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("contact")}>Conversemos</button></div></div>}
 

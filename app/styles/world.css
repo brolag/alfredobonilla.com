@@ -57,6 +57,10 @@
 .world-room-label--door span { display: block; max-width: 100%; padding: 8px 9px; border: 1px solid #517759; border-radius: 8px; color: #214734; background: rgba(255,252,230,.98); box-shadow: 0 5px 15px rgba(29,61,42,.25); font-size: 11px; line-height: 1.15; }
 .world-room-label--door:hover, .world-room-label--door:focus-visible { transform: translate(-50%, -50%); border-color: #ffe5a1; background: rgba(255,243,184,.13); }
 .world-room-label--door:hover span { background: #fff; }
+.world-room-label--station { display: flex; align-items: flex-end; justify-content: center; max-width: none; padding: 0 3px 4px; border: 2px solid transparent; border-radius: 9px; background: transparent; box-shadow: none; white-space: normal; touch-action: manipulation; }
+.world-room-label--station span { display: block; max-width: 100%; padding: 7px 10px; border: 1px solid #567e67; border-radius: 7px; color: #234934; background: rgba(255,252,230,.98); box-shadow: 0 5px 14px rgba(20,58,43,.28); font-size: 11px; line-height: 1.15; }
+.world-room-label--station:hover, .world-room-label--station:focus-visible { transform: translate(-50%, -50%); border-color: #ffe4a5; background: rgba(255,248,206,.1); }
+.world-room-label--station:hover span { background: #fff; }
 .world-room-guide { position: absolute; z-index: 6; right: clamp(22px, 4vw, 70px); bottom: 32px; width: min(390px, calc(100vw - 44px)); max-height: calc(100svh - 150px); overflow-y: auto; padding: 21px; border: 1px solid rgba(67,109,74,.3); border-radius: 17px; color: #274d3b; background: rgba(251,248,232,.95); box-shadow: 0 20px 56px rgba(28,62,43,.24); backdrop-filter: blur(15px); }
 .world-room-guide__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #7e907f; font: 800 9px var(--font-mono), monospace; letter-spacing: .06em; text-transform: uppercase; }
 .world-room-guide__head button { padding: 4px 0; border: 0; color: #357358; background: transparent; font: 900 11px var(--font-ui), sans-serif; white-space: nowrap; }
@@ -241,6 +245,8 @@
   .world-room-label { max-width: 110px; padding: 5px 7px; font-size: 10px; overflow: hidden; text-overflow: ellipsis; }
   .world-room-label--door { max-width: none; min-height: 0; padding: 0 1px 6px; overflow: visible; }
   .world-room-label--door span { padding: 6px 4px; font-size: 9px; }
+  .world-room-label--station { max-width: none; padding: 0 1px 3px; overflow: visible; }
+  .world-room-label--station span { padding: 5px 4px; font-size: 9px; }
   .world-room-guide { left: 12px; right: 12px; bottom: 75px; width: auto; max-height: min(39svh, 330px); padding: 14px; }
   .world-room-guide--projects { top: 78px; bottom: auto; max-height: none; padding: 10px 12px; transform: none; }
   .world-room-guide--projects h1 { font-size: 20px; }

@@ -25,6 +25,7 @@ export interface WorldController {
   enterProjectRoom: (id: ProjectId) => void;
   exitRoom: () => void;
   activateRoomObject: (id: PlaceId, itemId: string) => void;
+  activateProjectObject: (id: ProjectId, itemId: string) => void;
   travelTo: (id: PlaceId) => void;
   focus: (id: PlaceId | null) => void;
   dispose: () => void;
@@ -569,10 +570,16 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
         doorCornerB.set(object.position.x + 1.09, 0.12, -4.02).project(roomCamera);
         label.style.width = `${Math.max(70, (doorCornerB.x - doorCornerA.x) * width * 0.5)}px`;
         label.style.height = `${Math.max(110, (doorCornerA.y - doorCornerB.y) * height * 0.5)}px`;
+      } else if (activeProject) {
+        doorCornerA.set(object.position.x - 1.38, 4.18, -4.03).project(roomCamera);
+        doorCornerB.set(object.position.x + 1.38, 1.83, -4.03).project(roomCamera);
+        label.style.width = `${Math.max(75, (doorCornerB.x - doorCornerA.x) * width * 0.5)}px`;
+        label.style.height = `${Math.max(60, (doorCornerA.y - doorCornerB.y) * height * 0.5)}px`;
       }
       label.hidden = focused !== null || projector.z > 1 || Math.abs(projector.x) > 0.82 || Math.abs(projector.y) > 0.72;
     });
     animated.forEach((fn) => fn(time, delta));
+    if (activeProject) interiors.update(time);
     const currentScene = activeRoom ? interiors.scene : scene;
     renderer.render(currentScene, activeCamera);
     if (frameCount % 120 === 0 && frameSamples.length >= 60) {
@@ -638,8 +645,10 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       roomLabels.splice(0).forEach((label) => label.remove());
       for (const item of projectShowrooms[id].stations) {
         const label = document.createElement("button");
-        label.type = "button"; label.className = "world-room-label";
-        label.textContent = item.label;
+        label.type = "button"; label.className = "world-room-label world-room-label--station";
+        const name = document.createElement("span");
+        name.textContent = `✳ ${item.label}`;
+        label.appendChild(name);
         label.setAttribute("aria-label", `Explorar ${item.label}`);
         label.addEventListener("click", () => events.onProjectObject(id, item.id));
         mount.appendChild(label); roomLabels.push(label);
@@ -647,6 +656,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     },
     exitRoom() { activeRoom = null; activeProject = null; focused = null; pressed.clear(); roomLabels.splice(0).forEach((label) => label.remove()); },
     activateRoomObject(id, itemId) { interiors.activate(id, itemId); },
+    activateProjectObject(id, itemId) { interiors.activateProject(id, itemId); },
     travelTo(id) { const p = placeById[id], front = p.z < 0 ? 1 : -1; avatarRoot.position.set(p.x, 0.1, p.z + front * 6.2); yaw = front > 0 ? 0 : Math.PI; pitch = 0.08; near = id; events.onNear(id); },
     focus(id) { focused = id; pressed.clear(); if (id) { near = null; events.onNear(null); } },
     dispose() {

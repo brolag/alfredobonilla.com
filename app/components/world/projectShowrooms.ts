@@ -51,7 +51,7 @@ export const projectShowrooms: Record<ProjectId, ProjectShowroom> = {
     ],
   },
   "stone-sphere": {
-    color: "#7ca7c5", wall: "#dce5ec",
+    color: "#7ca7c5", wall: "#435b67",
     intro: "Stone Sphere trabaja con los equipos que conocen cada operación para implementar IA útil y medible.",
     stations: [
       { id: "mission", label: "Propósito", title: "IA útil para operar", body: "Stone Sphere ayuda a identificar oportunidades reales para la IA dentro de una operación. Su punto de partida son los procesos y el trabajo del equipo.", image: "/showrooms/stone-hero.png", imageAlt: "Esfera visual oficial de Stone Sphere", source: "Stone Sphere", sourceUrl: "https://www.stonesphere.tech/" },

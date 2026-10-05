@@ -14,6 +14,8 @@ export interface WorldInteriors {
   enter: (id: PlaceId) => void;
   enterProject: (id: ProjectId) => void;
   activate: (id: PlaceId, itemId: string) => void;
+  activateProject: (id: ProjectId, itemId: string) => void;
+  update: (time: number) => void;
   objects: (id: PlaceId) => readonly InteriorObject[];
   projectObjects: (id: ProjectId) => readonly InteriorObject[];
   dispose: () => void;
@@ -54,6 +56,8 @@ export function createInteriors(): WorldInteriors {
   let currentProject: ProjectId | null = null;
   const projectRooms: Record<string, THREE.Group> = {};
   const projectObjects: Record<string, InteriorObject[]> = {};
+  const projectHighlights: Record<string, Record<string, THREE.Group>> = {};
+  const projectMotion: Record<string, THREE.Object3D[]> = {};
 
   function shape(parent: THREE.Object3D, geometry: THREE.BufferGeometry, material: THREE.Material, x: number, y: number, z: number, sx = 1, sy = 1, sz = 1) {
     const mesh = new THREE.Mesh(geometry, material);
@@ -65,6 +69,15 @@ export function createInteriors(): WorldInteriors {
   const box = (p: THREE.Object3D, m: THREE.Material, x: number, y: number, z: number, w: number, h: number, d: number) => shape(p, cube, m, x, y, z, w, h, d);
   const ball = (p: THREE.Object3D, m: THREE.Material, x: number, y: number, z: number, r: number) => shape(p, globe, m, x, y, z, r, r, r);
   const column = (p: THREE.Object3D, m: THREE.Material, x: number, y: number, z: number, r: number, h: number) => shape(p, tube, m, x, y, z, r, h, r);
+  function beam(parent: THREE.Object3D, material: THREE.Material, from: THREE.Vector3, to: THREE.Vector3, radius: number) {
+    const distance = from.distanceTo(to);
+    const geometry = new THREE.CylinderGeometry(radius, radius, distance, 7);
+    galleryGeometries.add(geometry);
+    const result = shape(parent, geometry, material, 0, 0, 0);
+    result.position.copy(from).add(to).multiplyScalar(0.5);
+    result.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), to.clone().sub(from).normalize());
+    return result;
+  }
 
   function makeDoorSign(name: string, logo: string, index: number) {
     const canvas = document.createElement("canvas");
@@ -117,56 +130,167 @@ export function createInteriors(): WorldInteriors {
   function buildProjectRoom(id: ProjectId) {
     const config = projectShowrooms[id];
     const group = new THREE.Group();
-    const accent = mat(config.color), wall = mat(config.wall);
-    const trim = mat("#f9f2df"), frame = mat("#49635e");
-    const xs = [-3.1, 0, 3.1];
+    const isStone = id === "stone-sphere";
+    const accent = mat(config.color, { emissive: config.color, emissiveIntensity: 0.12 });
+    const glow = mat(config.color, { emissive: config.color, emissiveIntensity: 0.75 });
+    const wall = mat(config.wall), floor = mat(isStone ? "#283c47" : id === "lyfter" ? "#e8cfb7" : id === "imagine-paradise" ? "#d4e4d2" : "#d4e7e1");
+    const trim = mat(isStone ? "#d8e6dd" : "#fff7e6"), frame = mat(isStone ? "#142e39" : "#315348");
+    const muted = mat(isStone ? "#365563" : id === "lyfter" ? "#c38f69" : id === "imagine-paradise" ? "#6f9e82" : "#83b5ad");
+    const goldLocal = mat("#ddb97b", { metalness: 0.28 });
+    const path = mat(config.color, { transparent: true, opacity: isStone ? 0.19 : 0.11 });
+    const xs = [-3.2, 0, 3.2];
     projectObjects[id] = [];
-    box(group, trim, 0, -0.18, 0, 11, 0.36, 11);
+    projectHighlights[id] = {};
+    projectMotion[id] = [];
+    // The gallery is a room with depth: a framed art wall, a ceiling, and a path
+    // leading to each image. The same footprint keeps navigation predictable.
+    box(group, floor, 0, -0.18, 0, 11, 0.36, 11);
     box(group, wall, 0, 3.1, -4.7, 11, 6.2, 0.35);
     box(group, wall, -5.42, 3.1, 0, 0.3, 6.2, 9.7);
     box(group, wall, 5.42, 3.1, 0, 0.3, 6.2, 9.7);
-    box(group, accent, 0, 5.34, -4.44, 8.5, 0.13, 0.12);
-    box(group, frame, 0, 0.015, -1.3, 8.9, 0.04, 4.6);
-    box(group, wall, 0, 0.05, -1.3, 8.55, 0.04, 4.3);
-    for (const x of [-4.7, 4.7]) {
-      column(group, frame, x, 0.62, 1.7, 0.45, 1.25);
-      ball(group, accent, x, 1.42, 1.7, 0.64);
+    box(group, muted, 0, 0.65, -4.46, 10.55, 1.25, 0.09);
+    box(group, isStone ? muted : trim, 0, 6.15, -0.1, 10.8, 0.16, 9.8);
+    for (const z of [-3.2, -0.3, 2.6]) {
+      box(group, muted, 0, 6.04, z, 10.6, 0.22, 0.16);
+      box(group, glow, 0, 5.88, z, 8.9, 0.035, 0.055);
     }
+    for (const x of [-5.1, 5.1]) {
+      box(group, muted, x, 1.06, 0, 0.12, 2.12, 9.4);
+      for (const z of [-3.2, -0.2, 2.8]) box(group, goldLocal, x * 0.98, 3.22, z, 0.09, 5.8, 0.09);
+    }
+    box(group, frame, 0, 4.78, -4.43, 10.25, 0.08, 0.1);
+    box(group, glow, 0, 0.08, -3.35, 10.1, 0.04, 0.07);
+    // One tall illustrated mural draws the visitor into the room. Its image
+    // comes from the matching door, so the transition has visual continuity.
+    box(group, frame, -5.22, 3.07, 0.72, 0.12, 4.95, 3.48);
+    const muralTexture = imageLoader.load(`/door-panels/${id}.jpg`);
+    muralTexture.colorSpace = THREE.SRGBColorSpace;
+    textures.add(muralTexture);
+    const muralMaterial = new THREE.MeshBasicMaterial({ map: muralTexture, toneMapped: false, side: THREE.DoubleSide });
+    materials.add(muralMaterial);
+    const muralGeometry = new THREE.PlaneGeometry(3.18, 4.68);
+    galleryGeometries.add(muralGeometry);
+    shape(group, muralGeometry, muralMaterial, -5.12, 3.07, 0.72).rotation.y = Math.PI / 2;
+    // The official brand sign anchors the back wall above the three stories.
+    const brand = featuredProjects.projects.find((project) => project.id === id)!;
+    const brandIndex = featuredProjects.projects.findIndex((project) => project.id === id);
+    const brandGeometry = new THREE.PlaneGeometry(3.4, 1.53);
+    galleryGeometries.add(brandGeometry);
+    shape(group, brandGeometry, makeDoorSign(brand.name, brand.logo, brandIndex), 0, 5.45, -4.18);
     config.stations.forEach((station, index) => {
       const x = xs[index];
-      projectObjects[id].push({ id: station.id, position: new THREE.Vector3(x, 2.6, -3.2) });
-      box(group, frame, x, 2.87, -4.32, 2.64, 2.14, 0.2);
-      box(group, trim, x, 2.87, -4.18, 2.43, 1.93, 0.07);
-      const geometry = new THREE.PlaneGeometry(2.26, 1.64);
+      projectObjects[id].push({ id: station.id, position: new THREE.Vector3(x, 2.94, -4.03) });
+      box(group, frame, x, 3.02, -4.31, 2.79, 2.26, 0.2);
+      box(group, trim, x, 3.02, -4.19, 2.56, 2.03, 0.07);
+      const geometry = new THREE.PlaneGeometry(2.43, 1.88);
       galleryGeometries.add(geometry);
-      const texture = imageLoader.load(station.image, (loaded) => {
-        const image = loaded.image as { width?: number; height?: number };
-        const aspect = (image.width ?? 1) / (image.height ?? 1);
-        const width = Math.min(2.26, 1.64 * aspect);
-        const height = Math.min(1.64, 2.26 / aspect);
-        imagePlane.scale.set(width / 2.26, height / 1.64, 1);
-      });
-      texture.colorSpace = THREE.SRGBColorSpace;
-      textures.add(texture);
-      const photo = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, toneMapped: false, color: station.darkLogo ? "#111111" : "#ffffff" });
-      materials.add(photo);
-      const imagePlane = shape(group, geometry, photo, x, 2.87, -4.12);
-      box(group, accent, x, 1.68, -4.11, 2.35, 0.12, 0.08);
-      box(group, frame, x, 0.74, -2.52, 1.9, 1.43, 1.2);
-      box(group, accent, x, 1.5, -2.52, 2.1, 0.1, 1.37);
-      box(group, trim, x, 0.82, -1.9, 1.55, 0.27, 0.05);
-      ball(group, accent, x, 1.83, -2.52, 0.16);
+      if (id === "imagine-paradise" && station.id === "products") {
+        // Render the site's gradient triangle at gallery scale; the tiny SVG
+        // mark does not rasterize reliably as a Three.js texture.
+        const canvas = document.createElement("canvas"); canvas.width = 720; canvas.height = 540;
+        const context = canvas.getContext("2d");
+        if (context) {
+          context.fillStyle = "#fffaf0"; context.fillRect(0, 0, 720, 540);
+          const gradient = context.createLinearGradient(220, 100, 470, 390);
+          gradient.addColorStop(0, "#e8713c"); gradient.addColorStop(1, "#7bb7b2");
+          context.fillStyle = gradient; context.beginPath(); context.moveTo(360, 65); context.lineTo(505, 355); context.lineTo(215, 355); context.closePath(); context.fill();
+          context.fillStyle = "#274c42"; context.textAlign = "center";
+          context.font = "600 46px Georgia, serif"; context.fillText("Imagine Paradise", 360, 443);
+        }
+        const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; textures.add(texture);
+        const photo = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false, side: THREE.DoubleSide }); materials.add(photo);
+        shape(group, geometry, photo, x, 3.02, -4.12);
+      } else {
+        const texture = imageLoader.load(station.image, (loaded) => {
+          const image = loaded.image as { width?: number; height?: number };
+          const aspect = (image.width ?? 1) / (image.height ?? 1);
+          const width = Math.min(2.43, 1.88 * aspect);
+          const height = Math.min(1.88, 2.43 / aspect);
+          imagePlane.scale.set(width / 2.43, height / 1.88, 1);
+        });
+        texture.colorSpace = THREE.SRGBColorSpace;
+        textures.add(texture);
+        const photo = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, toneMapped: false, color: station.darkLogo ? "#111111" : "#ffffff" });
+        materials.add(photo);
+        const imagePlane = shape(group, geometry, photo, x, 3.02, -4.12);
+      }
+      box(group, muted, x, 1.78, -4.12, 2.58, 0.11, 0.1);
+      box(group, frame, x, 0.46, -2.65, 2.3, 0.92, 0.76);
+      box(group, trim, x, 0.95, -2.65, 2.47, 0.08, 0.94);
+      box(group, accent, x, 0.99, -2.65, 1.72, 0.035, 0.68);
+      box(group, path, x, 0.012, 0.76, 2.12, 0.018, 5.8);
+      const discovery = new THREE.Group();
+      discovery.visible = false;
+      group.add(discovery);
+      box(discovery, glow, x, 4.2, -4.02, 2.78, 0.09, 0.1);
+      const halo = shape(discovery, ring, glow, x, 0.1, -2.65, 1.08, 1.08, 1.08);
+      halo.rotation.x = -Math.PI / 2;
+      projectHighlights[id][station.id] = discovery;
     });
     if (id === "indie-mind") {
-      for (const x of [-0.8, 0, 0.8]) shape(group, ring, accent, x, 4.4 + Math.abs(x) * 0.2, -4.28, 0.5, 0.5, 0.5);
+      // A hanging constellation of connected ideas and a living workbench.
+      const constellation = new THREE.Group();
+      constellation.position.set(2.75, 4.72, 0.1); constellation.scale.setScalar(0.76); group.add(constellation);
+      for (const radius of [0.84, 1.34]) {
+        const orbit = shape(constellation, ring, radius < 1 ? goldLocal : accent, 0, 0, 0, radius, radius, radius);
+        orbit.rotation.x = radius < 1 ? 0.78 : -0.48;
+      }
+      const nodes = [[-1.15, 0.42, 0.2], [-0.42, -0.72, 0.55], [0.62, 0.72, -0.15], [1.2, -0.16, 0.3]];
+      nodes.forEach(([x, y, z], index) => {
+        ball(constellation, index % 2 ? glow : trim, x, y, z, 0.14);
+        beam(constellation, goldLocal, new THREE.Vector3(0, 0, 0), new THREE.Vector3(x, y, z), 0.025);
+      });
+      ball(constellation, glow, 0, 0, 0, 0.26);
+      projectMotion[id].push(constellation);
+      for (const x of [-4.3, 4.3]) {
+        box(group, frame, x, 0.43, 2.1, 1.28, 0.82, 1.05);
+        for (const offset of [-0.32, 0.1, 0.38]) ball(group, offset > 0 ? leafLight : leaf, x + offset, 1.1 + Math.abs(offset), 2.1, 0.32);
+      }
     } else if (id === "lyfter") {
-      for (let i = 0; i < 4; i++) box(group, accent, -1.2 + i * 0.8, 4.04 + i * 0.16, -4.28, 0.58, 0.28 + i * 0.32, 0.14);
+      // Rising forms and practical workstations turn the gallery into a studio.
+      for (let i = 0; i < 5; i++) {
+        box(group, i % 2 ? accent : goldLocal, 1.8 + i * 0.43, 4.5 + i * 0.13, 0.75, 0.36, 0.22 + i * 0.15, 0.4);
+      }
+      for (const x of [-4.1, 4.1]) {
+        box(group, frame, x, 0.8, 1.5, 1.5, 0.13, 1.08);
+        box(group, muted, x, 0.36, 1.5, 1.1, 0.72, 0.85);
+        box(group, frame, x, 1.19, 1.18, 0.84, 0.56, 0.08);
+        box(group, glow, x, 1.19, 1.22, 0.72, 0.43, 0.03);
+        box(group, trim, x, 0.88, 1.55, 0.93, 0.05, 0.58);
+      }
     } else if (id === "imagine-paradise") {
-      ball(group, gold, 0, 4.4, -4.2, 0.53);
-      for (const x of [-2.2, 2.2]) ball(group, leaf, x, 4.1, -4.2, 0.43);
+      // A luminous canopy, planted terraces and water give this room a place.
+      const sun = new THREE.Group(); sun.position.set(2.8, 4.8, 0.1); sun.scale.setScalar(0.75); group.add(sun);
+      ball(sun, goldLocal, 0, 0, 0, 0.52);
+      const corona = shape(sun, ring, glow, 0, 0, 0, 1.12, 1.12, 1.12);
+      corona.rotation.x = 0.18;
+      projectMotion[id].push(sun);
+      for (const x of [-4.25, 4.25]) {
+        column(group, wood, x, 1.3, 1.3, 0.1, 2.6);
+        for (const [dx, dy, dz] of [[-0.38, 2.6, 0], [0.36, 2.47, 0.18], [0, 2.75, -0.22]]) ball(group, leaf, x + dx, dy, 1.3 + dz, 0.51);
+        box(group, wood, x, 0.3, 1.3, 1.25, 0.59, 1.2);
+        box(group, leafLight, x, 0.62, 1.3, 1.1, 0.07, 1.05);
+      }
+      box(group, glass, 0, 0.025, 1.4, 1.2, 0.025, 4.9);
+      for (const x of [-0.66, 0.66]) box(group, goldLocal, x, 0.04, 1.4, 0.07, 0.04, 5);
     } else {
-      ball(group, accent, 0, 4.4, -4.2, 0.52);
-      shape(group, ring, gold, 0, 4.4, -4.2, 1.1, 1.1, 1.1).rotation.x = 0.5;
+      // An operations lab: connected points orbit a faceted working system.
+      const system = new THREE.Group(); system.position.set(2.8, 4.77, 0.5); system.scale.setScalar(0.69); group.add(system);
+      ball(system, accent, 0, 0, 0, 0.59);
+      for (const [angle, scale] of [[0.28, 1.07], [-0.61, 1.35], [0.9, 1.6]]) {
+        const orbit = shape(system, ring, scale > 1.5 ? goldLocal : glow, 0, 0, 0, scale, scale, scale);
+        orbit.rotation.x = angle;
+      }
+      for (const [x, y, z] of [[-1.24, 0.35, 0.2], [1.1, -0.54, 0.5], [0.34, 1.18, -0.34]]) {
+        ball(system, trim, x, y, z, 0.13);
+        beam(system, glow, new THREE.Vector3(0, 0, 0), new THREE.Vector3(x, y, z), 0.025);
+      }
+      projectMotion[id].push(system);
+      for (const x of [-4.25, 4.25]) {
+        column(group, frame, x, 0.62, 1.4, 0.62, 1.2);
+        ball(group, accent, x, 1.5, 1.4, 0.56);
+        shape(group, ring, goldLocal, x, 1.5, 1.4, 0.92, 0.92, 0.92).rotation.x = 0.55;
+      }
     }
     projectRooms[id] = group;
   }
@@ -457,6 +581,8 @@ export function createInteriors(): WorldInteriors {
       if (currentProject) scene.remove(projectRooms[currentProject]);
       currentProject = null;
       current = id;
+      scene.background = new THREE.Color("#dce7d8");
+      scene.fog = new THREE.Fog("#dce7d8", 13, 27);
       scene.add(rooms[id]);
     },
     enterProject(id) {
@@ -465,11 +591,23 @@ export function createInteriors(): WorldInteriors {
       if (!projectRooms[id]) buildProjectRoom(id);
       current = null;
       currentProject = id;
+      scene.background = new THREE.Color(projectShowrooms[id].wall);
+      scene.fog = new THREE.Fog(projectShowrooms[id].wall, 17, 32);
       scene.add(projectRooms[id]);
     },
     activate(id, itemId) {
       const beacon = activated[id]?.[itemId];
       if (beacon) { beacon.visible = true; reactions[id][itemId](); }
+    },
+    activateProject(id, itemId) {
+      const highlight = projectHighlights[id]?.[itemId];
+      if (highlight) highlight.visible = true;
+    },
+    update(time) {
+      if (!currentProject) return;
+      projectMotion[currentProject]?.forEach((object, index) => {
+        object.rotation.y = time * (index % 2 ? -0.15 : 0.15);
+      });
     },
     objects(id) { return objects[id]; },
     projectObjects(id) { return projectObjects[id] ?? []; },
