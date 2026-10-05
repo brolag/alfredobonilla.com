@@ -9,6 +9,7 @@ export interface ShowroomStation {
   body: string;
   image: string;
   imageAlt: string;
+  darkLogo?: boolean;
   source: string;
   sourceUrl: string;
   people?: readonly { name: string; role: string; image?: string }[];
@@ -35,7 +36,7 @@ export const projectShowrooms: Record<ProjectId, ProjectShowroom> = {
     color: "#eeaa70", wall: "#f1e5d9",
     intro: "Un equipo de ingeniería y educación acompaña una ruta práctica para aprender a desarrollar software.",
     stations: [
-      { id: "learning", label: "La experiencia", title: "Aprender construyendo", body: "Lyfter combina una ruta estructurada de desarrollo de software con proyectos, comunidad y revisión personalizada de código.", image: "/brands/lyfter.svg", imageAlt: "Logotipo oficial de Lyfter", source: "Lyfter", sourceUrl: "https://www.lyfter.academy/" },
+      { id: "learning", label: "La experiencia", title: "Aprender construyendo", body: "Lyfter combina una ruta estructurada de desarrollo de software con proyectos, comunidad y revisión personalizada de código.", image: "/brands/lyfter.svg", imageAlt: "Logotipo de Lyfter en negro", darkLogo: true, source: "Lyfter", sourceUrl: "https://www.lyfter.academy/" },
       { id: "community", label: "Comunidad", title: "Aprender con otras personas", body: "La comunidad también se encuentra fuera del aula. Esta foto de un encuentro publicada por Lyfter muestra a participantes y equipo reunidos.", image: "/showrooms/lyfter-community.jpg", imageAlt: "Foto grupal de la comunidad Lyfter en un encuentro", source: "Lyfter · comunidad", sourceUrl: "https://www.lyfter.academy/" },
       { id: "people", label: "Equipo", title: "Un equipo que enseña y construye", body: "Lyfter presenta a instructores que siguen trabajando en software. Educación, ingeniería y mentoría se combinan para revisar código, resolver dudas y acompañar proyectos reales. La foto muestra un encuentro de la comunidad; los retratos de abajo identifican a los integrantes publicados por Lyfter.", image: "/showrooms/lyfter-community-2.jpg", imageAlt: "Encuentro de la comunidad Lyfter publicado por Lyfter", source: "Lyfter · comunidad y equipo", sourceUrl: "https://www.lyfter.academy/", people: [{ name: "Alek Castillo", role: "Ingeniería full stack y DevOps", image: "/showrooms/lyfter-alek.webp" }, { name: "André Solís", role: "Dirección de Educación", image: "/showrooms/lyfter-andre.webp" }, { name: "Alfredo Bonilla", role: "Dirección de Tecnología", image: "/showrooms/lyfter-alfredo.png" }, { name: "Gerardo López", role: "Ingeniería principal", image: "/showrooms/lyfter-gerardo.png" }, { name: "Andrés Bonilla", role: "Ingeniería y docencia", image: "/showrooms/lyfter-andres.png" }, { name: "Luis Cascante", role: "Ingeniería y docencia", image: "/showrooms/lyfter-luis.png" }, { name: "Eduardo Quiroga", role: "Ingeniería y mentoría", image: "/showrooms/lyfter-eduardo.webp" }] },
     ],

@@ -100,7 +100,7 @@ export function createInteriors(): WorldInteriors {
       });
       texture.colorSpace = THREE.SRGBColorSpace;
       textures.add(texture);
-      const photo = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, toneMapped: false });
+      const photo = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, toneMapped: false, color: station.darkLogo ? "#111111" : "#ffffff" });
       materials.add(photo);
       const imagePlane = shape(group, geometry, photo, x, 2.87, -4.12);
       box(group, accent, x, 1.68, -4.11, 2.35, 0.12, 0.08);

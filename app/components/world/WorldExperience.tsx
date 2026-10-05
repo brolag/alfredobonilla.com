@@ -42,7 +42,7 @@ function ProjectCard({ project }: { project: { name: string; description: string
 
 function ShowroomContent({ station, projectUrl }: { station: (typeof projectShowrooms)[ProjectId]["stations"][number]; projectUrl: string }) {
   return <div className="world-showroom-content">
-    <div className="world-showroom-content__image"><Image src={station.image} alt={station.imageAlt} width={900} height={550} sizes="(max-width: 600px) 100vw, 450px"/></div>
+    <div className="world-showroom-content__image"><Image className={station.darkLogo ? "world-showroom-content__logo-dark" : undefined} src={station.image} alt={station.imageAlt} width={900} height={550} sizes="(max-width: 600px) 100vw, 450px"/></div>
     <p>{station.body}</p>
     {station.people && <div className="world-showroom-people">{station.people.map((person) => <div key={person.name} className="world-showroom-person">{person.image && <Image src={person.image} alt={`Retrato de ${person.name}`} width={56} height={56}/>}<span><strong>{person.name}</strong><small>{person.role}</small></span></div>)}</div>}
     <div className="world-showroom-content__links"><a href={station.sourceUrl} target="_blank" rel="noopener noreferrer">Fuente: {station.source} <ArrowIcon diagonal/></a><a href={projectUrl} target="_blank" rel="noopener noreferrer">Sitio del proyecto <ArrowIcon diagonal/></a></div>
@@ -322,7 +322,7 @@ export default function WorldExperience() {
     {room && !active && !showFinale && <section className="world-room-guide" aria-label={showroom ? `Sala de ${showroom.name}` : `Actividad en ${room.name}`}>
       {showroom && projectRoom ? <>
         <div className="world-room-guide__head"><span>PROYECTOS · SALA 0{featured.findIndex((project) => project.id === projectRoom) + 1}</span><button onClick={leaveProject}>← Volver al taller</button></div>
-        <div className="world-room-guide__brand">{showroom.logo && <Image src={showroom.logo} alt="" width={38} height={38}/>}<h1>{showroom.name}</h1></div>
+        <div className={`world-room-guide__brand ${projectRoom === "lyfter" ? "world-room-guide__brand--dark-logo" : ""}`}>{showroom.logo && <Image src={showroom.logo} alt="" width={38} height={38}/>}<h1>{showroom.name}</h1></div>
         <p>{projectShowrooms[projectRoom].intro}</p>
         <div className="world-room-guide__items world-room-guide__items--stations">{projectShowrooms[projectRoom].stations.map((item) => <button key={item.id} onClick={() => inspectProjectStation(projectRoom, item.id)} aria-label={`Explorar ${item.label}`}><span>✳</span>{item.label}</button>)}</div>
         <p className="world-room-guide__hint">Abre una estación para ver imágenes, historias y fuentes · <kbd>Esc</kbd> vuelve al taller.</p>
