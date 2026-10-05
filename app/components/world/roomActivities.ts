@@ -27,7 +27,7 @@ export const roomActivities: Record<PlaceId, RoomActivity> = {
     ],
   },
   projects: {
-    prompt: "Entra a cada salón para conocer sus imágenes, ideas y personas.",
+    prompt: "Haz clic en una de las cuatro puertas para entrar a su salón.",
     completed: "Ya visitaste los cuatro salones del taller.",
     verb: "Entrar al salón de",
     items: featuredProjects.projects.map(({ id, name, description }) => ({ id, label: name, detail: description })),

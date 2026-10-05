@@ -220,14 +220,23 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       box(g, 0.7, 0.05, 0.37, 1.45, 0.76, 2.13, m.wood);
       for (const x of [-1.55, 1.55]) planter(g, x, 1.62, m.leafLight);
     } else if (place.id === "projects") {
-      box(g, 4.55, 2.7, 3.75, 0, 1.5, -0.2, m.orange);
-      roof(g, 3.18, 4.85, 4, m.wood, 0.22);
-      frontDoor(g, 1.71); buildingWindow(g, -1.5, 1.57, 1.73, 0.82); buildingWindow(g, 1.5, 1.57, 1.73, 0.82);
-      box(g, 0.25, 0.7, 0.25, -1.66, 3.6, -0.9, m.wood);
-      cylinder(g, 0.35, 0.3, 0.12, 0, 2.4, 1.85, m.gold, 12);
-      for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; const spoke = box(g, 0.09, 0.28, 0.1, Math.cos(a) * 0.42, 2.4 + Math.sin(a) * 0.42, 1.91, m.gold); spoke.rotation.z = a; }
-      solarPanel(g, -0.8, 3.49, -0.35); solarPanel(g, 0.8, 3.49, -0.35);
-      box(g, 1.2, 0.8, 0.85, 2.4, 0.55, 1.55, m.wood); box(g, 1.1, 0.06, 0.91, 2.4, 0.97, 1.55, m.gold);
+      // The four-window second floor signals that this building holds four rooms.
+      box(g, 9.15, 0.22, 3.5, 0, 0.16, 2.12, m.stone);
+      box(g, 8.35, 4.45, 5.1, 0, 2.48, -0.18, m.orange);
+      box(g, 8.5, 0.28, 0.45, 0, 2.54, 2.48, m.woodLight);
+      roof(g, 5.04, 8.65, 5.38, m.wood, 0.19);
+      box(g, 2.22, 2.66, 0.18, 0, 1.56, 2.45, m.wood);
+      box(g, 1.82, 2.34, 0.2, 0, 1.43, 2.54, m.dark);
+      sphere(g, 0.1, 0.62, 1.3, 2.68, m.gold, 1);
+      box(g, 2.7, 0.18, 0.82, 0, 3.04, 2.81, m.woodLight);
+      for (const [index, x] of [-3.08, -1.03, 1.03, 3.08].entries()) {
+        buildingWindow(g, x, 3.6, 2.42, 1.07);
+        box(g, 1.28, 0.09, 0.46, x, 3.03, 2.67, [m.leafLight, m.gold, m.blue, m.roofLight][index]);
+        buildingWindow(g, x, 1.55, 2.42, 0.87);
+        box(g, 1.38, 0.11, 0.49, x, 0.97, 2.66, m.woodLight);
+        solarPanel(g, x, 5.43, -0.68);
+      }
+      box(g, 8.9, 0.11, 1.1, 0, 0.12, 4.13, m.stoneDark);
     } else if (place.id === "agents") {
       cylinder(g, 1.8, 2.03, 2.8, 0, 1.63, -0.1, m.blue, 10);
       cylinder(g, 1.9, 1.85, 0.23, 0, 3.18, -0.1, m.wood, 12);
@@ -454,6 +463,8 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   let quality: "high" | "balanced" | "low" = "high";
   const frameSamples: number[] = [];
   const projector = new THREE.Vector3();
+  const doorCornerA = new THREE.Vector3();
+  const doorCornerB = new THREE.Vector3();
 
   function nearest(): PlaceId | null {
     let best: PlaceId | null = null, distance = 3.8;
@@ -467,7 +478,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
   function allowed(x: number, z: number) {
     if (Math.abs(x) > 16.4 || Math.abs(z) > 12.6) return false;
     if (Math.hypot(x, z) < 1.25) return false;
-    return !places.some((p) => Math.abs(x - p.x) < (p.id === "agents" ? 1.82 : 2.18) && Math.abs(z - p.z) < (p.id === "academy" ? 1.65 : 1.82));
+    return !places.some((p) => Math.abs(x - p.x) < (p.id === "projects" ? 4.12 : p.id === "agents" ? 1.82 : 2.18) && Math.abs(z - p.z) < (p.id === "projects" ? 2.8 : p.id === "academy" ? 1.65 : 1.82));
   }
   function resize() {
     const width = mount.clientWidth || window.innerWidth, height = mount.clientHeight || window.innerHeight;
@@ -541,7 +552,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
     const width = mount.clientWidth || window.innerWidth, height = mount.clientHeight || window.innerHeight;
     const activeCamera = activeRoom ? roomCamera : exploring ? eyeCamera : camera;
     places.forEach((p, index) => {
-      const labelY = exploring ? 2.55 : p.id === "agents" ? 6.5 : p.id === "academy" ? 4.4 : 4;
+      const labelY = exploring ? 2.55 : p.id === "agents" ? 6.5 : p.id === "projects" ? 5.8 : p.id === "academy" ? 4.4 : 4;
       projector.set(p.x, labelY, p.z).project(activeCamera);
       const label = labels[index]; label.style.left = `${(projector.x * 0.5 + 0.5) * width}px`; label.style.top = `${(-projector.y * 0.5 + 0.5) * height}px`;
       const labelX = (projector.x * 0.5 + 0.5) * width;
@@ -553,6 +564,12 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       const label = roomLabels[index];
       label.style.left = `${(projector.x * 0.5 + 0.5) * width}px`;
       label.style.top = `${(-projector.y * 0.5 + 0.5) * height}px`;
+      if (activeRoom === "projects" && !activeProject) {
+        doorCornerA.set(object.position.x - 1.09, 3.77, -4.02).project(roomCamera);
+        doorCornerB.set(object.position.x + 1.09, 0.12, -4.02).project(roomCamera);
+        label.style.width = `${Math.max(70, (doorCornerB.x - doorCornerA.x) * width * 0.5)}px`;
+        label.style.height = `${Math.max(110, (doorCornerA.y - doorCornerB.y) * height * 0.5)}px`;
+      }
       label.hidden = focused !== null || projector.z > 1 || Math.abs(projector.x) > 0.82 || Math.abs(projector.y) > 0.72;
     });
     animated.forEach((fn) => fn(time, delta));
@@ -603,8 +620,12 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       roomLabels.splice(0).forEach((label) => label.remove());
       for (const item of roomActivities[id].items) {
         const label = document.createElement("button");
-        label.type = "button"; label.className = "world-room-label";
-        label.textContent = item.label;
+        label.type = "button"; label.className = id === "projects" ? "world-room-label world-room-label--door" : "world-room-label";
+        if (id === "projects") {
+          const name = document.createElement("span");
+          name.textContent = `↗ ${item.label}`;
+          label.appendChild(name);
+        } else label.textContent = item.label;
         label.setAttribute("aria-label", `${roomActivities[id].verb}: ${item.label}`);
         label.addEventListener("click", () => events.onRoomObject(id, item.id));
         mount.appendChild(label); roomLabels.push(label);

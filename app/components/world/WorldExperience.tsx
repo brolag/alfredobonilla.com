@@ -319,7 +319,7 @@ export default function WorldExperience() {
     {started && showHelp && !room && !active && !mapOpen && <aside className="world-onboarding" aria-label="Cómo explorar"><strong>Tu recorrido empieza aquí.</strong><p>Camina hacia una puerta, toca su nombre o usa el mapa. Dentro de cada lugar, activa los objetos para descubrir su historia.</p><div><button onClick={() => setShowHelp(false)}>Entendido</button><button onClick={() => { setShowHelp(false); setMapOpen(true); }}>Abrir mapa <ArrowIcon/></button></div></aside>}
     {started && nearPlace && !active && !room && <button className="world-near" onClick={() => openPlace(nearPlace)}><span>{visited.includes(nearPlace) ? "VOLVER" : "ENTRAR"}</span><strong>{placeById[nearPlace].name}</strong><kbd>E</kbd></button>}
 
-    {room && !active && !showFinale && <section className="world-room-guide" aria-label={showroom ? `Sala de ${showroom.name}` : `Actividad en ${room.name}`}>
+    {room && !active && !showFinale && <section className={`world-room-guide ${room.id === "projects" && !projectRoom ? "world-room-guide--projects" : ""}`} aria-label={showroom ? `Sala de ${showroom.name}` : `Actividad en ${room.name}`}>
       {showroom && projectRoom ? <>
         <div className="world-room-guide__head"><span>PROYECTOS · SALA 0{featured.findIndex((project) => project.id === projectRoom) + 1}</span><button onClick={leaveProject}>← Volver al taller</button></div>
         <div className={`world-room-guide__brand ${projectRoom === "lyfter" ? "world-room-guide__brand--dark-logo" : ""}`}>{showroom.logo && <Image src={showroom.logo} alt="" width={38} height={38}/>}<h1>{showroom.name}</h1></div>
@@ -328,10 +328,10 @@ export default function WorldExperience() {
         <p className="world-room-guide__hint">Abre una estación para ver imágenes, historias y fuentes · <kbd>Esc</kbd> vuelve al taller.</p>
       </> : <>
         <div className="world-room-guide__head"><span>{room.eyebrow}</span><button onClick={leaveRoom}>← Volver al poblado</button></div>
-        <h1>{room.shortName}</h1><p>{visited.includes(room.id) ? roomActivities[room.id].completed : roomActivities[room.id].prompt}</p>
-        <div className="world-room-guide__progress" aria-live="polite">{usedByPlace[room.id].length}/{roomActivities[room.id].items.length} explorados {visited.includes(room.id) && <strong>✓ Lugar descubierto</strong>}</div>
-        <div className="world-room-guide__items">{roomActivities[room.id].items.map((item) => <button key={item.id} onClick={() => inspectItem(room.id, item.id)} aria-label={`${roomActivities[room.id].verb}: ${item.label}`}><span>{usedByPlace[room.id].includes(item.id) ? "✓" : "✳"}</span>{item.label}</button>)}</div>
-        <p className="world-room-guide__hint">Toca un objeto o su nombre · gira con ← → · <kbd>E</kbd> inspecciona el objeto frente a ti.</p>
+        <h1>{room.id === "projects" ? "Elige una puerta" : room.shortName}</h1>{room.id !== "projects" && <p>{visited.includes(room.id) ? roomActivities[room.id].completed : roomActivities[room.id].prompt}</p>}
+        <div className="world-room-guide__progress" aria-live="polite">{usedByPlace[room.id].length}/{roomActivities[room.id].items.length} {room.id === "projects" ? "salones visitados" : "explorados"} {visited.includes(room.id) && <strong>✓ Lugar descubierto</strong>}</div>
+        <div className="world-room-guide__items">{roomActivities[room.id].items.map((item) => <button key={item.id} onClick={() => inspectItem(room.id, item.id)} aria-label={`${roomActivities[room.id].verb}: ${item.label}`}><span>{usedByPlace[room.id].includes(item.id) ? "✓" : room.id === "projects" ? "↗" : "✳"}</span>{item.label}</button>)}</div>
+        {room.id !== "projects" && <p className="world-room-guide__hint">Toca un objeto o su nombre · gira con ← → · <kbd>E</kbd> inspecciona el objeto frente a ti.</p>}
       </>}
     </section>}
 

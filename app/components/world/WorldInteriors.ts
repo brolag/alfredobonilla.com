@@ -154,10 +154,16 @@ export function createInteriors(): WorldInteriors {
         ball(group, accent, x, 3.67, -4.18, 0.27);
       }
     } else if (place.id === "projects") {
-      for (const x of [-3.5, 3.5]) {
-        box(group, wood, x, 3.72, -4.27, 1.2, 0.12, 0.25);
-        box(group, gold, x, 3.84, -4.27, 0.24, 0.24, 0.23);
+      // A single hall with four full-height doors makes the nested rooms legible.
+      const hall = mat("#d4b88d"), doorway = mat("#284638");
+      box(group, hall, 0, 4.73, -4.28, 10.4, 0.34, 0.28);
+      box(group, wood, 0, 0.16, -1.63, 9.8, 0.06, 5.6);
+      box(group, pale, 0, 0.2, -1.63, 9.45, 0.06, 5.25);
+      for (const x of [-4.9, -2.45, 0, 2.45, 4.9]) {
+        box(group, wood, x, 2.12, -4.24, 0.15, 4.2, 0.28);
+        box(group, gold, x, 4.32, -4.1, 0.23, 0.16, 0.12);
       }
+      box(group, doorway, 0, 0.35, -3.65, 9.8, 0.07, 1.15);
     } else if (place.id === "agents") {
       // A shared signal above three distinct social stations.
       ball(group, accent, 0, 3.72, -4.19, 0.28);
@@ -291,9 +297,36 @@ export function createInteriors(): WorldInteriors {
     }
 
     const items = roomActivities[place.id].items;
-    const xs = items.length === 4 ? [-3.45, -1.15, 1.15, 3.45] : items.length === 3 ? [-2.9, 0, 2.9] : items.length === 2 ? [-1.9, 1.9] : [0];
+    const xs = items.length === 4 ? [-3.7, -1.23, 1.23, 3.7] : items.length === 3 ? [-2.9, 0, 2.9] : items.length === 2 ? [-1.9, 1.9] : [0];
     items.forEach((item, index) => {
       const x = xs[index];
+      if (place.id === "projects") {
+        const frame = mat("#755b48"), recess = mat("#263e36"), door = mat(projectShowrooms[item.id as ProjectId].color);
+        objects.projects.push({ id: item.id, position: new THREE.Vector3(x, 1.9, -4.02) });
+        box(group, frame, x, 1.93, -4.13, 2.25, 3.75, 0.24);
+        box(group, recess, x, 1.91, -3.96, 1.99, 3.49, 0.08);
+        box(group, door, x, 1.88, -3.84, 1.81, 3.31, 0.14);
+        box(group, glass, x, 2.83, -3.75, 1.49, 0.78, 0.06);
+        box(group, wood, x, 2.83, -3.7, 0.055, 0.79, 0.08);
+        box(group, gold, x, 3.85, -3.8, 2.12, 0.1, 0.22);
+        box(group, gold, x, 0.19, -3.42, 2.34, 0.08, 0.87);
+        ball(group, gold, x + 0.62, 1.37, -3.68, 0.085);
+        const featured = featuredProjects.projects[index];
+        const texture = imageLoader.load(featured.logo);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        textures.add(texture);
+        const logoMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, color: "#171c17" });
+        materials.add(logoMaterial);
+        box(group, pale, x, 1.93, -3.7, 1.54, 0.69, 0.08);
+        shape(group, index === 1 ? brandWide : brandSquare, logoMaterial, x, 1.93, -3.64, index === 1 ? 1.2 : 1.7, index === 1 ? 1.2 : 1.7);
+        for (let mark = 0; mark <= index; mark++) box(group, gold, x - index * 0.13 + mark * 0.26, 4.12, -4.05, 0.17, 0.17, 0.12);
+        const beacon = shape(group, ring, gold, x, 0.28, -3.5, 1.1, 1.1, 1.1);
+        beacon.rotation.x = -Math.PI / 2;
+        beacon.visible = false;
+        activated.projects[item.id] = beacon;
+        reactions.projects[item.id] = () => {};
+        return;
+      }
       const stand = new THREE.Group(); stand.position.set(x, 0, -1.8); group.add(stand);
       objects[place.id].push({ id: item.id, position: new THREE.Vector3(x, 2.2, -1.8) });
       if (place.id !== "contact") {
@@ -306,32 +339,7 @@ export function createInteriors(): WorldInteriors {
       beacon.visible = false;
       activated[place.id][item.id] = beacon;
       reactions[place.id][item.id] = () => {};
-      if (place.id === "projects") {
-        const featured = featuredProjects.projects[index];
-        const texture = imageLoader.load(featured.logo);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        textures.add(texture);
-        const logoMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false });
-        materials.add(logoMaterial);
-        shape(stand, index === 1 ? brandWide : brandSquare, logoMaterial, 0, 0.85, 0.625);
-        if (index === 0) { // Indie Mind: ideas growing together
-          box(stand, accent, 0, 1.99, 0, 0.95, 0.62, 0.14);
-          for (const dx of [-0.25, 0, 0.25]) ball(stand, leafLight, dx, 2.38 + Math.abs(dx), 0, 0.2);
-        } else if (index === 1) { // Lyfter: rising steps
-          for (let n = 0; n < 3; n++) box(stand, n === 2 ? gold : accent, -0.36 + n * 0.36, 1.87 + n * 0.19, 0, 0.3, 0.4 + n * 0.38, 0.58);
-        } else if (index === 2) { // Imagine Paradise: island and sun
-          column(stand, glass, 0, 1.82, 0, 0.54, 0.13);
-          ball(stand, leaf, 0, 2.03, 0, 0.38);
-          column(stand, wood, -0.16, 2.31, 0, 0.07, 0.49);
-          ball(stand, leafLight, -0.16, 2.59, 0, 0.27);
-          ball(stand, gold, 0.36, 2.53, -0.08, 0.22);
-        } else { // Stone Sphere: a connected core
-          ball(stand, accent, 0, 2.24, 0, 0.48);
-          const orbit = shape(stand, ring, gold, 0, 2.24, 0, 0.9, 0.9, 0.9);
-          orbit.rotation.x = 0.42;
-          orbit.rotation.y = 0.25;
-        }
-      } else if (place.id === "about") {
+      if (place.id === "about") {
         const cover = box(stand, accent, 0, 2.14, 0, 0.85, 1.04, 0.17);
         box(stand, pale, 0, 2.14, 0.1, 0.53, 0.72, 0.03);
         const seal = ball(stand, gold, 0, 2.15, 0.19, 0.17 + index * 0.03);
