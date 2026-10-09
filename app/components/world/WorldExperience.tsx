@@ -24,6 +24,36 @@ const projectDescriptions: Record<string, string> = {
   "Neural Codex": "Un plugin para Codex con cinco etapas de trabajo y hooks de continuidad.",
 };
 
+const socialStories: Record<string, { lead: string; body: string }> = {
+  github: {
+    lead: "Mi laboratorio público está en GitHub.",
+    body: "Allí encontrarás Neural Claude Code, Neural Open Code y Neural Codex: herramientas para desarrollar con agentes y compartir lo aprendido.",
+  },
+  linkedin: {
+    lead: "Aquí conecto con personas y equipos que quieren construir juntos.",
+    body: "Es un punto de partida para conversaciones profesionales sobre producto, formación y sistemas de IA.",
+  },
+  instagram: {
+    lead: "Una mirada más personal al proceso.",
+    body: "Entre proyectos, también me inspiran la naturaleza, los juegos de mesa y la música.",
+  },
+};
+
+const serviceStories: Record<string, { lead: string; body: string }> = {
+  ai: {
+    lead: "La IA sirve cuando resuelve un trabajo concreto.",
+    body: "Diseño agentes y automatizaciones alrededor de problemas reales, con resultados que se puedan revisar y mejorar.",
+  },
+  leadership: {
+    lead: "Un equipo avanza mejor cuando sabe qué construir y por qué.",
+    body: "Aporto dirección técnica, decisiones de arquitectura y una ruta clara para llevar el producto a la práctica.",
+  },
+  mentoring: {
+    lead: "Aprender funciona mejor cuando se aplica a un proyecto propio.",
+    body: "Acompaño a desarrolladores y equipos que quieren incorporar IA y mejorar su práctica de desarrollo web.",
+  },
+};
+
 function ArrowIcon({ diagonal = false }: { diagonal?: boolean }) {
   return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{diagonal ? <><path d="M5 19 19 5M8 5h11v11"/></> : <><path d="M4 12h16m-7-7 7 7-7 7"/></>}</svg>;
 }
@@ -65,6 +95,8 @@ function AboutStory({ selection, onNavigate }: { selection?: string; onNavigate:
 
 function PlaceContent({ id, onNavigate, selection }: { id: PlaceId; onNavigate: (id: PlaceId) => void; selection?: string }) {
   const libraryResource = selection === "build" ? libraryResources.build : libraryResources["learn-ai"];
+  const socialStory = socialStories[selection ?? ""];
+  const serviceStory = serviceStories[selection ?? ""];
   switch (id) {
     case "about": return <AboutStory selection={selection} onNavigate={onNavigate}/>;
     case "projects": return <>
@@ -73,9 +105,9 @@ function PlaceContent({ id, onNavigate, selection }: { id: PlaceId; onNavigate: 
       <a className="world-text-link" href="https://github.com/brolag" target="_blank" rel="noopener noreferrer">Más trabajo en GitHub <ArrowIcon diagonal/></a>
     </>;
     case "agents": return <>
-      <p className="world-panel__lead">Cada red muestra una parte distinta de lo que hago.</p>
-      <p>En GitHub comparto código, en LinkedIn converso sobre tecnología y trabajo, y en Instagram aparecen ideas y momentos fuera del teclado.</p>
-      <div className="world-contact-list">{socialLinks.map((detail) => <a key={detail.type} href={detail.url} target="_blank" rel="noopener noreferrer"><span>{detail.type === "github" ? "Código" : detail.type === "linkedin" ? "Trayectoria" : "Detrás de escena"}</span><strong>{detail.type === "github" ? "GitHub" : detail.type === "linkedin" ? "LinkedIn" : "Instagram"}</strong><ArrowIcon diagonal/></a>)}</div>
+      <p className="world-panel__lead">{socialStory?.lead}</p>
+      <p>{socialStory?.body}</p>
+      <Link className="world-text-link" href="/redes">Ver todos mis enlaces <ArrowIcon/></Link>
     </>;
     case "academy": return <>
       <p className="world-panel__lead">Una biblioteca para aprender mientras construyes.</p>
@@ -83,12 +115,8 @@ function PlaceContent({ id, onNavigate, selection }: { id: PlaceId; onNavigate: 
       {libraryResource && <div className="world-projects"><ProjectCard project={libraryResource}/></div>}
     </>;
     case "services": return <>
-      <p className="world-panel__lead">Colaboremos para convertir una idea compleja en un sistema útil.</p>
-      <div className="world-services">
-        <div><span>01</span><strong>Soluciones con IA</strong><p>Agentes, automatización y productos adaptados a problemas concretos.</p></div>
-        <div><span>02</span><strong>Liderazgo técnico</strong><p>Estrategia, arquitectura y dirección para equipos que necesitan avanzar con claridad.</p></div>
-        <div><span>03</span><strong>Mentoría y formación</strong><p>Acompañamiento práctico para desarrolladores y equipos.</p></div>
-      </div>
+      <p className="world-panel__lead">{serviceStory?.lead}</p>
+      <p>{serviceStory?.body}</p>
       <button className="world-primary-link" onClick={() => onNavigate("contact")}>Hablemos de tu proyecto <ArrowIcon/></button>
     </>;
     case "contact": return <>
