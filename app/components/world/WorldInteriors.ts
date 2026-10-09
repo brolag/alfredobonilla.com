@@ -42,6 +42,7 @@ export function createInteriors(): WorldInteriors {
   const wood = mat("#9f7855"), pale = mat("#efead4"), dark = mat("#31584a"), gold = mat("#ecc481", { metalness: 0.24 });
   const glass = mat("#a6dad2", { transparent: true, opacity: 0.62, roughness: 0.18 });
   const leaf = mat("#6aab80"), leafLight = mat("#9fc78b");
+  const memoryColors = [mat("#c58b50"), mat("#5d9d7b"), mat("#6f95ad")];
   const rooms = {} as Record<PlaceId, THREE.Group>;
   const objects = {} as Record<PlaceId, InteriorObject[]>;
   const activated = {} as Record<PlaceId, Record<string, THREE.Mesh>>;
@@ -84,10 +85,28 @@ export function createInteriors(): WorldInteriors {
       ball(group, leafLight, x + 0.28, 1.65, 2.15, 0.38);
     }
     if (place.id === "about") {
-      for (const x of [-2.9, 0, 2.9]) {
+      for (const [index, x] of [-2.9, 0, 2.9].entries()) {
         box(group, wood, x, 3.62, -4.36, 1.4, 1.26, 0.1);
         box(group, pale, x, 3.62, -4.25, 1.17, 1.02, 0.06);
-        ball(group, accent, x, 3.67, -4.18, 0.27);
+        if (index === 0) {
+          shape(group, ring, memoryColors[index], x - 0.12, 3.73, -4.16, 0.43, 0.43, 1);
+          const handle = box(group, memoryColors[index], x + 0.2, 3.42, -4.14, 0.09, 0.43, 0.08);
+          handle.rotation.z = 0.74;
+        } else if (index === 1) {
+          box(group, memoryColors[index], x, 3.52, -4.16, 0.75, 0.07, 0.08);
+          for (const dx of [-0.34, 0, 0.34]) {
+            ball(group, gold, x + dx, dx === 0 ? 3.86 : 3.52, -4.12, 0.13);
+          }
+          for (const dx of [-0.18, 0.18]) {
+            const link = box(group, memoryColors[index], x + dx, 3.7, -4.16, 0.07, 0.43, 0.08);
+            link.rotation.z = dx < 0 ? -0.72 : 0.72;
+          }
+        } else {
+          for (let step = 0; step < 3; step++) {
+            box(group, memoryColors[index], x - 0.31 + step * 0.31, 3.37 + step * 0.16, -4.16, 0.25, 0.2 + step * 0.32, 0.08);
+          }
+          ball(group, gold, x + 0.31, 4.04, -4.12, 0.1);
+        }
       }
     } else if (place.id === "projects") {
       for (const x of [-3.5, 3.5]) {
@@ -153,7 +172,7 @@ export function createInteriors(): WorldInteriors {
     items.forEach((item, index) => {
       const x = xs[index];
       const stand = new THREE.Group(); stand.position.set(x, 0, -1.8); group.add(stand);
-      objects[place.id].push({ id: item.id, position: new THREE.Vector3(x, 2.2, -1.8) });
+      objects[place.id].push({ id: item.id, position: new THREE.Vector3(x, place.id === "about" ? 1.35 : 2.2, -1.8) });
       if (place.id !== "contact") {
         box(stand, wood, 0, 0.75, 0, 1.54, 1.4, 1.15);
         box(stand, gold, 0, 1.49, 0, 1.7, 0.09, 1.28);
@@ -190,10 +209,38 @@ export function createInteriors(): WorldInteriors {
           orbit.rotation.y = 0.25;
         }
       } else if (place.id === "about") {
-        const cover = box(stand, accent, 0, 2.14, 0, 0.85, 1.04, 0.17);
-        box(stand, pale, 0, 2.14, 0.1, 0.53, 0.72, 0.03);
-        const seal = ball(stand, gold, 0, 2.15, 0.19, 0.17 + index * 0.03);
-        reactions[place.id][item.id] = () => { cover.rotation.y = -0.42; seal.scale.setScalar(0.29); };
+        const ink = memoryColors[index];
+        if (index === 0) { // Curiosity: an open notebook and a lens.
+          const left = box(stand, ink, -0.25, 2.12, 0, 0.45, 0.69, 0.1);
+          const right = box(stand, ink, 0.25, 2.12, 0, 0.45, 0.69, 0.1);
+          box(stand, pale, -0.25, 2.12, 0.07, 0.37, 0.58, 0.04);
+          box(stand, pale, 0.25, 2.12, 0.07, 0.37, 0.58, 0.04);
+          box(stand, gold, 0, 2.12, 0.12, 0.06, 0.66, 0.05);
+          const lens = shape(stand, ring, gold, 0.15, 2.55, 0.22, 0.37, 0.37, 1);
+          const handle = box(stand, gold, 0.42, 2.28, 0.23, 0.08, 0.36, 0.08);
+          handle.rotation.z = 0.72;
+          const spark = ball(stand, gold, -0.36, 2.73, 0.12, 0.13); spark.visible = false;
+          reactions[place.id][item.id] = () => { left.rotation.y = -0.3; right.rotation.y = 0.3; lens.rotation.z = -0.25; spark.visible = true; };
+        } else if (index === 1) { // Community: three people connected by a shared line.
+          box(stand, ink, 0, 1.84, 0, 1.18, 0.13, 0.53);
+          for (const dx of [-0.36, 0, 0.36]) {
+            box(stand, ink, dx, dx === 0 ? 2.2 : 2.13, 0.04, 0.22, 0.47, 0.22);
+            ball(stand, gold, dx, dx === 0 ? 2.59 : 2.5, 0.04, 0.17);
+          }
+          const bridge = box(stand, gold, 0, 2.02, 0.22, 0.84, 0.07, 0.08); bridge.visible = false;
+          const shared = ball(stand, pale, 0, 2.02, 0.3, 0.12); shared.visible = false;
+          reactions[place.id][item.id] = () => { bridge.visible = true; shared.visible = true; };
+        } else { // Today: small modules become a working system.
+          const heights = [0.42, 0.62, 0.82];
+          heights.forEach((height, step) => {
+            box(stand, ink, -0.38 + step * 0.38, 1.84 + height / 2, 0, 0.3, height, 0.44);
+            box(stand, pale, -0.38 + step * 0.38, 1.84 + height, 0, 0.31, 0.06, 0.45);
+          });
+          const outcome = ball(stand, gold, 0.38, 2.87, 0, 0.19); outcome.visible = false;
+          const orbit = shape(stand, ring, glass, 0, 2.32, -0.06, 0.72, 0.72, 1);
+          orbit.rotation.y = 0.4;
+          reactions[place.id][item.id] = () => { outcome.visible = true; orbit.rotation.y = 0.85; };
+        }
       } else if (place.id === "agents") {
         box(stand, accent, 0, 2.23, 0, 1.12, 1.12, 0.17);
         if (index === 0) { // GitHub: source branches

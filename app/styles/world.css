@@ -53,6 +53,9 @@
 .world-room-label { position: absolute; z-index: 3; transform: translate(-50%, -50%); max-width: 170px; padding: 8px 12px; border: 1px solid #5d8a65; border-radius: 10px; color: #254d38; background: rgba(255,250,228,.96); box-shadow: 0 5px 0 rgba(40,79,55,.18), 0 10px 26px rgba(23,55,37,.22); font-size: 12px; font-weight: 900; text-align: center; white-space: nowrap; }
 .world-room-label:hover { background: #fff; transform: translate(-50%, -58%); }
 .world-room-label[hidden] { display: none; }
+.world-room-label--memory-curiosity { border-color: #c58b50; color: #76512c; background: #fff3df; }
+.world-room-label--memory-community { border-color: #5d9d7b; color: #315f46; background: #e8f2e5; }
+.world-room-label--memory-today { border-color: #6f95ad; color: #3c6075; background: #eaf1f5; }
 .world-room-guide { position: absolute; z-index: 6; right: clamp(22px, 4vw, 70px); bottom: 32px; width: min(390px, calc(100vw - 44px)); max-height: calc(100svh - 150px); overflow-y: auto; padding: 21px; border: 1px solid rgba(67,109,74,.3); border-radius: 17px; color: #274d3b; background: rgba(251,248,232,.95); box-shadow: 0 20px 56px rgba(28,62,43,.24); backdrop-filter: blur(15px); }
 .world-room-guide__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #7e907f; font: 800 9px var(--font-mono), monospace; letter-spacing: .06em; text-transform: uppercase; }
 .world-room-guide__head button { padding: 4px 0; border: 0; color: #357358; background: transparent; font: 900 11px var(--font-ui), sans-serif; white-space: nowrap; }
@@ -64,6 +67,16 @@
 .world-room-guide__items button { display: flex; align-items: center; gap: 8px; min-height: 42px; padding: 7px 9px; border: 1px solid #d9e2d0; border-radius: 9px; color: #315744; background: #f4f3e6; text-align: left; font-size: 11px; font-weight: 900; }
 .world-room-guide__items button:hover { background: #e6efdf; border-color: #90b691; }
 .world-room-guide__items button span { color: #52906c; font-size: 15px; }
+.world-room-guide__items--memories { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.world-room-guide__items--memories button { gap: 5px; min-width: 0; padding: 7px; font-size: 10px; }
+.world-room-guide__items--memories button span { font: 900 10px var(--font-mono), monospace; }
+.world-room-guide__items--memories button:nth-child(1) { border-color: #dec8a7; color: #76512c; background: #faf0df; }
+.world-room-guide__items--memories button:nth-child(1) span { color: #a66c35; }
+.world-room-guide__items--memories button:nth-child(2) { border-color: #b9d7bf; color: #315f46; background: #e8f2e5; }
+.world-room-guide__items--memories button:nth-child(2) span { color: #438263; }
+.world-room-guide__items--memories button:nth-child(3) { border-color: #bfd0dc; color: #3c6075; background: #eaf1f5; }
+.world-room-guide__items--memories button:nth-child(3) span { color: #557d99; }
+.world-room-guide__items--memories button:hover { filter: brightness(1.04); }
 .world-room-guide .world-room-guide__hint { margin: 10px 0 0; font-size: 10px; }
 .world-room-guide kbd { display: inline-block; padding: 0 4px; border: 1px solid #b9c9b4; border-radius: 3px; background: #fff; font: 800 10px var(--font-mono), monospace; }
 .world-finale { position: fixed; z-index: 18; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; color: #244c39; background: rgba(239,246,224,.92); text-align: center; backdrop-filter: blur(16px); }
