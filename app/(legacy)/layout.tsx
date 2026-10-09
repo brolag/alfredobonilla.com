@@ -1,4 +1,4 @@
-// Legacy CRT shell for /city, /links and /redes.
+// Legacy CRT shell for /city.
 // The old root layout wrapped every page in this chrome; the new home
 // (desktop terminal) needs a clean body, so the CRT look lives here only.
 export default function LegacyLayout({

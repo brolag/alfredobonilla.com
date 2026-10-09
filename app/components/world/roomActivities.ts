@@ -21,9 +21,9 @@ export const roomActivities: Record<PlaceId, RoomActivity> = {
     completed: "Ya conoces la historia detrás del poblado.",
     verb: "Abrir recuerdo",
     items: [
-      { id: "curiosity", label: "Curiosidad", detail: "Todo empezó con la curiosidad por entender cómo funcionan las cosas y construirlas con código." },
-      { id: "community", label: "Comunidad", detail: "Enseñar, compartir y aprender con otras personas convirtió esa curiosidad en proyectos colectivos." },
-      { id: "today", label: "Hoy", detail: "Hoy combino producto, IA y educación para crear herramientas que ayuden a otros a construir." },
+      { id: "curiosity", label: "Curiosidad", detail: "La pregunta inicial fue sencilla: ¿cómo funciona esto y qué puedo crear con ello?" },
+      { id: "community", label: "Comunidad", detail: "Una idea gana fuerza cuando alguien más puede aprender de ella, usarla y mejorarla." },
+      { id: "today", label: "Hoy", detail: "Del prototipo al uso real: esa es la pregunta que guía mi trabajo actual." },
     ],
   },
   projects: {

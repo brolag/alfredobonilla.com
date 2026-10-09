@@ -5,6 +5,7 @@ import "./styles/theme.css";
 import "./styles/terminal.css";
 import "./styles/paper.css";
 import "./styles/paper-site.css";
+import "./styles/social-paper.css";
 import "./styles/legacy-crt.css";
 
 // Terminal monospace font (prompt, commands, banner)
