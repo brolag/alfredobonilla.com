@@ -54,6 +54,18 @@ const serviceStories: Record<string, { lead: string; body: string }> = {
   },
 };
 
+const aboutMemoryVisuals: Record<string, { color: string; background: string; number: string }> = {
+  curiosity: { color: "#a66c35", background: "#f6ead8", number: "01" },
+  community: { color: "#438263", background: "#e6f0e6", number: "02" },
+  today: { color: "#557d99", background: "#e6eef3", number: "03" },
+};
+
+function AboutMemoryIcon({ id }: { id: string }) {
+  if (id === "curiosity") return <svg width="31" height="31" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="13" cy="13" r="7"/><path d="m18.5 18.5 8 8M24 5v4m-2-2h4"/></svg>;
+  if (id === "community") return <svg width="31" height="31" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="16" cy="8" r="3"/><circle cx="7" cy="23" r="3"/><circle cx="25" cy="23" r="3"/><path d="m14.5 11-5.5 9m8.5-9 5.5 9M10 23h12"/></svg>;
+  return <svg width="31" height="31" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 25h7v-7h7v-7h7V4"/><path d="m20 4 5 0 0 5"/></svg>;
+}
+
 function ArrowIcon({ diagonal = false }: { diagonal?: boolean }) {
   return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{diagonal ? <><path d="M5 19 19 5M8 5h11v11"/></> : <><path d="M4 12h16m-7-7 7 7-7 7"/></>}</svg>;
 }
@@ -298,6 +310,7 @@ export default function WorldExperience() {
   const selected = selectedItem ? roomActivities[selectedItem.place].items.find((item) => item.id === selectedItem.id) : null;
   const selectedProject = selectedItem?.place === "projects" ? featured.find((project) => project.id === selectedItem.id) : null;
   const selectedSocial = selectedItem?.place === "agents" ? socialLinks.find((detail) => detail.type === selectedItem.id) : null;
+  const memoryVisual = selectedItem?.place === "about" ? aboutMemoryVisuals[selectedItem.id] : null;
   const room = roomPlace ? placeById[roomPlace] : null;
   return <main id="world-main-content" tabIndex={-1} className={`world-root ${started ? "world-root--exploring" : ""}`} lang="es">
     <div className="world-sky" aria-hidden="true"/>
@@ -324,7 +337,7 @@ export default function WorldExperience() {
       <div className="world-room-guide__head"><span>{room.eyebrow}</span><button onClick={leaveRoom}>← Volver al poblado</button></div>
       <h1>{room.shortName}</h1><p>{visited.includes(room.id) ? roomActivities[room.id].completed : roomActivities[room.id].prompt}</p>
       <div className="world-room-guide__progress" aria-live="polite">{usedByPlace[room.id].length}/{roomActivities[room.id].items.length} explorados {visited.includes(room.id) && <strong>✓ Lugar descubierto</strong>}</div>
-      <div className="world-room-guide__items">{roomActivities[room.id].items.map((item) => <button key={item.id} onClick={() => inspectItem(room.id, item.id)} aria-label={`${roomActivities[room.id].verb}: ${item.label}`}><span>{usedByPlace[room.id].includes(item.id) ? "✓" : "✳"}</span>{item.label}</button>)}</div>
+      <div className={`world-room-guide__items ${room.id === "about" ? "world-room-guide__items--memories" : ""}`}>{roomActivities[room.id].items.map((item, index) => <button key={item.id} onClick={() => inspectItem(room.id, item.id)} aria-label={`${roomActivities[room.id].verb}: ${item.label}`}><span>{usedByPlace[room.id].includes(item.id) ? "✓" : room.id === "about" ? `0${index + 1}` : "✳"}</span>{item.label}</button>)}</div>
       <p className="world-room-guide__hint">Toca un objeto o su nombre · gira con ← → · <kbd>E</kbd> inspecciona el objeto frente a ti.</p>
     </section>}
 
@@ -332,7 +345,7 @@ export default function WorldExperience() {
       <div className="world-map__top"><span>EL POBLADO · {visited.length}/6 DESCUBIERTOS</span><button onClick={() => setMapOpen(false)} aria-label="Cerrar mapa">×</button></div><h2>Elige un destino.</h2><p>{visited.length === places.length ? "¡Recorrido completo! Puedes volver a cualquier lugar." : "Camina o viaja directamente para descubrir cada lugar."}</p><div className="world-map__list">{places.map((place, index) => <button key={place.id} onClick={() => openPlace(place.id)} tabIndex={mapOpen ? 0 : -1}><span className="world-map__number">0{index + 1}</span><span className="world-map__glyph" style={{ color: place.color }}><PlaceIcon id={place.id}/></span><span><strong>{place.name}</strong><small>{place.shortName} · {visited.includes(place.id) ? "descubierto" : "sin descubrir"}</small></span><ArrowIcon/></button>)}</div>
     </aside>}
 
-    {active && selected && <><button className="world-panel-backdrop" aria-label="Volver a la sala" onClick={closePlace}/><aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title"><div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: active.color }}/>{active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Volver a la sala">×</button></div><div className="world-panel__icon" style={{ color: active.color }}><PlaceIcon id={active.id} size={31}/></div><h2 id="world-panel-title">{selected.label}</h2><p className="world-panel__summary">{selected.detail}</p><div className="world-panel__rule"/><div className="world-panel__body">{selectedProject ? <><p className="world-panel__lead">Un proyecto del taller.</p><div className="world-projects"><ProjectCard project={selectedProject}/></div></> : selectedSocial ? <><a className="world-primary-link" href={selectedSocial.url} target="_blank" rel="noopener noreferrer">Abrir {selected.label} <ArrowIcon diagonal/></a><PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/></> : <PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/>}</div><div className="world-panel__footer"><span>{usedByPlace[active.id].length}/{roomActivities[active.id].items.length} OBJETOS EXPLORADOS</span><button onClick={closePlace}>Volver a la sala <ArrowIcon/></button></div></aside></>}
+    {active && selected && <><button className="world-panel-backdrop" aria-label="Volver a la sala" onClick={closePlace}/><aside id="world-content" className="world-panel" role="dialog" aria-modal="true" aria-labelledby="world-panel-title"><div className="world-panel__top"><span className="world-panel__eyebrow"><span style={{ background: memoryVisual?.color ?? active.color }}/>{memoryVisual ? `CASA · RECUERDO ${memoryVisual.number} / 03` : active.eyebrow}</span><button ref={closeButton} className="world-panel__close" onClick={closePlace} aria-label="Volver a la sala">×</button></div><div className="world-panel__icon" style={{ color: memoryVisual?.color ?? active.color, background: memoryVisual?.background }}>{memoryVisual ? <AboutMemoryIcon id={selectedItem?.id ?? ""}/> : <PlaceIcon id={active.id} size={31}/>}</div><h2 id="world-panel-title">{selected.label}</h2><p className="world-panel__summary">{selected.detail}</p><div className="world-panel__rule"/><div className="world-panel__body">{selectedProject ? <><p className="world-panel__lead">Un proyecto del taller.</p><div className="world-projects"><ProjectCard project={selectedProject}/></div></> : selectedSocial ? <><a className="world-primary-link" href={selectedSocial.url} target="_blank" rel="noopener noreferrer">Abrir {selected.label} <ArrowIcon diagonal/></a><PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/></> : <PlaceContent id={active.id} onNavigate={openPlace} selection={selectedItem?.id}/>}</div><div className="world-panel__footer"><span>{usedByPlace[active.id].length}/{roomActivities[active.id].items.length} OBJETOS EXPLORADOS</span><button onClick={closePlace}>Volver a la sala <ArrowIcon/></button></div></aside></>}
 
     {showFinale && !active && <div className="world-finale" role="dialog" aria-modal="true" aria-labelledby="world-finale-title"><span>✳ RECORRIDO COMPLETO</span><h2 id="world-finale-title">El poblado ya es tuyo.</h2><p>Exploraste las seis ideas que lo mantienen vivo. Gracias por caminar conmigo.</p><div><button ref={finaleButton} className="world-enter" onClick={() => { setShowFinale(false); leaveRoom(); }}>Volver al poblado <ArrowIcon/></button><button className="world-intro__secondary" onClick={() => openPlace("contact")}>Conversemos</button></div></div>}
 

@@ -600,7 +600,7 @@ export function createWorld(mount: HTMLDivElement, events: WorldEvents): WorldCo
       roomLabels.splice(0).forEach((label) => label.remove());
       for (const item of roomActivities[id].items) {
         const label = document.createElement("button");
-        label.type = "button"; label.className = "world-room-label";
+        label.type = "button"; label.className = id === "about" ? `world-room-label world-room-label--memory-${item.id}` : "world-room-label";
         label.textContent = item.label;
         label.setAttribute("aria-label", `${roomActivities[id].verb}: ${item.label}`);
         label.addEventListener("click", () => events.onRoomObject(id, item.id));
