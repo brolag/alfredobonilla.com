@@ -39,16 +39,34 @@ function ProjectCard({ project }: { project: { name: string; description: string
   return hasProjectLink ? <a className="world-project" href={project.url} target="_blank" rel="noopener noreferrer">{content}</a> : <article className="world-project">{content}</article>;
 }
 
+function AboutStory({ selection, onNavigate }: { selection?: string; onNavigate: (id: PlaceId) => void }) {
+  switch (selection) {
+    case "curiosity": return <>
+      <p className="world-panel__lead">Aprender construyendo se volvió mi oficio.</p>
+      <p>Esa curiosidad me llevó al software. Durante más de 14 años he convertido preguntas en prototipos y prototipos en productos, con Costa Rica como base.</p>
+      <p>Fuera del teclado sigo explorando: naturaleza, juegos de mesa y música. Son otras maneras de observar, experimentar y aprender.</p>
+      <button className="world-text-link" onClick={() => onNavigate("projects")}>Ver lo que he construido <ArrowIcon/></button>
+    </>;
+    case "community": return <>
+      <p className="world-panel__lead">La enseñanza me llevó a construir con otras personas.</p>
+      <p>En proyectos como Lyfter e Indie Mind trabajo para que más personas aprendan creando. Los proyectos reales, la conversación y la revisión de lo que hacemos son parte del proceso.</p>
+      <p>También comparto herramientas abiertas para Claude Code, OpenCode y Codex. Publicarlas permite que otras personas las usen, cuestionen y mejoren.</p>
+      <button className="world-text-link" onClick={() => onNavigate("academy")}>Explorar recursos para aprender <ArrowIcon/></button>
+    </>;
+    case "today": return <>
+      <p className="world-panel__lead">Hoy dirijo Indie Mind y construyo productos con IA aplicada.</p>
+      <p>Diseño flujos con agentes, automatizaciones y experiencias educativas para que personas y equipos lleven ideas a herramientas que puedan usar.</p>
+      <blockquote>“Systems over willpower.” <span>Automatizar lo repetitivo y conservar el criterio para decidir qué vale la pena construir.</span></blockquote>
+      <button className="world-text-link" onClick={() => onNavigate("contact")}>Conversemos <ArrowIcon/></button>
+    </>;
+    default: return null;
+  }
+}
+
 function PlaceContent({ id, onNavigate, selection }: { id: PlaceId; onNavigate: (id: PlaceId) => void; selection?: string }) {
   const libraryResource = selection === "build" ? libraryResources.build : libraryResources["learn-ai"];
   switch (id) {
-    case "about": return <>
-      <p className="world-panel__lead">Soy Alfredo Bonilla: ingeniero de software, educador y fundador de Indie Mind.</p>
-      <p>Desde Costa Rica llevo más de 14 años construyendo productos digitales. Hoy concentro mi trabajo en sistemas de IA, automatización y herramientas que ayudan a otros desarrolladores a crear mejor.</p>
-      <blockquote>“Systems over willpower.” <span>Diseñar sistemas que amplían lo que podemos hacer sin perder el criterio humano.</span></blockquote>
-      <div className="world-facts"><div><span>Base</span><strong>Costa Rica</strong></div><div><span>Ahora</span><strong>Indie Mind + IA agéntica</strong></div><div><span>Fuera del teclado</span><strong>Naturaleza, juegos y música</strong></div></div>
-      <button className="world-text-link" onClick={() => onNavigate("contact")}>Conversemos <ArrowIcon/></button>
-    </>;
+    case "about": return <AboutStory selection={selection} onNavigate={onNavigate}/>;
     case "projects": return <>
       <p className="world-panel__lead">Cuatro proyectos que reúnen educación, producto, mercadeo e IA aplicada.</p>
       <div className="world-projects">{featured.map((project) => <ProjectCard key={project.id} project={project}/>)}</div>
