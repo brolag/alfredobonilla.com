@@ -33,6 +33,12 @@
 .social-paper__project span span { font-size: 0.82rem; line-height: 1.4; }
 .social-paper__project > span:last-child { color: #a65d3d; font-size: 1.25rem; }
 .social-paper__more { margin-top: 30px; }
+.links-paper__social-section { margin-top: 30px; }
+.links-paper__socials { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.links-paper__socials a { display: flex; flex-direction: column; align-items: center; gap: 7px; min-height: 83px; padding: 8px 3px; border: 1px solid rgba(32, 85, 63, 0.18); border-radius: 9px; color: var(--paper-ink); font: 700 0.78rem var(--font-mono), monospace; text-align: center; text-decoration: none; transition: background-color 0.2s ease, transform 0.2s ease; }
+.links-paper__socials a:hover { background: rgba(32, 85, 63, 0.08); transform: translateY(-2px); }
+.links-paper__social-icon { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 50%; background: #e7ede1; color: #20553f; }
+.links-paper__social-icon svg { width: 22px; height: 22px; }
 
 .social-paper .ps-foot { padding: 0; }
 .social-paper a:focus-visible { outline: 3px solid #b97650; outline-offset: 3px; }
@@ -45,4 +51,8 @@
   .social-paper__main { margin-top: 76px; }
   .social-paper__actions { gap: 9px; }
   .social-paper__actions .ps-btn { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  .links-paper__socials { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

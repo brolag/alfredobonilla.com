@@ -20,11 +20,33 @@ const paths = [
   },
 ];
 
-const more = [
-  { mark: "IM", title: "Blog de Indie Mind", description: "Ideas y guías sobre IA aplicada.", href: "https://www.indiemind.ai/blog" },
-  { mark: "in", title: "LinkedIn", description: "Producto, tecnología y colaboración.", href: "https://www.linkedin.com/in/brolag/" },
-  { mark: "GH", title: "GitHub", description: "Herramientas abiertas para construir con agentes.", href: "https://github.com/brolag" },
-];
+const socials = [
+  { name: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/brolag/" },
+  { name: "github", label: "GitHub", href: "https://github.com/brolag" },
+  { name: "instagram", label: "Instagram", href: "https://www.instagram.com/brolag/" },
+  { name: "twitter", label: "Twitter", href: "https://twitter.com/brolag" },
+] as const;
+
+function SocialIcon({ name }: { name: typeof socials[number]["name"] }) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {name === "linkedin" && <>
+      <rect x="2.5" y="2.5" width="19" height="19" rx="3" />
+      <circle cx="7.5" cy="8" r="1" fill="currentColor" stroke="none" />
+      <path d="M7.5 11v7M12 18v-7h3.2v1.1a3 3 0 0 1 5.3 2V18M12 14a3 3 0 0 1 3-3" />
+    </>}
+    {name === "github" && <>
+      <path d="M9 19c-4.5 1.5-4.5-2.5-6.5-3M15 22v-3.8a3.3 3.3 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.7a5.2 5.2 0 0 0-1.4-3.6 4.8 4.8 0 0 0-.1-3.6S17.6 1.4 15 3.1a12 12 0 0 0-6 0C6.4 1.4 5.2 1.7 5.2 1.7a4.8 4.8 0 0 0-.1 3.6 5.2 5.2 0 0 0-1.4 3.6c0 5.2 3.2 6.4 6.2 6.7a3.3 3.3 0 0 0-.9 2.6V22" />
+    </>}
+    {name === "instagram" && <>
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </>}
+    {name === "twitter" && <>
+      <path d="M3 3h4.2L21 21h-4.2L3 3ZM21 3 12.8 12M11.2 13.8 3 21" />
+    </>}
+  </svg>;
+}
 
 export default function LinksPaper() {
   useEffect(() => {
@@ -68,11 +90,21 @@ export default function LinksPaper() {
 
           <div className="social-paper__more">
             <h3>Ideas y herramientas</h3>
-            <nav className="social-paper__links" aria-label="Contenido y redes de Alfredo Bonilla">
-              {more.map((link) => <a key={link.title} href={link.href}>
-                <span className="social-paper__mark" aria-hidden="true">{link.mark}</span>
-                <span className="social-paper__link-copy"><strong>{link.title}</strong><small>{link.description}</small></span>
+            <nav className="social-paper__links" aria-label="Contenido de Indie Mind">
+              <a href="https://www.indiemind.ai/blog">
+                <span className="social-paper__mark" aria-hidden="true">IM</span>
+                <span className="social-paper__link-copy"><strong>Blog de Indie Mind</strong><small>Ideas y guías sobre IA aplicada.</small></span>
                 <span className="social-paper__arrow" aria-hidden="true">↗</span>
+              </a>
+            </nav>
+          </div>
+
+          <div className="links-paper__social-section">
+            <h3>Sígueme en redes</h3>
+            <nav className="links-paper__socials" aria-label="Redes sociales de Alfredo Bonilla">
+              {socials.map((social) => <a key={social.name} href={social.href} target="_blank" rel="noopener noreferrer">
+                <span className="links-paper__social-icon"><SocialIcon name={social.name} /></span>
+                <span>{social.label}</span>
               </a>)}
             </nav>
           </div>
