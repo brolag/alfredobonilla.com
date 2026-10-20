@@ -32,6 +32,7 @@
 .social-paper__project strong { font-size: 1.04rem; }
 .social-paper__project span span { font-size: 0.82rem; line-height: 1.4; }
 .social-paper__project > span:last-child { color: #a65d3d; font-size: 1.25rem; }
+.social-paper__more { margin-top: 30px; }
 
 .social-paper .ps-foot { padding: 0; }
 .social-paper a:focus-visible { outline: 3px solid #b97650; outline-offset: 3px; }
